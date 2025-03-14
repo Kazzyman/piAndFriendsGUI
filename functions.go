@@ -35,6 +35,13 @@ func formatWithThousandSeparators(num *big.Float) string {
 }
 
 
+func check(e error) { // create a func named check which takes one parameter "e" of type error
+	if e != nil {
+		panic(e) // use panic() to display error code
+	}
+}
+
+
 func checkPi(stringOfSum string) int {
 	posInPi := 0               // to be the incremented offset : piChar = piAs59766chars[posInPi]
 	var piChar byte            // one byte (character) of pi as string, e.g. piChar = piAs59766chars[posInPi]
