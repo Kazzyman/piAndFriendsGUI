@@ -2,7 +2,9 @@ package main
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/theme"
+	"image/color"
 )
 
 // @formatter:off
@@ -20,3 +22,5 @@ func (m myTheme) Size(name fyne.ThemeSizeName) float32 {
 }
 
 var copyOfLastPosition int
+
+var ricksFirstWords = canvas.NewText("this is ricksFirstWords?", color.Black) // write something on the canvas
