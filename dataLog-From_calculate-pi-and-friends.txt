@@ -54,3 +54,270 @@ was run on: Sat Mar 15 01:18:48 2025
 Total run was 510.063584ms 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 07:02:42 2025
+999999 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 510.432083ms 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 07:54:55 2025
+2999999 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 1.489904083s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 11:01:02 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 25.294148625s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 11:28:34 2025
+999999999 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 8m30.666241583s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 11:31:02 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 25.262212167s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 11:37:24 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 25.5495355s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 11:50:47 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 25.706171416s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:25:37 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 24.825262667s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:29:32 2025
+50000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 24.894249084s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:32:28 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.017191417s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:35:28 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.569139625s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:37:50 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 19.971187959s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:40:39 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.129196333s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 12:45:45 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 19.969031209s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 13:10:43 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 19.763401167s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 13:13:48 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 19.993957709s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 13:16:53 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.225266625s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 13:24:04 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 19.952157417s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 14:05:35 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.323885625s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 15:35:10 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.04633825s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
+was run on: Sat Mar 15 15:35:46 2025
+3222984939 was Lines/Second  
+2.302132e+08 was Iterations/Seconds  
+4.000000e+09 was total Iterations  
+Total runTime was 17.375197542s 
+
+  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
+was run on: Sat Mar 15 15:36:04 2025
+6946048736 was Lines/Second  
+4.961463e+08 was Iterations/Seconds  
+9.000000e+09 was total Iterations  
+Total runTime was 18.139809375s 
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 15:39:36 2025
+40000000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 20.6878185s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 15:40:23 2025
+20000000 was total Iterations; 128 was precision setting for the big.Float types 
+Total run was 9.057886333s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
+was run on: Sat Mar 15 15:41:29 2025
+3971013468 was Lines/Second  
+2.836438e+08 was Iterations/Seconds  
+4.000000e+09 was total Iterations  
+Total runTime was 14.102193416s 
+
+  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
+was run on: Sat Mar 15 15:41:46 2025
+7137080399 was Lines/Second  
+5.097915e+08 was Iterations/Seconds  
+9.000000e+09 was total Iterations  
+Total runTime was 17.654277792s 
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 15:42:01 2025
+1330576218 was Lines/Second  
+1.209615e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.4801285s 
+ 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 15:42:25 2025
+10000 was total Iterations; 128 was precision setting for the big.Float types 
+Total run was 7.093625ms 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 16:08:47 2025
+555 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 914.875µs 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
+was run on: Sat Mar 15 16:10:14 2025
+3927817732 was Lines/Second  
+2.805584e+08 was Iterations/Seconds  
+4.000000e+09 was total Iterations  
+Total runTime was 14.257280709s 
+
+  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
+was run on: Sat Mar 15 16:10:31 2025
+7053794720 was Lines/Second  
+5.038425e+08 was Iterations/Seconds  
+9.000000e+09 was total Iterations  
+Total runTime was 17.862725667s 
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 16:11:14 2025
+1365932249 was Lines/Second  
+1.241757e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.415932417s 
+ 
+  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
+was run on: Sat Mar 15 16:11:39 2025
+3932917317 was Lines/Second  
+2.809227e+08 was Iterations/Seconds  
+4.000000e+09 was total Iterations  
+Total runTime was 14.238794125s 
+
+  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
+was run on: Sat Mar 15 16:11:57 2025
+7112601085 was Lines/Second  
+5.080429e+08 was Iterations/Seconds  
+9.000000e+09 was total Iterations  
+Total runTime was 17.715038209s 
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 16:12:34 2025
+1442438298 was Lines/Second  
+1.311308e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.287792833s 
+ 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 16:12:50 2025
+444 was total Iterations; 512 was precision setting for the big.Float types 
+Total run was 941.333µs 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 16:14:06 2025
+1438900758 was Lines/Second  
+1.308092e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.293417375s 
+ 
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 16:19:24 2025
+1431989089 was Lines/Second  
+1.301808e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.304486833s 
+ 

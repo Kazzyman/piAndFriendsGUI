@@ -49,8 +49,9 @@ func formatWithThousandSeparators(num *big.Float) string {
 }
 
 
-func check(e error) { // create a func named check which takes one parameter "e" of type error
+func check(e error) { // create a func named check which takes one parameter "e" of type error ::: - -
 	if e != nil {
+		// ::: that should do it ???	
 		panic(e) // use panic() to display error code
 	}
 }

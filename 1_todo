@@ -1,1 +1,78 @@
 go mod tidy
+
+The Problem:
+
+The key issue is that the fyneFunc calls (which are essentially calls to callBkPrn2canvas) are being made directly from within the NilakanthaBig function, which is executed as a goroutine. This directly violates Fyne's requirement that UI updates must occur on the main thread.
+
+Specifically, these lines are the problem:
+
+Go
+fyneFunc(fmt.Sprintf(" ... "))
+fyneFunc(fmt.Sprintf("... werkin ..."))
+fyneFunc(fmt.Sprintf(" ... doin some ... "))
+// ... and many more calls to fyneFunc throughout the function
+Solution:
+
+To fix this, you must eliminate all direct calls to fyneFunc from within the NilakanthaBig goroutine. Instead, send the data you want to display to the updateChan, which is then processed by the main thread's update loop.
+
+Here's how to modify the function:
+
+func NilakanthaBig(updateChan chan updateData, iters int, precision int) { // Changed signature
+    // ... (rest of NilakanthaBig) ...
+
+    if iters > 36111222 {
+        updateChan <- updateData{text: " ... "} // Send to channel
+    }
+    if iters > 42000000 {
+        updateChan <- updateData{text: "... werkin ..."} // Send to channel
+    }
+    // ... (replace all fyneFunc calls with sends to updateChan) ...
+
+    if iterBig == 20111222 {
+        updateChan <- updateData{text: " ... doin some ... "} // Send to channel
+    }
+    // ... (replace all fyneFunc calls with sends to updateChan) ...
+
+    // ... (rest of NilakanthaBig) ...
+
+    updateChan <- updateData{text: fmt.Sprintf(" via Nilakantha \n")} // Send to channel
+    updateChan <- updateData{text: fmt.Sprintf("Total run with SetPrec at: %d and iters of %d was %s \n\n ", precision, iterBig, TotalRun)} // Send to channel
+
+    // ... (rest of NilakanthaBig) ...
+}
+// ::: I think I got all of that 
+
+
+
+
+And in your main function:
+
+// ... (rest of main function) ...
+
+buttonNilakantha := NewColoredButton("Nilakantha", color.RGBA{255, 255, 100, 255}, func() {
+        updateChan <- updateData{clearText: true}
+        go func() {
+                inputs := getInputValues([]string{
+                        "You have selected the Nilakantha Somayaji method...\nPlease fill-in the fields with the number of iterations (suggest 100,000 -> 100,000,000)",
+                        "And a value for the precision: (suggest 128 -> 512), then hit 'Submit'",
+                })
+                iters, _ := strconv.Atoi(inputs[0])
+                precision, _ := strconv.Atoi(inputs[1])
+                NilakanthaBig(updateChan, iters, precision) // pass the channel
+        }()
+})
+
+// ... (rest of main function) ...
+
+
+Explanation:
+
+Modified NilakanthaBig: The function now takes the updateChan as an argument.
+Channel Sends: Every place where you previously called fyneFunc, you now send an updateData struct to the updateChan.
+Main Thread Processing: The main thread's update loop will receive these updateData structs and update the UI accordingly.
+Important Notes:
+
+Remove fyneFunc: Completely remove the fyneFunc parameter from the NilakanthaBig function signature.
+Consistency: Ensure that all UI updates from goroutines are handled through the updateChan mechanism.
+Testing: After making these changes, thoroughly test the Nilakantha functionality to ensure that the UI updates correctly and that no Fyne thread errors occur.
+By making these changes, you will correctly isolate UI updates to the main thread, resolving the Fyne thread errors.
