@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"image/color"
 	"time"
 )
@@ -11,36 +12,13 @@ import (
 // @formatter:off
 
 
-// Define a custom theme with larger text
-type myTheme struct {
-	fyne.Theme
-}
 
-func (m myTheme) Size(name fyne.ThemeSizeName) float32 {
-	if name == theme.SizeNameText {
-		return 20 // Larger default text size
-	}
-	return theme.DefaultTheme().Size(name)
-}
 
 var copyOfLastPosition int
 
-var ricksFirstWords = canvas.NewText("this is ricksFirstWords?", color.Black) // write something on the canvas
-
-
-// vars & consts for use in multiple localized sections of code =========================================================
 // convenience globals:
-var selection int
 
 var usingBigFloats = false // a variable of type bool which is passed by many funcs to printResultStatsLong()
-
-const colorReset = "\033[0m"
-const colorRed = "\033[31m"
-const colorGreen = "\033[32m"
-const colorYellow = "\033[33m"
-const colorPurple = "\033[35m"
-const colorCyan = "\033[36m"
-const colorWhite = "\033[37m"
 
 var iterationsForMonte16i int
 var iterationsForMonte16j int
@@ -54,8 +32,8 @@ var iterFloat64 float64 // to be used in selections which do not require modulus
 var Table_of_perfect_squares = []int{}
 var t2 time.Time
 
-// the following globals, are used in multiple funcs of case 18: calculate either square or cube root of any integer
-// ------------------------------------------------------------------------------------------------------------------
+// The following globals, are used in multiple funcs of case 18: calculate either square or cube root of any integer
+
 var Tim_win float64             // Time Window
 var sortedResults = []Results{} // sortedResults is an array of type Results as defined at the top of this file
 var Table_of_perfect_Products = []int{}
@@ -72,4 +50,98 @@ type Results struct { // define a new structure called Results with two fields; 
 	pdiff  float64
 }
 
-// ========== end of global var section ================================================================================
+
+// ColoredButton type
+type ColoredButton struct {
+	widget.Button
+	BackgroundColor color.Color
+}
+
+func NewColoredButton(label string, backgroundColor color.Color, tapped func()) *ColoredButton {
+	btn := &ColoredButton{BackgroundColor: backgroundColor}
+	btn.Text = label
+	btn.OnTapped = tapped
+	btn.ExtendBaseWidget(btn)
+	return btn
+}
+
+func (b *ColoredButton) CreateRenderer() fyne.WidgetRenderer {
+	text := canvas.NewText(b.Text, color.Black)
+	text.Alignment = fyne.TextAlignCenter
+	background := canvas.NewRectangle(b.BackgroundColor)
+	border := canvas.NewRectangle(color.Transparent)
+	border.StrokeColor = color.Gray{0x80}
+	border.StrokeWidth = 2
+	return &coloredButtonRenderer{
+		button:     b,
+		text:       text,
+		background: background,
+		border:     border,
+		objects:    []fyne.CanvasObject{background, border, text},
+	}
+}
+
+// Custom renderer
+type coloredButtonRenderer struct {
+	button     *ColoredButton
+	text       *canvas.Text
+	background *canvas.Rectangle
+	border     *canvas.Rectangle
+	objects    []fyne.CanvasObject
+}
+
+func (r *coloredButtonRenderer) BackgroundColor() color.Color {
+	return r.button.BackgroundColor
+}
+
+func (r *coloredButtonRenderer) Layout(size fyne.Size) {
+	r.background.Resize(size)
+	r.border.Resize(size)
+	textSize := r.text.MinSize()
+	r.text.Resize(fyne.NewSize(size.Width-20, textSize.Height))
+	r.text.Move(fyne.NewPos(10, (size.Height-textSize.Height)/2)) // Center vertically
+}
+
+func (r *coloredButtonRenderer) MinSize() fyne.Size {
+	textSize := r.text.MinSize()
+	return fyne.NewSize(fyne.Max(textSize.Width+20, 200), fyne.Max(textSize.Height+20, 50))
+}
+
+func (r *coloredButtonRenderer) Refresh() {
+	r.background.FillColor = r.button.BackgroundColor
+	r.text.Text = r.button.Text
+	r.background.Refresh()
+	r.border.Refresh()
+	r.text.Refresh()
+}
+
+func (r *coloredButtonRenderer) Objects() []fyne.CanvasObject {
+	return r.objects
+}
+
+func (r *coloredButtonRenderer) Destroy() {
+	// No-op
+}
+
+// Theme
+type myTheme struct {
+	Theme fyne.Theme
+}
+
+func (m *myTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
+	switch name {
+	case theme.ColorNameBackground:
+		return color.RGBA{245, 245, 245, 255}
+	case theme.ColorNameButton:
+		return color.RGBA{200, 200, 200, 255}
+	case theme.ColorNameForeground:
+		return color.RGBA{0, 0, 0, 255}
+	case theme.ColorNamePrimary:
+		return color.RGBA{255, 165, 0, 255}
+	}
+	return m.Theme.Color(name, variant)
+}
+
+func (m *myTheme) Font(style fyne.TextStyle) fyne.Resource    { return m.Theme.Font(style) }
+func (m *myTheme) Icon(name fyne.ThemeIconName) fyne.Resource { return m.Theme.Icon(name) }
+func (m *myTheme) Size(name fyne.ThemeSizeName) float32       { return m.Theme.Size(name) }

@@ -1,140 +1,56 @@
 
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 21:45:34 2025
-200000 was total Iterations; 256 was precision setting for the big.Float types 
-Total run was 133.189834ms 
+  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
+was run on: Fri Mar 14 17:58:37 2025
+3838663289 was Lines/Second  
+2.741902e+08 was Iterations/Seconds  
+4.000000e+09 was total Iterations  
+Total runTime was 14.588411583s 
+
+  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
+was run on: Fri Mar 14 17:58:56 2025
+6886880406 was Lines/Second  
+4.919200e+08 was Iterations/Seconds  
+9.000000e+09 was total Iterations  
+Total runTime was 18.29565675s 
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Fri Mar 14 17:59:53 2025
+500000 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 279.021542ms 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
 
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 21:49:20 2025
-200999 was total Iterations; 256 was precision setting for the big.Float types 
-Total run was 140.28375ms 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Fri Mar 14 23:13:09 2025
+345678 was total Iterations; 234 was precision setting for the big.Float types 
+Total run was 204.926542ms 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
 
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:25:04 2025
-300000 was total Iterations; 256 was precision setting for the big.Float types 
-Total run was 182.092375ms 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 00:05:27 2025
+700000 was total Iterations; 512 was precision setting for the big.Float types 
+Total run was 468.364ms 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
 
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:35:16 2025
-500000 was total Iterations; 512 was precision setting for the big.Float types 
-Total run was 351.028375ms 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 00:11:20 2025
+1999999 was total Iterations; 512 was precision setting for the big.Float types 
+Total run was 1.2668725s 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
 
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:36:18 2025
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 01:18:39 2025
+23456789 was total Iterations; 345 was precision setting for the big.Float types 
+Total run was 13.113702458s 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 01:18:48 2025
 999999 was total Iterations; 256 was precision setting for the big.Float types 
-Total run was 561.222292ms 
+Total run was 510.063584ms 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
-
-  -- Nilakantha Somayaji -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:37:13 2025
-50000000 was total Iterations; 512 was precision setting for the big.Float types 
-Total run was 34.442984375s 
- 
-Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
-
-  -- Gregory-Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:50:45 2025
-1323801826 was Lines/Second  
-1.203456e+08 was Iterations/Seconds  
-3.000000e+08 was total Iterations  
-Total run was 2.49282025s 
- 
-  -- Gregory-Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 22:54:25 2025
-1387493707 was Lines/Second  
-1.261358e+08 was Iterations/Seconds  
-3.000000e+08 was total Iterations  
-Total run was 2.378389166s 
- 
-  -- Gregory-Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:00:00 2025
-1397641304 was Lines/Second  
-1.270583e+08 was Iterations/Seconds  
-3.000000e+08 was total Iterations  
-Total run was 2.361120833s 
- 
-  -- Gregory-Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:05:09 2025
-1407546382 was Lines/Second  
-1.279588e+08 was Iterations/Seconds  
-3.000000e+08 was total Iterations  
-Total run was 2.344505333s 
- 
-  -- Gregory-Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:08:20 2025
-1296970686 was Lines/Second  
-1.179064e+08 was Iterations/Seconds  
-3.000000e+08 was total Iterations  
-Total run was 2.544390583s 
- 
-  -- Gottfried Wilhelm Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:19:51 2025
-3856584735 was Lines/Second  
-2.754703e+08 was Iterations/Seconds  
-4.000000e+09 was total Iterations  
-Total runTime was 14.520619625s 
-
-  -- Gottfried Wilhelm Leibniz -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:37:41 2025
-3922050781 was Lines/Second  
-2.801465e+08 was Iterations/Seconds  
-4.000000e+09 was total Iterations  
-Total runTime was 14.2782445s 
-
-  -- Gottfried Wilhelm Leibniz (cont.) -- selection #0 on Mac-mini.local 
-was run on: Thu Mar 13 23:37:59 2025
-6940976012 was Lines/Second  
-4.957840e+08 was Iterations/Seconds  
-9.000000e+09 was total Iterations  
-Total runTime was 18.153066625s 
-
-  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
-was run on: Thu Mar 13 23:47:02 2025
-3854262720 was Lines/Second  
-2.753045e+08 was Iterations/Seconds  
-4.000000e+09 was total Iterations  
-Total runTime was 14.529367625s 
-
-  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
-was run on: Thu Mar 13 23:47:20 2025
-7059990091 was Lines/Second  
-5.042850e+08 was Iterations/Seconds  
-9.000000e+09 was total Iterations  
-Total runTime was 17.847050542s 
-
-  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
-was run on: Thu Mar 13 23:48:59 2025
-3839988062 was Lines/Second  
-2.742849e+08 was Iterations/Seconds  
-4.000000e+09 was total Iterations  
-Total runTime was 14.583378667s 
-
-  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
-was run on: Thu Mar 13 23:49:17 2025
-7022244927 was Lines/Second  
-5.015889e+08 was Iterations/Seconds  
-9.000000e+09 was total Iterations  
-Total runTime was 17.942979958s 
-
-  -- Gottfried Wilhelm Leibniz --  on Mac-mini.local 
-was run on: Thu Mar 13 23:52:12 2025
-3702308654 was Lines/Second  
-2.644506e+08 was Iterations/Seconds  
-4.000000e+09 was total Iterations  
-Total runTime was 15.125697292s 
-
-  -- Gottfried Wilhelm Leibniz (cont.) -- on Mac-mini.local 
-was run on: Thu Mar 13 23:52:31 2025
-6988470075 was Lines/Second  
-4.991764e+08 was Iterations/Seconds  
-9.000000e+09 was total Iterations  
-Total runTime was 18.029697291s 

@@ -157,7 +157,7 @@ func NilakanthaBig(fyneFunc func(string), iters int, precision int) {
 		fileHandleBig, err1prslc2c := os.OpenFile("big_pie_is_in_here.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
 		check(err1prslc2c)                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
 		defer fileHandleBig.Close()                                                                                    // It’s idiomatic to defer a Close immediately after opening a file.
-		_, err2prslc2c := fmt.Fprintf(fileHandleBig, "\nThese are the %d verified digits we have calculated per case: %d  :: \n", copyOfLastPosition, selection)
+		_, err2prslc2c := fmt.Fprintf(fileHandleBig, "\nThese are the %d verified digits we have calculated  :: \n", copyOfLastPosition)
 		check(err2prslc2c)
 		for _, oneChar := range stringVerOfCorrectDigits {
 			// fmt.Print(oneChar) // to the console // the whole point of using an alternate file is to not clutter up the console or the default file
@@ -165,7 +165,7 @@ func NilakanthaBig(fyneFunc func(string), iters int, precision int) {
 			_, err8prslc2c := fmt.Fprint(fileHandleBig, oneChar) // to a file
 			check(err8prslc2c)
 		}
-		_, err9prslc2c := fmt.Fprintf(fileHandleBig, "\n...the preceeding was logged one char at a time by case: %d \n", selection)
+		_, err9prslc2c := fmt.Fprintf(fileHandleBig, "\n...the preceeding was logged one char at a time \n")
 		check(err9prslc2c)
 		fileHandleBig.Close()
 	} else if true {
@@ -193,7 +193,7 @@ func NilakanthaBig(fyneFunc func(string), iters int, precision int) {
 		check(err1prslc2d)                                                                                                                    // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
 		defer fileHandleDefault.Close()                                                                                                       // It’s idiomatic to defer a Close immediately after opening a file.
 		// to file
-		_, err2prslc2d := fmt.Fprintf(fileHandleDefault, "\nThese are the %d verified digits we have calculated per case: %d  :: \n", copyOfLastPosition, selection)
+		_, err2prslc2d := fmt.Fprintf(fileHandleDefault, "\nThese are the %d verified digits we have calculated  :: \n", copyOfLastPosition)
 		check(err2prslc2d)
 		// to screen
 		fyneFunc(fmt.Sprintf("\n These are the %d verified digits we have calculated: \n", copyOfLastPosition))
@@ -213,7 +213,7 @@ func NilakanthaBig(fyneFunc func(string), iters int, precision int) {
 		check(err1)                                                                                                                    // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
 		defer fileHandleDefault.Close()                                                                                                // It’s idiomatic to defer a Close immediately after opening a file.
 		Hostname, _ := os.Hostname()
-		_, err0 := fmt.Fprintf(fileHandleDefault, "\n  -- Nilakantha Somayaji -- selection #%d on %s \n", selection, Hostname)
+		_, err0 := fmt.Fprintf(fileHandleDefault, "\n  -- Nilakantha Somayaji -- on %s \n", Hostname)
 		check(err0)
 		current_time := time.Now()
 		_, err6 := fmt.Fprint(fileHandleDefault, "was run on: ", current_time.Format(time.ANSIC), "\n")

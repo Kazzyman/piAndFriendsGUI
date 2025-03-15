@@ -84,7 +84,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 			check(err1)                                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
 			defer fileHandle.Close()                                                                                                // It’s idiomatic to defer a Close immediately after opening a file.
 			Hostname, _ := os.Hostname()
-			_, err0 := fmt.Fprintf(fileHandle, "\n  -- Gregory-Leibniz -- selection #%d on %s \n", selection, Hostname)
+			_, err0 := fmt.Fprintf(fileHandle, "\n  -- Gregory-Leibniz -- on %s \n", Hostname)
 			check(err0)
 			current_time := time.Now()
 			_, err6 := fmt.Fprint(fileHandle, "was run on: ", current_time.Format(time.ANSIC), "\n")
