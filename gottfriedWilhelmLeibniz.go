@@ -13,7 +13,7 @@ usingBigFloats = false
 fyneFunc(fmt.Sprintf("\n\nYou selected Gottfried Wilhelm Leibniz formula  :  π = 4 * ( 1 - 1/3 + 1/5 - 1/7 + 1/9 ... "))
 fyneFunc(fmt.Sprintf("   Infinitesimal calculus was developed independently in the late 17th century by Isaac Newton"))
 fyneFunc(fmt.Sprintf("    ... and Gottfried Wilhelm Leibniz"))
-fyneFunc(fmt.Sprintf("   4 Billion iterations will be executed ... "))
+fyneFunc(fmt.Sprintf("   4 Billion iterations will (initially) be executed ... NEED TO ADD INPUT FOR OPTIONAL EXTENTION !!!!"))
 fyneFunc(fmt.Sprintf(""))
 fyneFunc(fmt.Sprintf(" ... working ...\n"))
 start := time.Now()
@@ -36,7 +36,7 @@ sum = sum - 1/denom
 if iterInt64 == 100000000 {
 fyneFunc(fmt.Sprintf("... 100,000,000 completed iterations ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.1415926,53589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.1415926,53589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  100,000,000 iterations in %s yields 8 digits of π\n\n", elapsed))
@@ -44,7 +44,7 @@ fyneFunc(fmt.Sprintf("  100,000,000 iterations in %s yields 8 digits of π\n\n",
 if iterInt64 == 200000000 {
 fyneFunc(fmt.Sprintf("... 200,000,000 gets another digit ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.14159265,3589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  200,000,000 iterations in %s yields 9 digits of π\n\n", elapsed))
@@ -52,7 +52,7 @@ fyneFunc(fmt.Sprintf("  200,000,000 iterations in %s yields 9 digits of π\n\n",
 if iterInt64 == 400000000 {
 fyneFunc(fmt.Sprintf("... 400,000,000 iterations completed, still at nine ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.14159265,3589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  400,000,000 iterations in %s yields 9 digits of π\n\n", elapsed))
@@ -60,7 +60,7 @@ fyneFunc(fmt.Sprintf("  400,000,000 iterations in %s yields 9 digits of π\n\n",
 if iterInt64 == 600000000 {
 fyneFunc(fmt.Sprintf("... 600,000,000 iterations, still at nine ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.14159265,3589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  600,000,000 iterations in %s yields 9 digits of π\n\n", elapsed))
@@ -68,7 +68,7 @@ fyneFunc(fmt.Sprintf("  600,000,000 iterations in %s yields 9 digits of π\n\n",
 if iterInt64 == 1000000000 {
 fyneFunc(fmt.Sprintf("... 1 Billion iterations completed, still nine ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.14159265,3589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  1,000,000,000 iterations in %s yields 9 digits of π\n\n", elapsed))
@@ -76,7 +76,7 @@ fyneFunc(fmt.Sprintf("  1,000,000,000 iterations in %s yields 9 digits of π\n\n
 if iterInt64 == 2000000000 {
 fyneFunc(fmt.Sprintf("... 2 Billion, and still just nine ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.14159265,3589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  2,000,000,000 iterations in %s yields 9 digits of π\n\n", elapsed))
@@ -84,7 +84,7 @@ fyneFunc(fmt.Sprintf("  2,000,000,000 iterations in %s yields 9 digits of π\n\n
 if iterInt64 == 4000000000 { // last one
 fyneFunc(fmt.Sprintf("\n... 4 Billion, gets us ten digits  ..."))
 fyneFunc(fmt.Sprintf("   %0.5f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.141592653,589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.141592653,589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  4,000,000,000 iterations in %s yields 10 digits of π\n\n", elapsed))
@@ -148,7 +148,7 @@ sum = sum - 1/denom
 if iterInt64 == 6000000000 {
 fyneFunc(fmt.Sprintf("... 6 Billion completed ... \n"))
 fyneFunc(fmt.Sprintf("   %0.13f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.141592653,589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.141592653,589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  6,000,000,000 iterations in %s still yields 10 digits of π\n", elapsed))
@@ -157,7 +157,7 @@ fyneFunc(fmt.Sprintf( "  ... working ...\n"))
 if iterInt64 == 8000000000 {
 fyneFunc(fmt.Sprintf("... 8 Billion completed. still ten ...\n"))
 fyneFunc(fmt.Sprintf("   %0.13f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.141592653,589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.141592653,589793 is from the web"))
 t := time.Now()
 elapsed := t.Sub(start)
 fyneFunc(fmt.Sprintf("  8,000,000,000 iterations in %s still yields 10 digits of π\n", elapsed))
@@ -165,7 +165,7 @@ fyneFunc(fmt.Sprintf( "  ... working ...\n"))
 }
 if iterInt64 == 9000000000 {
 fyneFunc(fmt.Sprintf("   %0.13f was calculated by the Gottfried Wilhelm Leibniz formula", π))
-fyneFunc(fmt.Sprintf("    3.141592653,589793 is from the web"))
+fyneFunc(fmt.Sprintf("   3.141592653,589793 is from the web"))
 // fyneFunc(fmt.Sprintf("   ", iter)
 t := time.Now()
 elapsed := t.Sub(start)
@@ -176,7 +176,10 @@ t = time.Now()
 elapsed = t.Sub(start)
 
 LinesPerIter = 14
-fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...", LinesPerIter))
+fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...\n\n", LinesPerIter))
+	fyneFunc(fmt.Sprintf("   Infinitesimal calculus was developed independently in the late 17th century by Isaac Newton"))
+	fyneFunc(fmt.Sprintf("    ... and Gottfried Wilhelm Leibniz. This implementaion was done entirely by Richard Woolley\n\n\n"))
+
 LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
 fmt.Printf("Aprox %.0f lines of code were executed per second \n", LinesPerSecond)
 

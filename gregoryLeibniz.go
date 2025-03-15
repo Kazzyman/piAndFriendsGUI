@@ -10,9 +10,9 @@ import (
 
 func GregoryLeibniz(fyneFunc func(string)){
 	usingBigFloats = false
-	fyneFunc(fmt.Sprintf("\n\nYou selected the Gregory-Leibniz series ..."))
-	fyneFunc(fmt.Sprintf("π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ..."))
-	fyneFunc(fmt.Sprintf("Three hundred million iterations are being executed ... working ...\n"))
+	fyneFunc(fmt.Sprintf("\n\nYou selected the Gregory-Leibniz series ... this will be quick!\n\n"))
+	fyneFunc(fmt.Sprintf("π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...\n"))
+	fyneFunc(fmt.Sprintf("Three-hundred-million iterations will be executed ... working ...\n"))
 	start := time.Now()
 	iterFloat64 = 0
 	var nextOdd float64
@@ -31,7 +31,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 		if iterInt64 == 10000000 {
 			fyneFunc(fmt.Sprintf("... 10,000,000 of three hundred million completed. still working, but ..."))
 			fyneFunc(fmt.Sprintf("   %0.6f was calculated by the Gregory-Leibniz series", tally))
-			fyneFunc(fmt.Sprintf("    3.141592,653589793 is from the web"))
+			fyneFunc(fmt.Sprintf("   3.141592,653589793 is from the web"))
 			t := time.Now()
 			elapsed := t.Sub(start)
 			fyneFunc(fmt.Sprintf("  10,000,000 iterations in %s yields 7 digits of π\n\n", elapsed))
@@ -41,7 +41,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 		if iterInt64 == 50000000 {
 			fyneFunc(fmt.Sprintf("... 50,000,000 of three hundred million completed. still working, but ..."))
 			fyneFunc(fmt.Sprintf("      %0.8f was calculated by the Gregory-Leibniz series", tally))
-			fyneFunc(fmt.Sprintf("    3.1415926,53589793 is from the web"))
+			fyneFunc(fmt.Sprintf("     3.1415926,53589793 is from the web"))
 			t := time.Now()
 			elapsed := t.Sub(start)
 			fyneFunc(fmt.Sprintf("  50,000,000 iterations in %s yields 8 digits of π\n", elapsed))
@@ -50,7 +50,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 		if iterInt64 == 100000000 {
 			fyneFunc(fmt.Sprintf("... 100,000,000 of three hundred million completed. still working, but ..."))
 			fyneFunc(fmt.Sprintf("      %0.9f was calculated by the Gregory-Leibniz series", tally))
-			fyneFunc(fmt.Sprintf("    3.1415926,53589793 is from the web"))
+			fyneFunc(fmt.Sprintf("     3.1415926,53589793 is from the web"))
 			t := time.Now()
 			elapsed := t.Sub(start)
 			fyneFunc(fmt.Sprintf("  100,000,000 iterations in %s yields 8 digits of π\n\n", elapsed))
@@ -59,14 +59,14 @@ func GregoryLeibniz(fyneFunc func(string)){
 		if iterInt64 == 200000000 {
 			fyneFunc(fmt.Sprintf("... 200,000,000 of three hundred million completed. still working, but ..."))
 			fyneFunc(fmt.Sprintf("      %0.10f was calculated by the Gregory-Leibniz series", tally))
-			fyneFunc(fmt.Sprintf("    3.14159265,3589793 is from the web"))
+			fyneFunc(fmt.Sprintf("     3.14159265,3589793 is from the web"))
 			t := time.Now()
 			elapsed := t.Sub(start)
 			fyneFunc(fmt.Sprintf("  200,000,000 iterations in %s yields 9 digits of π\n", elapsed))
 		}
 		if iterInt64 == 300000000 { // last one, still 9 digits
 			fyneFunc(fmt.Sprintf("       %0.11f was calculated by the Gregory-Leibniz series", tally))
-			fyneFunc(fmt.Sprintf("\n    3.141592653589793 is from the web"))
+			fyneFunc(fmt.Sprintf("\n      3.141592653589793 is from the web\n"))
 			t := time.Now()
 			elapsed := t.Sub(start)
 			fyneFunc(fmt.Sprintf("  300 million iterations still yields 9 digits, ")) // no Println here
@@ -77,6 +77,10 @@ func GregoryLeibniz(fyneFunc func(string)){
 			fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...", LinesPerIter))
 			LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
 			fmt.Printf("       %.0f lines of code were executed per second \n", LinesPerSecond)
+
+			fyneFunc(fmt.Sprintf("\n That was the Gregory-Leibniz series:\n\n"))
+			fyneFunc(fmt.Sprintf("π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...\n"))
+			fyneFunc(fmt.Sprintf("Three-hundred-million iterations were executed. This section was written entirely by Richard Woolley\n\n"))
 
 			
 			// store results in a log file which can be displayed from within the program by selecting option #12

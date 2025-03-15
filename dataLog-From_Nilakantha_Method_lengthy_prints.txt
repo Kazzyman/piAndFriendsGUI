@@ -92,3 +92,15 @@ Below are the 9 verified digits we have calculated via Nilakantha using precisio
 
 Below are the 9 verified digits we have calculated via Nilakantha using precision of 512 and iterations of 444: 
 3.14159265
+
+Below are the 24 verified digits we have calculated via Nilakantha using precision of 512 and iterations of 40000555: 
+3.14159265358979323846264
+
+Below are the 9 verified digits we have calculated via Nilakantha using precision of 128 and iterations of 444: 
+3.14159265
+
+Below are the 24 verified digits we have calculated via Nilakantha using precision of 512 and iterations of 80000000: 
+3.14159265358979323846264
+
+Below are the 24 verified digits we have calculated via Nilakantha using precision of 512 and iterations of 85000000: 
+3.14159265358979323846264

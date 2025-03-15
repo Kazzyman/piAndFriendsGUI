@@ -107,16 +107,16 @@ func main() {
 	}
 
 	// Buttons
-	buttonArchimedes := NewColoredButton("Archimedes", color.RGBA{255, 100, 100, 255}, func() {
+	buttonArchimedes := NewColoredButton("modified Archimedes -- by Rick Woolley", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
 	})
-	buttonLeibniz := NewColoredButton("Gottfried Wilhelm Leibniz\n runs long", color.RGBA{100, 255, 100, 255}, func() {
+	buttonLeibniz := NewColoredButton("Gottfried Wilhelm Leibniz -- runs long", color.RGBA{100, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go GottfriedWilhelmLeibniz(callBkPrn2canvas)
 	})
 
-	buttonNilakantha := NewColoredButton("Nilakantha", color.RGBA{255, 255, 100, 255}, func() {
+	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() {
 			inputChan := getInputValues([]string{
@@ -156,7 +156,7 @@ func main() {
 			NilakanthaBig(updateChan, iters, precision)
 		}()
 	})
-	buttonGregory := NewColoredButton("Gregory-Leibniz", color.RGBA{100, 100, 255, 255}, func() {
+	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go GregoryLeibniz(callBkPrn2canvas)
 	})

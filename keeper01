@@ -1,0 +1,297 @@
+package main
+
+import (
+	"fmt"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
+	"image/color"
+	"strconv"
+	"sync"
+	"time"
+)
+
+type highContrastTheme struct {
+	fyne.Theme
+}
+
+func (h *highContrastTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
+	switch name {
+	case theme.ColorNameBackground:
+		return color.White
+	case theme.ColorNameInputBackground:
+		return color.White
+	case theme.ColorNameForeground:
+		return color.Black
+	}
+	return h.Theme.Color(name, variant)
+}
+
+func main() {
+	myApp := app.New()
+	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()})
+	myWindow := myApp.NewWindow("Archimedes Pi")
+	myWindow.Resize(fyne.NewSize(1900, 1600))
+
+	outputLabel := widget.NewLabel("Press a button to start...\n")
+	outputLabel.Wrapping = fyne.TextWrapWord
+	scrollContainer := container.NewScroll(outputLabel)
+	scrollContainer.SetMinSize(fyne.NewSize(1900, 1300))
+
+	promptLabel := widget.NewLabel("")
+	inputContainer := container.NewVBox()
+	inputContainer.Hide()
+
+	var outputText string
+	updateChan := make(chan string, 100) // For incoming messages
+	var buffer string                    // Buffer for batched updates
+	var mu sync.Mutex                    // Protect buffer and outputText
+
+	// Background goroutine to batch messages
+	go func() {
+		ticker := time.NewTicker(100 * time.Millisecond)
+		defer ticker.Stop()
+		for {
+			select {
+			case msg := <-updateChan:
+				mu.Lock()
+				if msg == "" {
+					buffer = ""
+				} else {
+					buffer += msg + "\n"
+				}
+				mu.Unlock()
+			case <-ticker.C:
+				// Just keep ticking, main thread handles updates
+			}
+		}
+	}()
+
+	callBkPrn2canvas := func(oneLineSansCR string) {
+		updateChan <- oneLineSansCR
+	}
+
+	getInputValues := func(prompts []string) []string {
+		inputContainer.Objects = nil
+		promptLabel.SetText(prompts[0] + "\n" + prompts[1])
+		values := make([]string, len(prompts))
+		entryFields := make([]*widget.Entry, len(prompts))
+		done := make(chan bool)
+
+		entryFields[0] = widget.NewEntry()
+		entryFields[0].SetPlaceHolder("e.g., 50,000,000")
+		entryFields[0].Resize(fyne.NewSize(220, 40))
+
+		entryFields[1] = widget.NewEntry()
+		entryFields[1].SetPlaceHolder("e.g., 256")
+		entryFields[1].Resize(fyne.NewSize(150, 40))
+
+		submitBtn := widget.NewButton("Submit", func() {
+			for i, entry := range entryFields {
+				values[i] = entry.Text
+			}
+			inputContainer.Hide()
+			promptLabel.SetText("")
+			done <- true
+		})
+		submitBtn.Resize(fyne.NewSize(95, 40))
+		submitBtn.Importance = widget.HighImportance
+
+		hbox := container.NewWithoutLayout(
+			entryFields[0],
+			entryFields[1],
+			submitBtn,
+		)
+		entryFields[0].Move(fyne.NewPos(0, 0))
+		entryFields[1].Move(fyne.NewPos(230, 0))
+		submitBtn.Move(fyne.NewPos(390, 0))
+		hbox.Resize(fyne.NewSize(500, 40))
+
+		inputContainer.Add(container.NewBorder(nil, nil, nil, nil, hbox))
+		inputContainer.Resize(fyne.NewSize(500, 60))
+		inputContainer.Show()
+		<-done
+		return values
+	}
+
+	// Buttons
+	buttonArchimedes := NewColoredButton("Archimedes", color.RGBA{255, 100, 100, 255}, func() {
+		updateChan <- ""
+		go ArchimedesBig(callBkPrn2canvas)
+	})
+	buttonLeibniz := NewColoredButton("Gottfried Wilhelm Leibniz", color.RGBA{100, 255, 100, 255}, func() {
+		updateChan <- ""
+		go GottfriedWilhelmLeibniz(callBkPrn2canvas)
+	})
+	buttonNilakantha := NewColoredButton("Nilakantha", color.RGBA{255, 255, 100, 255}, func() {
+		updateChan <- ""
+		go func() {
+			inputs := getInputValues([]string{
+				"You have selected the Nilakantha Somayaji method...\nPlease fill-in the fields with the number of iterations (suggest 100,000 -> 100,000,000)",
+				"And a value for the precision: (suggest 128 -> 512), then hit 'Submit'",
+			})
+			iters, _ := strconv.Atoi(inputs[0])
+			precision, _ := strconv.Atoi(inputs[1])
+			NilakanthaBig(callBkPrn2canvas, iters, precision)
+		}()
+	})
+	buttonGregory := NewColoredButton("Gregory-Leibniz", color.RGBA{100, 100, 255, 255}, func() {
+		updateChan <- ""
+		go GregoryLeibniz(callBkPrn2canvas)
+	})
+	buttonChudnovsky := NewColoredButton("Chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
+		updateChan <- ""
+		go ChudnovskyBig(callBkPrn2canvas)
+	})
+	buttonMonteCarlo := NewColoredButton("Monte Carlo", color.RGBA{100, 255, 255, 255}, func() {
+		updateChan <- ""
+		go MonteCarloBig(callBkPrn2canvas)
+	})
+	buttonExtra1 := NewColoredButton("Extra 1", color.RGBA{200, 200, 200, 255}, func() {
+		callBkPrn2canvas("Extra 1 clicked")
+	})
+	buttonExtra2 := NewColoredButton("Extra 2", color.RGBA{150, 150, 150, 255}, func() {
+		callBkPrn2canvas("Extra 2 clicked")
+	})
+
+	buttonContainer := container.NewGridWithColumns(4,
+		buttonArchimedes, buttonLeibniz, buttonGregory, buttonNilakantha,
+		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, buttonExtra2,
+	)
+	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
+	myWindow.SetContent(content)
+
+	// Main-thread update loop using Fyne's lifecycle
+	myWindow.Canvas().SetOnTypedRune(func(r rune) {
+		// Dummy handler to keep canvas active
+	})
+	go func() {
+		ticker := time.NewTicker(100 * time.Millisecond)
+		defer ticker.Stop()
+		for range ticker.C {
+			mu.Lock()
+			if outputText != buffer {
+				outputText = buffer
+				outputLabel.SetText(outputText)
+				scrollContainer.ScrollToBottom()
+				if buffer != "" {
+					fmt.Println(buffer[:len(buffer)-1])
+				}
+			}
+			mu.Unlock()
+		}
+	}()
+
+	myWindow.ShowAndRun()
+}
+/*
+# groksDemoGUIcolors
+ld: warning: ignoring duplicate libraries: '-lobjc'
+./groksDemoGUIcolors: replacing existing signature
+2025/03/15 13:13:13 Fyne error:  Error occurred loading built-in translations
+2025/03/15 13:13:13   Cause: invalid character '}' looking for beginning of object key string
+2025/03/15 13:13:13   At: /Users/quasar/go/pkg/mod/fyne.io/fyne/v2@v2.6.0-beta1/lang/lang.go:181
+2025-03-15 13:13:14.224 groksDemoGUIcolors[63002:4496339] +[IMKClient subclass]: chose IMKClient_Modern
+2025-03-15 13:13:14.224 groksDemoGUIcolors[63002:4496339] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+2025/03/15 13:13:15 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:15   From: /Users/quasar/groksDemoGUIcolors/main.go:78
+2025/03/15 13:13:15 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:15   From: /Users/quasar/groksDemoGUIcolors/main.go:78
+2025/03/15 13:13:15 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:15   From: /Users/quasar/groksDemoGUIcolors/main.go:78
+2025/03/15 13:13:15 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:15   From: /Users/quasar/groksDemoGUIcolors/main.go:78
+2025/03/15 13:13:15 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:15   From: /Users/quasar/groksDemoGUIcolors/main.go:78
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:28 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:28   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+ ...
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:38 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:38   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+ ...
+ ... doin some ...
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:46 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:46   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+ ...
+ ... doin some ...
+ ... werkin ...
+Total run with SetPrec at: 256 and iters of 40000000 was 19.993957709s
+
+ 2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+2025/03/15 13:13:48 *** Error in Fyne call thread, this should have been called in fyne.Do[AndWait] ***
+2025/03/15 13:13:48   From: /Users/quasar/groksDemoGUIcolors/main.go:177
+ ...
+ ... doin some ...
+ ... werkin ...
+
+pi from the web begins thusly: [3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825]
+
+pi as calculated herein begins: 3.141592653589793238462639477029795852935572719916487656817077310870871817225947228631381735
+
+.... we have matched 23 digits:
+
+
+ via Nilakantha
+
+
+
+*/

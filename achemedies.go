@@ -196,7 +196,7 @@ func ArchimedesBig(fyneFunc func(string)) {
 				}
 				posInPi++
 			}
-			fyneFunc(fmt.Sprintf("... And, it has been verified that we actually calculated pi correctly to %d digits!\n", copyOfLastPosition))
+			fyneFunc(fmt.Sprintf("... And, it has been verified that we actually calculated pi correctly to %d digits!\n\n by Richard (Rick) H. Woolley\n\n\n", copyOfLastPosition))
 			// my code says: pi correctly to 3012 digits (3023 unconfirmed digits, including the decimal, were printed to the terminal)
 			// Gpt said: The number you provided contains 3021 digits (when given the 3023 unconfirmed digits, including the decimal, that were printed to the terminal)
 			// Gemini said: After using a character counting tool, I can confirm that there are 3012 digits after the decimal point. But Gemini hallucinates a lot!
