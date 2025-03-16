@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"fyne.io/fyne/v2/dialog"
 	"image/color"
 	"strconv"
 	"sync"
@@ -13,6 +14,8 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
+
+// @formatter:off
 
 type highContrastTheme struct {
 	fyne.Theme
@@ -38,7 +41,7 @@ type updateData struct {
 func main() {
 	myApp := app.New()
 	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()})
-	myWindow := myApp.NewWindow("Archimedes Pi")
+	myWindow := myApp.NewWindow("Fast Pi calculators")
 	myWindow.Resize(fyne.NewSize(1900, 1600))
 
 	outputLabel := widget.NewLabel("Press a button to start...\n")
@@ -107,7 +110,7 @@ func main() {
 	}
 
 	// Buttons
-	buttonArchimedes := NewColoredButton("modified Archimedes -- by Rick Woolley", color.RGBA{255, 100, 100, 255}, func() {
+	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
 	})
@@ -171,13 +174,19 @@ func main() {
 	buttonExtra1 := NewColoredButton("Extra 1", color.RGBA{200, 200, 200, 255}, func() {
 		updateChan <- updateData{text: "Extra 1 clicked"}
 	})
-	buttonExtra2 := NewColoredButton("Extra 2", color.RGBA{150, 150, 150, 255}, func() {
-		updateChan <- updateData{text: "Extra 2 clicked"}
+
+	multiLineButton := NewColoredButton("Line 1 \n Line 2", color.RGBA{100, 200, 255, 255}, func() {
+		fmt.Println("Multi-line button tapped")
 	})
+	/*
+		buttonExtra2 := NewColoredButton("Extra 2", color.RGBA{150, 150, 150, 255}, func() {
+				updateChan <- updateData{text: "Extra 2 clicked"}
+			})
+	*/
 
 	buttonContainer := container.NewGridWithColumns(4,
 		buttonArchimedes, buttonLeibniz, buttonGregory, buttonNilakantha,
-		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, buttonExtra2,
+		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, multiLineButton,
 	)
 	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
 	myWindow.SetContent(content)
@@ -205,6 +214,45 @@ func main() {
 			}
 		}
 	}()
+
+	// Drop-Down Menus
+	logFilesMenu := fyne.NewMenu("Log Files",
+		fyne.NewMenuItem("View Log 1", func() {
+			// Implement log file viewing here
+			dialog.ShowInformation("Log Files", "Viewing Log 1", myWindow)
+		}),
+		fyne.NewMenuItem("View Log 2", func() {
+			// Implement log file viewing here
+			dialog.ShowInformation("Log Files", "Viewing Log 2", myWindow)
+		}),
+	)
+
+	windowsMenu := fyne.NewMenu("Collections",
+		fyne.NewMenuItem("Fast Pi calculators", func() {
+			myWindow.Show()
+		}),
+		fyne.NewMenuItem("Classic Pi calculators", func() {
+			createWindow2(myApp).Show()
+		}),
+		fyne.NewMenuItem("Odd Pi calculators", func() {
+			createWindow3(myApp).Show()
+		}),
+		fyne.NewMenuItem("Misc Maths", func() {
+			createWindow4(myApp).Show()
+		}),
+	)
+
+	informationMenu := fyne.NewMenu("Information",
+		fyne.NewMenuItem("Help", func() {
+			dialog.ShowInformation("Information", "Help...", myWindow)
+		}),
+		fyne.NewMenuItem("About", func() {
+			dialog.ShowInformation("Information", "About...", myWindow)
+		}),
+	)
+
+	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
+	myWindow.SetMainMenu(mainMenu)
 
 	myWindow.ShowAndRun()
 }

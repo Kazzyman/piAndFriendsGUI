@@ -398,3 +398,38 @@ was run on: Sat Mar 15 16:57:54 2025
 3.000000e+08 was total Iterations  
 Total run was 2.455234292s 
  
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 21:26:07 2025
+1232609602 was Lines/Second  
+1.120554e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.677246708s 
+ 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 21:26:32 2025
+4444 was total Iterations; 256 was precision setting for the big.Float types 
+Total run was 2.970708ms 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 21:27:07 2025
+1239361676 was Lines/Second  
+1.126692e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.662661s 
+ 
+  -- Nilakantha Somayaji -- on Mac-mini.local 
+was run on: Sat Mar 15 21:27:21 2025
+88888 was total Iterations; 100 was precision setting for the big.Float types 
+Total run was 49.594583ms 
+ 
+Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- Gregory-Leibniz -- on Mac-mini.local 
+was run on: Sat Mar 15 21:27:28 2025
+1273916229 was Lines/Second  
+1.158106e+08 was Iterations/Seconds  
+3.000000e+08 was total Iterations  
+Total run was 2.590437208s 
+ 
