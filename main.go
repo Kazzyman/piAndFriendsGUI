@@ -1,48 +1,70 @@
-package main
+package main // limits scope (main is for all executable, others are for libraries or non executable packages)
 
-import (
+import ( // packages to include in the build 
 	"fmt"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"image/color"
 	"strconv"
 	"sync"
 	"time"
-
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/theme"
-	"fyne.io/fyne/v2/widget"
 )
 
-// @formatter:off
+// @formatter:off // ::: causes GoLand to not touch your formatting 
 
-type highContrastTheme struct {
-	fyne.Theme
+type highContrastTheme struct { // a user-defined type, based on fyne.Theme -- pairs with the color method below ::: - -
+	fyne.Theme // since there is only this one statement in the struct, highContrastTheme is really just a synonym for fyne.Theme -- needed to make a modifiable instance. 
 }
+// The following method returns a color based on input parameters. (the struct allows the method to override or extend fyne.Theme)
+func (h *highContrastTheme) color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color { // parentheses after func defines this as a method -- attached to a type.  ::: - -
+	switch name { // *highC... is a dereferenced address/pointer to a custom type; func can modify instance. * is dereference operator; used to access the value stored at a memory address.
+	case theme.ColorNameBackground:				// ColorNameBackground is a const string defined in image/color (package: image, file: color) -- image/color/Theme.Color
+		return color.White						// color refers to the image/color package; White is the exported/exposed element: Color ... i.e. ...
+	case theme.ColorNameInputBackground:		// Color(ThemeColorName, ThemeVariant) color.Color // from: type Theme interface {} which also contains 2 resources and a float 32
+		return color.White						// returns white: (typically RGBA{255, 255, 255, 255})
+	case theme.ColorNameForeground:				// ColorNameForeground was defined thus: ColorNameForeground fyne.ThemeColorName = "foreground" -- in package theme/color
+		return color.Black						// 
+	}										// .Theme.Color [below] means, or refers to: the exposed part of: image/color/Theme.Color
+	return h.Theme.Color(name, variant) // "else" return name fyne.ThemeColorName, variant fyne.ThemeVariant -- h is local var name for instance aka: receiver, self, this, handler.
+} // hence forward we could call highContrastTheme.color which would resolve to either Black or White -- as: RGBA() (r, g, b, a uint32)
 
-func (h *highContrastTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
-	switch name {
-	case theme.ColorNameBackground:
-		return color.White
-	case theme.ColorNameInputBackground:
-		return color.White
-	case theme.ColorNameForeground:
-		return color.Black
-	}
-	return h.Theme.Color(name, variant)
-}
-
-type updateData struct {
+type updateData struct { // ::: - -
 	text      string
 	clearText bool
 }
 
 func main() {
 	myApp := app.New()
-	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()})
-	myWindow := myApp.NewWindow("Fast Pi calculators")
+	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()}) // ??? points to a custom theme, defined above as a method called color [non-exported due to lower case name] ...
+		fmt.Printf("color.Color is: %s\n", "what could I put here to see what is/was returned by the above color method?")
+	myWindow := myApp.NewWindow("Fast Pi calculators")					// '&' is the address-of operator. It is used to get the memory address of a variable (see examples below).
 	myWindow.Resize(fyne.NewSize(1900, 1600))
+		
+			// Declare a variable of type int and assign it 42
+			var Value int = 42
+			fmt.Printf("value is: %d\n", Value) // prints: value is: 42
+		
+			// Use & to get the memory address of value and store it in ptr as type int 
+			var ptr *int = &Value
+			fmt.Println(*ptr, "is value accessed via a pointer of type int") // prints: 42 is value accessed via a pointer of type int
+		
+			// Print the value of Value and its memory address
+			fmt.Printf("Value: %d, Address of var Value: %p\n", Value, &Value) // prints: Value: 42, Address of var Value: 0x140002a99a0
+		
+			// Use * to dereference the pointer and access the value at the memory address of Value
+			fmt.Printf("Dereferenced pointer yeilds value of Value: %d\n", *ptr) // prints: Dereferenced pointer yeilds value of Value: 42
+		
+			// Modify the value called Value through the pointer
+			*ptr = 100 
+			// &ptr = 100 // would give two errors: Cannot assign to &ptr ; and: '100' (type untyped int) cannot be represented by the type **int
+			// ptr = 100 // would give error: '100' (type untyped int) cannot be represented by the type *int
+		
+			// Print the new value of Value
+			fmt.Printf("New value of Value: %d\n", Value) // prints: New value of Value: 100
 
 	outputLabel := widget.NewLabel("Press a button to start...\n")
 	outputLabel.Wrapping = fyne.TextWrapWord
@@ -51,7 +73,7 @@ func main() {
 
 	promptLabel := widget.NewLabel("")
 	inputContainer := container.NewVBox()
-	inputContainer.Hide()
+	inputContainer.Hide() // for Nilakantha's two input fields
 
 	// var outputText string
 	updateChan := make(chan updateData, 100) // Changed to struct
@@ -97,7 +119,7 @@ func main() {
 			entryFields[1],
 			submitBtn,
 		)
-		entryFields[0].Move(fyne.NewPos(0, 0))
+		entryFields[0].Move(fyne.NewPos(0, 0)) // ::: what are these doing ????
 		entryFields[1].Move(fyne.NewPos(230, 0))
 		submitBtn.Move(fyne.NewPos(390, 0))
 		hbox.Resize(fyne.NewSize(500, 40))
@@ -108,7 +130,44 @@ func main() {
 
 		return inputChan
 	}
+	// ::: ===============
+	getInputValue := func(digits int) chan string {
+		inputContainer.Objects = nil
+	
+		entryField := widget.NewEntry()
+		entryField.SetPlaceHolder("e.g., 9256")
+		entryField.Resize(fyne.NewSize(150, 40))
 
+		inputChan := make(chan string)
+
+		submitBtn := widget.NewButton("Submit", func() {
+				value := entryField.Text
+				fmt.Println("Input value:", value)
+			inputContainer.Hide()
+			promptLabel.SetText("")
+			fmt.Println("Submit button clicked")
+			inputChan <- value
+			close(inputChan) // Close the channel
+		})
+
+		submitBtn.Resize(fyne.NewSize(95, 40))
+		submitBtn.Importance = widget.HighImportance
+
+		hbox := container.NewWithoutLayout(
+			entryField,
+			submitBtn,
+		)
+		// entryFields[0].Move(fyne.NewPos(0, 0)) // ::: what ??? ^^^
+		entryField.Move(fyne.NewPos(230, 0))
+		submitBtn.Move(fyne.NewPos(390, 0))
+		hbox.Resize(fyne.NewSize(500, 40))
+
+		inputContainer.Add(container.NewBorder(nil, nil, nil, nil, hbox))
+		inputContainer.Resize(fyne.NewSize(500, 60))
+		inputContainer.Show()
+
+		return inputChan
+	}
 	// Buttons
 	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
@@ -132,7 +191,7 @@ func main() {
 			// Error handling for input1
 			iters := 100000
 			precision := 256
-			val1, err1 := strconv.Atoi(inputs[0]) // ::: apparently, we need to pause and wait for user input before doing this !!!!!!
+			val1, err1 := strconv.Atoi(inputs[0]) 
 			if err1 != nil {
 				fmt.Println("Error converting input1:", err1)
 				fmt.Println("setting iters to 40,000,555")
@@ -142,7 +201,7 @@ func main() {
 				iters = val1
 			}
 			// Error handling for input2
-			val2, err2 := strconv.Atoi(inputs[1]) // ::: or this !!!!!!!
+			val2, err2 := strconv.Atoi(inputs[1]) 
 			if err2 != nil {
 				fmt.Println("Error converting input2:", err2)
 				fmt.Println("setting precision to 512")
@@ -159,13 +218,38 @@ func main() {
 			NilakanthaBig(updateChan, iters, precision)
 		}()
 	})
+
+	buttonChudnovsky := NewColoredButton("Chudnovsky -- takes input", color.RGBA{255, 255, 100, 255}, func() {
+		updateChan <- updateData{clearText: true}
+		go func() {
+			inputChan := getInputValue(9)
+			stringVerOfReqDigitsOfPi := <-inputChan 
+					
+			ReqDigitsOfPi := 999
+
+			val1, err1 := strconv.Atoi(stringVerOfReqDigitsOfPi)
+			if err1 != nil {
+				fmt.Println("Error converting input1:", err1)
+				fmt.Println("setting iters to 40,000,555")
+				ReqDigitsOfPi = 40000555
+			} else {
+				fmt.Println("Value of input1:", val1)
+				ReqDigitsOfPi = val1
+			}
+			
+			
+			ChudnovskyBig(updateChan, ReqDigitsOfPi)
+		}()
+	})
+	// buttonChudnovsky := NewColoredButton("Chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
+	//	updateChan <- updateData{clearText: true}
+	//	go ChudnovskyBig(callBkPrn2canvas)
+	// })
+
+
 	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go GregoryLeibniz(callBkPrn2canvas)
-	})
-	buttonChudnovsky := NewColoredButton("Chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
-		updateChan <- updateData{clearText: true}
-		go ChudnovskyBig(callBkPrn2canvas)
 	})
 	buttonMonteCarlo := NewColoredButton("Monte Carlo", color.RGBA{100, 255, 255, 255}, func() {
 		updateChan <- updateData{clearText: true}

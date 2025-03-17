@@ -4,7 +4,8 @@ Gemini 2.0 flash ::: Safari
 https://aistudio.google.com/live  --- voice mode 
 Gpt: opens a tab from Safari (odd behavior) requires "sign-in" with google, easy
 
-go mod tidy
+go mod tidy && go build && ./groksDemoGUIcolors
+
 // @formatter:off
 
 todo: tally lines via SLOC.
@@ -13,8 +14,8 @@ todo: tally lines via SLOC.
 
 splat r :: replace 
 
-splat e  :: list of recent files
-shift splat backspace/delete  :: move to where you last made an edit
+splat e  :: list of recent files visited 
+::: shift splat backspace/delete  :: move to where you last made an edit (anywhere in the project) ; repeat to step further back in time
 splat [  :: to return to previous position||file  (multiple such commands will walk you back from whence you came).
 splat ]  :: steps forward after you have stepped back. 
 

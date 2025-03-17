@@ -9,12 +9,6 @@ import (
 
 // Placeholder Pi calculation functions
 
-func ChudnovskyBig(print func(string)) {
-	print("Starting Chudnovsky calculation...")
-	print("Pi approximation: 3.14159 (stub)")
-	print("Finished Chudnovsky.")
-}
-
 func MonteCarloBig(print func(string)) {
 	print("Starting Monte Carlo calculation...")
 	print("Pi approximation: 3.14159 (stub)")
