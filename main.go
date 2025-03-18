@@ -38,6 +38,7 @@ type updateData struct { // ::: - -
 }
 
 func main() {
+	countSLOC()
 	myApp := app.New()
 	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()}) // ??? points to a custom theme, defined above as a method called color [non-exported due to lower case name] ...
 		fmt.Printf("color.Color is: %s\n", "what could I put here to see what is/was returned by the above color method?")
@@ -69,20 +70,35 @@ func main() {
 	outputLabel := widget.NewLabel("Press a button to start...\n")
 	outputLabel.Wrapping = fyne.TextWrapWord
 	scrollContainer := container.NewScroll(outputLabel)
-	scrollContainer.SetMinSize(fyne.NewSize(1900, 1300))
+	scrollContainer.SetMinSize(fyne.NewSize(1900, 1100)) // was 1300
 
 	promptLabel := widget.NewLabel("")
 	inputContainer := container.NewVBox()
 	inputContainer.Hide() // for Nilakantha's two input fields
 
 	// var outputText string
-	updateChan := make(chan updateData, 100) // Changed to struct
+	updateChan := make(chan updateData, 100) // Changed to struct, from the previous var outputText string
+	
+	// chudnovskyBig(updateChan chan updateData, digits int) // ::: slow scrolling 
+	// chudnovskyBig(updateChan, ReqDigitsOfPi) // normal func call with arguments and ::: updateChan <- updateData{text:
+	// ::: i want to use fyne prints, and (fyneFunc func(string)) signature with (callBkPrn2canvas, arg) calls 
+	
+	
+	// ArchimedesBig(fyneFunc func(string)) { // ::: fast scrolling
+	// go ArchimedesBig(callBkPrn2canvas) // go routine with callback and ::: use fyneFunc(fmt.Sprintf( , fyne prints, and callBkPrn2canvas
+	
+	// NilakanthaBig(updateChan chan updateData, iters int, precision int) // ::: slow scrolling -- OK for Nilakantha since it does no scrolling  
+	// NilakanthaBig(updateChan, iters, precision) // normal func call with arguments and ::: updateChan <- updateData{text:
+	
+	// GottfriedWilhelmLeibniz(fyneFunc func(string)) // ::: fast 
+	
+	
 	var mu sync.Mutex
 
 	callBkPrn2canvas := func(oneLineSansCR string) {
 		updateChan <- updateData{text: oneLineSansCR}
 	}
-
+// ::: --- get input values (two strings)
 	getInputValues := func(prompts []string) chan []string {
 		inputContainer.Objects = nil
 		promptLabel.SetText(prompts[0] + "\n" + prompts[1])
@@ -130,7 +146,7 @@ func main() {
 
 		return inputChan
 	}
-	// ::: ===============
+	// ::: ===== get input value (one int)  ==========
 	getInputValue := func(digits int) chan string {
 		inputContainer.Objects = nil
 	
@@ -168,7 +184,7 @@ func main() {
 
 		return inputChan
 	}
-	// Buttons
+	// ::: Buttons
 	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
@@ -219,9 +235,10 @@ func main() {
 		}()
 	})
 
-	buttonChudnovsky := NewColoredButton("Chudnovsky -- takes input", color.RGBA{255, 255, 100, 255}, func() {
+	buttonChudnovsky := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() {
+			printAprompt(callBkPrn2canvas)
 			inputChan := getInputValue(9)
 			stringVerOfReqDigitsOfPi := <-inputChan 
 					
@@ -230,20 +247,20 @@ func main() {
 			val1, err1 := strconv.Atoi(stringVerOfReqDigitsOfPi)
 			if err1 != nil {
 				fmt.Println("Error converting input1:", err1)
-				fmt.Println("setting iters to 40,000,555")
-				ReqDigitsOfPi = 40000555
+				fmt.Println("setting iters to 40,000")
+				ReqDigitsOfPi = 40000
 			} else {
 				fmt.Println("Value of input1:", val1)
 				ReqDigitsOfPi = val1
 			}
-			
-			
-			ChudnovskyBig(updateChan, ReqDigitsOfPi)
+			updateChan <- updateData{clearText: true}
+			go chudnovskyBig(callBkPrn2canvas, updateChan, callBkPrn2canvas, ReqDigitsOfPi)
+			// chudnovskyBig(updateChan, ReqDigitsOfPi)
 		}()
 	})
-	// buttonChudnovsky := NewColoredButton("Chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
+	// buttonchudnovsky := NewColoredButton("chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
 	//	updateChan <- updateData{clearText: true}
-	//	go ChudnovskyBig(callBkPrn2canvas)
+	//	go chudnovskyBig(callBkPrn2canvas)
 	// })
 
 
@@ -339,4 +356,8 @@ func main() {
 	myWindow.SetMainMenu(mainMenu)
 
 	myWindow.ShowAndRun()
+}
+
+func printAprompt(fyneFunc func(string)){
+	fyneFunc(fmt.Sprintf("Enter the number of digits of pi to calculate per the chudnovsky method; \nThe sky is the limit with this method, so don't be shy."))
 }

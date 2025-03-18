@@ -8,7 +8,7 @@ import (
 
 // @formatter:off
 
-func ArchimedesBig(fyneFunc func(string)) {
+func ArchimedesBig(fyneFunc func(string)) { // ::: - -
 	fyneFunc(fmt.Sprintf("\nYou've selected a demonstration of Rick's improved version of Archimedes' method for aproximating the value of Pi : 3.14159...\n"))
 
 	fyneFunc(fmt.Sprintf("The goal is to accurately calculate over 2,700 correct digits of Pi. We'll need to use floating-point numbers with thousands of decimal places."))

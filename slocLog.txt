@@ -1,0 +1,125 @@
+
+When the App began at: 17:54:11 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2341 t-SLOC
+and, the Total lines of executable Code = 1752 e-SLOC
+
+
+When the App began at: 17:57:30 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2343 t-SLOC
+and, the Total lines of executable Code = 1752 e-SLOC
+
+
+When the App began at: 18:28:19 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2334 t-SLOC
+and, the Total lines of executable Code = 1750 e-SLOC
+
+
+When the App began at: 18:32:55 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2337 t-SLOC
+and, the Total lines of executable Code = 1750 e-SLOC
+
+
+When the App began at: 18:34:02 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2335 t-SLOC
+and, the Total lines of executable Code = 1750 e-SLOC
+
+
+When the App began at: 18:36:59 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2335 t-SLOC
+and, the Total lines of executable Code = 1750 e-SLOC
+
+
+When the App began at: 18:49:06 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2356 t-SLOC
+and, the Total lines of executable Code = 1755 e-SLOC
+
+
+When the App began at: 19:09:57 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2360 t-SLOC
+and, the Total lines of executable Code = 1759 e-SLOC
+
+
+When the App began at: 19:14:05 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2359 t-SLOC
+and, the Total lines of executable Code = 1758 e-SLOC
+
+
+When the App began at: 19:16:36 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2360 t-SLOC
+and, the Total lines of executable Code = 1759 e-SLOC
+
+
+When the App began at: 19:21:37 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2388 t-SLOC
+and, the Total lines of executable Code = 1760 e-SLOC
+
+
+When the App began at: 20:02:48 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2410 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 20:04:21 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2410 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 20:26:27 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2422 t-SLOC
+and, the Total lines of executable Code = 1755 e-SLOC
+
+
+When the App began at: 20:34:05 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2422 t-SLOC
+and, the Total lines of executable Code = 1755 e-SLOC
+
+
+When the App began at: 20:44:29 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2425 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 20:49:24 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2425 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 20:50:49 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2425 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 20:52:03 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2425 t-SLOC
+and, the Total lines of executable Code = 1757 e-SLOC
+
+
+When the App began at: 22:42:10 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2448 t-SLOC
+and, the Total lines of executable Code = 1766 e-SLOC
+
+
+When the App began at: 22:55:29 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2449 t-SLOC
+and, the Total lines of executable Code = 1766 e-SLOC
+
+
+When the App began at: 23:30:49 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2448 t-SLOC
+and, the Total lines of executable Code = 1763 e-SLOC
+
+
+When the App began at: 23:51:15 on Monday 03-17-2025
+The Total lines of Code (exclusive of data) = 2461 t-SLOC
+and, the Total lines of executable Code = 1767 e-SLOC
+
+
+When the App began at: 00:20:31 on Tuesday 03-18-2025
+The Total lines of Code (exclusive of data) = 2362 t-SLOC
+and, the Total lines of executable Code = 1758 e-SLOC
+
+
+When the App began at: 00:27:55 on Tuesday 03-18-2025
+The Total lines of Code (exclusive of data) = 2082 t-SLOC
+and, the Total lines of executable Code = 1524 e-SLOC
+

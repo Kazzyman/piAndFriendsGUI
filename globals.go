@@ -13,7 +13,7 @@ var copyOfLastPosition int
 
 // convenience globals:
 
-var usingBigFloats = false // a variable of type bool which is passed by many funcs to printResultStatsLong()
+var usingBigFloats = false // a variable of type bool which is passed by many funcs to print Result Stats Long()
 
 var iterationsForMonte16i int
 var iterationsForMonte16j int

@@ -178,7 +178,9 @@ elapsed = t.Sub(start)
 LinesPerIter = 14
 fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...\n\n", LinesPerIter))
 	fyneFunc(fmt.Sprintf("   Infinitesimal calculus was developed independently in the late 17th century by Isaac Newton"))
-	fyneFunc(fmt.Sprintf("    ... and Gottfried Wilhelm Leibniz. This implementaion was done entirely by Richard Woolley\n\n\n"))
+	fyneFunc(fmt.Sprintf("    ... and Gottfried Wilhelm Leibniz. This implementaion was done entirely by Richard Woolley"))
+	fyneFunc(fmt.Sprintf(""))
+	fyneFunc(fmt.Sprintf(""))
 
 LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
 fmt.Printf("Aprox %.0f lines of code were executed per second \n", LinesPerSecond)
