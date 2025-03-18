@@ -78,27 +78,19 @@ func main() {
 
 	// var outputText string
 	updateChan := make(chan updateData, 100) // Changed to struct, from the previous var outputText string
-	
-	// chudnovskyBig(updateChan chan updateData, digits int) // ::: slow scrolling 
-	// chudnovskyBig(updateChan, ReqDigitsOfPi) // normal func call with arguments and ::: updateChan <- updateData{text:
-	// ::: i want to use fyne prints, and (fyneFunc func(string)) signature with (callBkPrn2canvas, arg) calls 
-	
-	
-	// ArchimedesBig(fyneFunc func(string)) { // ::: fast scrolling
-	// go ArchimedesBig(callBkPrn2canvas) // go routine with callback and ::: use fyneFunc(fmt.Sprintf( , fyne prints, and callBkPrn2canvas
-	
-	// NilakanthaBig(updateChan chan updateData, iters int, precision int) // ::: slow scrolling -- OK for Nilakantha since it does no scrolling  
-	// NilakanthaBig(updateChan, iters, precision) // normal func call with arguments and ::: updateChan <- updateData{text:
-	
-	// GottfriedWilhelmLeibniz(fyneFunc func(string)) // ::: fast 
-	
-	
+		// Note::: updateChan is used for BOTH  slow and fast-scrolling methods, i.e., 
+		//  ::: updateChan <- updateData{text: with normal function calls,    and ,     callBkPrn2canvas + Fyne with go routines instead of normal function calls 
+		
+		// NilakanthaBig(updateChan chan updateData, iters int, precision int) // ::: slower scrolling method -- is OK for Nilakantha since it does no scrolling  
+		//  ::: updateChan <- updateData{text: ,   with   , normal function calls
+			
 	var mu sync.Mutex
 
 	callBkPrn2canvas := func(oneLineSansCR string) {
 		updateChan <- updateData{text: oneLineSansCR}
 	}
-// ::: --- get input values (two strings)
+	
+// ::: --- get input values (two strings) ========== = = = = = = = = = = = = = = = = = = = = = = = = =  
 	getInputValues := func(prompts []string) chan []string {
 		inputContainer.Objects = nil
 		promptLabel.SetText(prompts[0] + "\n" + prompts[1])
@@ -146,7 +138,8 @@ func main() {
 
 		return inputChan
 	}
-	// ::: ===== get input value (one int)  ==========
+	
+	// ::: ===== get input value (one int)  ========== = = = = = = = = = = = = = = = = = = = = = = = = =  
 	getInputValue := func(digits int) chan string {
 		inputContainer.Objects = nil
 	
@@ -184,7 +177,8 @@ func main() {
 
 		return inputChan
 	}
-	// ::: Buttons
+	
+	// ::: Buttons ========== = = = = = = = = = = = = = = = = = = = = = = = = =  
 	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
@@ -193,10 +187,11 @@ func main() {
 		updateChan <- updateData{clearText: true}
 		go GottfriedWilhelmLeibniz(callBkPrn2canvas)
 	})
-
+	
+	// ::: complex buttons - - - - - - -
 	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
-		go func() {
+		go func() { // this anonymous func concludes with a normal function call
 			inputChan := getInputValues([]string{
 				"You have selected the Nilakantha Somayaji method...\nPlease fill-in the fields with the number of iterations (suggest 100,000 -> 100,000,000)",
 				"And a value for the precision: (suggest 128 -> 512), then hit 'Submit'",
@@ -226,15 +221,12 @@ func main() {
 				fmt.Println("Value of input2:", val2)
 				precision = val2
 			}
-			/*
-				iters, _ := strconv.Atoi(inputs[0])
-				precision, _ := strconv.Atoi(inputs[1])
-			*/
 
 			NilakanthaBig(updateChan, iters, precision)
 		}()
 	})
 
+	// ::: button - - - - - - - - -
 	buttonChudnovsky := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() {
@@ -254,16 +246,14 @@ func main() {
 				ReqDigitsOfPi = val1
 			}
 			updateChan <- updateData{clearText: true}
-			go chudnovskyBig(callBkPrn2canvas, updateChan, callBkPrn2canvas, ReqDigitsOfPi)
-			// chudnovskyBig(updateChan, ReqDigitsOfPi)
+			go chudnovskyBig(callBkPrn2canvas, updateChan, callBkPrn2canvas, ReqDigitsOfPi) // ::: two identical callbacks :
+			// chudnovskyBig(fyneFunc func(string), updateChan chan updateData, callBkPrn2canvas func(oneLineSansCR string), digits int)
+			// ::: first will be named: fyneFunc,  while the second gets named: callBkPrn2canvas
+			// the first being customary; while the second is for passing-on ::: (I could have just made a copy at the destination)
 		}()
 	})
-	// buttonchudnovsky := NewColoredButton("chudnovsky", color.RGBA{255, 100, 255, 255}, func() {
-	//	updateChan <- updateData{clearText: true}
-	//	go chudnovskyBig(callBkPrn2canvas)
-	// })
 
-
+	// more simple buttons:
 	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go GregoryLeibniz(callBkPrn2canvas)
@@ -272,27 +262,25 @@ func main() {
 		updateChan <- updateData{clearText: true}
 		go MonteCarloBig(callBkPrn2canvas)
 	})
+	
+	// stub buttons:
 	buttonExtra1 := NewColoredButton("Extra 1", color.RGBA{200, 200, 200, 255}, func() {
 		updateChan <- updateData{text: "Extra 1 clicked"}
 	})
 
-	multiLineButton := NewColoredButton("Line 1 \n Line 2", color.RGBA{100, 200, 255, 255}, func() {
-		fmt.Println("Multi-line button tapped")
+	buttonExtra2 := NewColoredButton("Extra 2", color.RGBA{150, 150, 150, 255}, func() {
+			updateChan <- updateData{text: "Extra 2 clicked"}
 	})
-	/*
-		buttonExtra2 := NewColoredButton("Extra 2", color.RGBA{150, 150, 150, 255}, func() {
-				updateChan <- updateData{text: "Extra 2 clicked"}
-			})
-	*/
 
+	// load our eight buttons: 
 	buttonContainer := container.NewGridWithColumns(4,
 		buttonArchimedes, buttonLeibniz, buttonGregory, buttonNilakantha,
-		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, multiLineButton,
+		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, buttonExtra2,
 	)
 	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
 	myWindow.SetContent(content)
 
-	// Main-thread update loop using Fyne's lifecycle
+	// ::: Main-thread update loop using Fyne's lifecycle = = = = = = = = = =
 	myWindow.Canvas().SetOnTypedRune(func(r rune) {
 		// Dummy handler to keep canvas active
 	})
@@ -315,6 +303,7 @@ func main() {
 			}
 		}
 	}()
+	// ::: end of Main-thread update loop using Fyne's lifecycle = = = = = = = = 
 
 	// Drop-Down Menus
 	logFilesMenu := fyne.NewMenu("Log Files",
@@ -356,8 +345,9 @@ func main() {
 	myWindow.SetMainMenu(mainMenu)
 
 	myWindow.ShowAndRun()
-}
+} // ::: end of main
 
+// helper func for chudnovsky method
 func printAprompt(fyneFunc func(string)){
 	fyneFunc(fmt.Sprintf("Enter the number of digits of pi to calculate per the chudnovsky method; \nThe sky is the limit with this method, so don't be shy."))
 }

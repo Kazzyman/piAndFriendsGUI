@@ -21,7 +21,7 @@ import (
 //  Total run was 8h4m39.7847064s
 // AND, THAT CALCULATION WAS INDEPENDENTLY VERIFIED !!!!!!!!!!!
 
-// This will be a little tricky. We want to use callbacks etc. so that we can use the smoother-scrolling fyneFunc(fmt.Sprintf("")) prints ... 
+// This will be a little-bit tricky. We want to use callbacks etc. so that we can use the smoother-scrolling fyneFunc(fmt.Sprintf("")) way of doing prints ... 
 // ... but this chudnovsky section is a cascade of functions: chudnovskyBig()-->calcPi()-->finishChudIfs() and so we need to pass the updateChan map to the two subsequent functions. 
 func chudnovskyBig(fyneFunc func(string), updateChan chan updateData, callBkPrn2canvas func(oneLineSansCR string), digits int) { // ::: - -
 	usingBigFloats = true
@@ -32,6 +32,7 @@ func chudnovskyBig(fyneFunc func(string), updateChan chan updateData, callBkPrn2
 	
 	// ::: calcPi  <---- runs from here: v v v v v v v  
 	loops, pi, start = calcPi(callBkPrn2canvas, updateChan, float64(digits), start, loops)
+	// ::: calcPi ----- ^ ^ ^ 
 
 	if loops < 100 {
 		fyneFunc(fmt.Sprintf("\nLess than 100 loops, so here is a peek at the prospective value of Pi as a big float, and formatted 0.122f, is : \n%0.122f \n\n", pi))
@@ -71,7 +72,7 @@ func chudnovskyBig(fyneFunc func(string), updateChan chan updateData, callBkPrn2
 func calcPi(fyneFunc func(string), updateChan chan updateData, digits float64, start time.Time, loops int) (int, *big.Float, time.Time) {
 	/*
 		calcPi is being passed: fyneFunc func(string)  updateChan chan updateData  digits float64      start time.Time    loops int
-		 .......................callBkPrn2canvas,      updateChan,                 float64(digits),    start,             loops
+		 .....from; ............callBkPrn2canvas,      updateChan,                 float64(digits),    start,             loops
 	*/
 
 	usingBigFloats = true
@@ -119,7 +120,7 @@ func calcPi(fyneFunc func(string), updateChan chan updateData, digits float64, s
 	queryIfTimeToDie := 1
 	i = 1 // a secondary dedicated loop counter
 
-	callBkPrn2canvas := func(oneLineSansCR string) {
+	callBkPrn2canvas := func(oneLineSansCR string) { // ::: this local object gets passed to the next func in the chain 
 		updateChan <- updateData{text: oneLineSansCR}
 	}
 

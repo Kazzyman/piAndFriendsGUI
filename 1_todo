@@ -35,5 +35,3 @@ Ctrl-k  :: kill to end of line.
 option + return usually inserts a newline.
 shift + return inserts a newline in Grok-3 "ask anything" text box.
 
-
-
