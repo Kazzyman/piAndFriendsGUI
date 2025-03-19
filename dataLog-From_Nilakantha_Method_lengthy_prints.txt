@@ -122,3 +122,21 @@ Below are the 25 verified digits we have calculated via Nilakantha using precisi
 
 Below are the 26 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 200000000: 
 3.1415926535897932384626433
+
+Below are the 12 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 5000: 
+3.14159265358
+
+Below are the 15 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 60000: 
+3.14159265358979
+
+Below are the 15 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 60000: 
+3.14159265358979
+
+Below are the 15 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 60000: 
+3.14159265358979
+
+Below are the 23 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 40000000: 
+3.1415926535897932384626
+
+Below are the 23 verified digits we have calculated via Nilakantha using precision of 256 and iterations of 40000000: 
+3.1415926535897932384626

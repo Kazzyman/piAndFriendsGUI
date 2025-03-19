@@ -183,12 +183,15 @@ func main() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
 	})
-	buttonLeibniz := NewColoredButton("Gottfried Wilhelm Leibniz -- runs long", color.RGBA{100, 255, 100, 255}, func() {
+	buttonArchimedes2 := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
-		go GottfriedWilhelmLeibniz(callBkPrn2canvas)
+		go ArchimedesBig(callBkPrn2canvas)
 	})
 	
 	// ::: complex buttons - - - - - - -
+	
+	// spigot should go here in fourth position
+	
 	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 255}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() { // this anonymous func concludes with a normal function call
@@ -274,7 +277,7 @@ func main() {
 
 	// load our eight buttons: 
 	buttonContainer := container.NewGridWithColumns(4,
-		buttonArchimedes, buttonLeibniz, buttonGregory, buttonNilakantha,
+		buttonArchimedes, buttonArchimedes2, buttonGregory, buttonNilakantha,
 		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, buttonExtra2,
 	)
 	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
