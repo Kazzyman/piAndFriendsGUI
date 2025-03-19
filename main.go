@@ -179,20 +179,21 @@ func main() {
 	}
 	
 	// ::: Buttons ========== = = = = = = = = = = = = = = = = = = = = = = = = =  
-	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
+	buttonArchimedes := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
 	})
-	buttonArchimedes2 := NewColoredButton("modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 255}, func() {
+	// JohnWallis
+	buttonJohnWallis := NewColoredButton("John Wallis \n-- by Rick Woolley\n three\n four", color.RGBA{25, 200, 100, 215}, func() {
 		updateChan <- updateData{clearText: true}
-		go ArchimedesBig(callBkPrn2canvas)
+		go JohnWallis(callBkPrn2canvas)
 	})
 	
 	// ::: complex buttons - - - - - - -
 	
 	// spigot should go here in fourth position
 	
-	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 255}, func() {
+	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 245}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() { // this anonymous func concludes with a normal function call
 			inputChan := getInputValues([]string{
@@ -230,7 +231,7 @@ func main() {
 	})
 
 	// ::: button - - - - - - - - -
-	buttonChudnovsky := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 255}, func() {
+	buttonChudnovsky := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() {
 			printAprompt(callBkPrn2canvas)
@@ -257,11 +258,11 @@ func main() {
 	})
 
 	// more simple buttons:
-	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 255}, func() {
+	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 185}, func() {
 		updateChan <- updateData{clearText: true}
 		go GregoryLeibniz(callBkPrn2canvas)
 	})
-	buttonMonteCarlo := NewColoredButton("Monte Carlo", color.RGBA{100, 255, 255, 255}, func() {
+	buttonMonteCarlo := NewColoredButton("Monte Carlo", color.RGBA{100, 255, 255, 205}, func() {
 		updateChan <- updateData{clearText: true}
 		go MonteCarloBig(callBkPrn2canvas)
 	})
@@ -277,7 +278,7 @@ func main() {
 
 	// load our eight buttons: 
 	buttonContainer := container.NewGridWithColumns(4,
-		buttonArchimedes, buttonArchimedes2, buttonGregory, buttonNilakantha,
+		buttonArchimedes, buttonJohnWallis, buttonGregory, buttonNilakantha,
 		buttonChudnovsky, buttonMonteCarlo, buttonExtra1, buttonExtra2,
 	)
 	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)

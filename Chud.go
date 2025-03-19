@@ -283,7 +283,7 @@ func finishChudIfs(fyneFunc func(string), pi *big.Float, digits float64, i int, 
 			break // ... else break to print result and info below
 		}
 		if positionInOurPiAsAstring > 59700 { // additionally, break if we are approaching the limit of the length of the Web ver of pi, essential for cases where we exceed that 59,766 digit example. 
-			fmt.Printf("We are nearing the end of the example of pi, positionInOurPiAsAstring is now: %d ... aborting ...\n", positionInOurPiAsAstring)
+			fyneFunc(fmt.Sprintf("We are nearing the end of the example of pi, positionInOurPiAsAstring is now: %d ... aborting ...\n", positionInOurPiAsAstring))
 			break
 		}
 	}

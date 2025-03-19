@@ -23,13 +23,6 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	outputLabel.Wrapping = fyne.TextWrapWord
 	scrollContainer := container.NewScroll(outputLabel)
 	scrollContainer.SetMinSize(fyne.NewSize(1900, 1100))
-
-	/*
-	   // Define these locally and include them in the content
-	   promptLabel := widget.NewLabel("")
-	   inputContainer := container.NewVBox()
-	   inputContainer.Hide() // Initially hidden, like in main()
-	 */
 	
 	promptLabel := widget.NewLabel("")
 	inputContainer := container.NewVBox()
@@ -44,21 +37,6 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			updateChan <- updateData{text: oneLineSansCR}
 		}
 
-/*
-	myApp := app.New()
-	myApp.Settings().SetTheme(&highContrastTheme{Theme: theme.LightTheme()}) // ??? points to a custom theme, defined above as a method called color [non-exported due to lower case name] ...
-		fmt.Printf("color.Color is: %s\n", "what could I put here to see what is/was returned by the above color method?")
-	myWindow := myApp.NewWindow("Fast Pi calculators")					// '&' is the address-of operator. It is used to get the memory address of a variable (see examples below).
-	myWindow.Resize(fyne.NewSize(1900, 1600))
-	outputLabel := widget.NewLabel("Press a button to start...\n")
-	outputLabel.Wrapping = fyne.TextWrapWord
-	scrollContainer := container.NewScroll(outputLabel)
-	scrollContainer.SetMinSize(fyne.NewSize(1900, 1100)) // was 1300
-
-	promptLabel := widget.NewLabel("")
-	inputContainer := container.NewVBox()
-	inputContainer.Hide() // for Nilakantha's two input fields
-*/
 	// ::: --- get input values (two strings) ========== = = = = = = = = = = = = = = = = = = = = = = = = =  
 	getInputValues := func(prompts []string) chan []string {
 		inputContainer.Objects = nil
@@ -109,18 +87,18 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	}
 
 
-	ArchimedesButton2pg1pos := NewColoredButton("Bailey chan goes here\nnot\nArchimedesBigCopy", color.RGBA{255, 100, 100, 255}, func() {
+	ArchimedesButton2pg1pos := NewColoredButton("Bailey chan goes here\nnot\nArchimedesBigCopy", color.RGBA{255, 100, 100, 215}, func() {
 		updateChan <- updateData{clearText: true}
 		go ArchimedesBig(callBkPrn2canvas)
 	})
 
-	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 255}, func() {
+	buttonGregory := NewColoredButton("Gregory-Leibniz, is quick", color.RGBA{100, 100, 255, 165}, func() {
 		updateChan <- updateData{clearText: true}
 		go GregoryLeibniz(callBkPrn2canvas)
 	})
 	
 	// nila 3 goes here
-	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 255}, func() {
+	buttonNilakantha := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 235}, func() {
 		updateChan <- updateData{clearText: true}
 		go func() { // this anonymous func concludes with a normal function call
 			inputChan := getInputValues([]string{
@@ -157,7 +135,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		}()
 	})
 
-	GottfriedWilhelmLeibniz2pg2pos := NewColoredButton("Gottfried Wilhelm Leibniz -- runs long", color.RGBA{100, 255, 100, 255}, func() {
+	GottfriedWilhelmLeibniz2pg2pos := NewColoredButton("Gottfried Wilhelm Leibniz -- runs long", color.RGBA{100, 255, 100, 225}, func() {
 		updateChan <- updateData{clearText: true}
 		go GottfriedWilhelmLeibniz(callBkPrn2canvas)
 	})
@@ -165,13 +143,6 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	buttonContainer := container.NewGridWithColumns(4,
 		ArchimedesButton2pg1pos, buttonNilakantha, buttonGregory, GottfriedWilhelmLeibniz2pg2pos,
 	)
-	
-	/*
-
-	   // Include promptLabel and inputContainer in the layout
-	   content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
-	   window2.SetContent(content)
-	 */
 	
 	content := container.NewVBox(buttonContainer, promptLabel, inputContainer, scrollContainer)
 	window2.SetContent(content)

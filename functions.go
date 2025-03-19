@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/big"
+	"strconv"
 	"strings"
 )
 
@@ -23,6 +24,28 @@ func formatWithThousandSeparators(num *big.Float) string {
 
 	// Get the string representation
 	numStr := numInt.String()
+
+	// Handle negative numbers
+	prefix := ""
+	if strings.HasPrefix(numStr, "-") {
+		prefix = "-"
+		numStr = numStr[1:]
+	}
+
+	// Insert commas every three digits from the right
+	result := ""
+	for i, char := range numStr {
+		if i > 0 && (len(numStr)-i)%3 == 0 {
+			result += ","
+		}
+		result += string(char)
+	}
+	return prefix + result
+}
+// fyneFunc func(string)
+func formatInt64WithThousandSeparators(num int64) string {
+
+	numStr := strconv.FormatInt(num, 10)
 
 	// Handle negative numbers
 	prefix := ""

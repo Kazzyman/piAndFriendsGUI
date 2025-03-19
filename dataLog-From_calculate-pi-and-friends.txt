@@ -948,3 +948,137 @@ was run on: Tue Mar 18 19:12:28 2025
 Total run was 19.690019875s 
  
 Results from running Nilakantha (case 5:) can be viewed in dataLog-From_Nilakantha_Method_lengthy_prints.txt
+
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 20:38:52 2025
+9702967568 was Lines/Second  
+269526876.90 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.710205125s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 20:51:37 2025
+9623974390 was Lines/Second  
+267332621.96 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.740658333s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 20:54:14 2025
+10168485449 was Lines/Second  
+282457929.13 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.54035025s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 20:57:31 2025
+10172752769 was Lines/Second  
+282576465.81 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.538865125s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 20:59:40 2025
+10037219264 was Lines/Second  
+278811646.21 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.58665075s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:00:57 2025
+9788575937 was Lines/Second  
+271904887.13 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.677756625s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:03:54 2025
+10172473462 was Lines/Second  
+282568707.29 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.538962292s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:10:31 2025
+10135885148 was Lines/Second  
+281552365.22 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.551737167s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:29:40 2025
+10226217422 was Lines/Second  
+284061595.06 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.52036325s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:33:06 2025
+10077212557 was Lines/Second  
+279922571.03 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.572416459s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:33:17 2025
+%!s(float64=1.0257002859864374e+10) was Lines/Second  
+284916746.11 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.509797208s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:41:49 2025
+%!s(float64=1.026077559376295e+10) was Lines/Second  
+285021544.27 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.508506708s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:44:16 2025
+%!s(float64=1.0151984488397125e+10) was Lines/Second  
+281999569.12 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.546104709s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:47:52 2025
+10,201,321,304 was Lines/Second  
+283370036.25 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.528954625s 
+ 
+  -- John Wallis (cont.) -- on Mac-mini.local 
+was run on: Tue Mar 18 21:50:52 2025
+%!s(float64=8.008362545325746e+09) was Lines/Second  
+222454515.15 was Iterations/Seconds  
+4.000000e+10 was total Iterations  
+Total run was 2m59.812039209s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 21:56:16 2025
+10,064,485,512 was Lines/Second  
+279569042.02 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.576933958s 
+ 
+  -- John Wallis (cont.) -- on Mac-mini.local 
+was run on: Tue Mar 18 21:59:17 2025
+%!s(float64=7.927332106393352e+09) was Lines/Second  
+220203669.62 was Iterations/Seconds  
+4.000000e+10 was total Iterations  
+Total run was 3m1.6500155s 
+ 
+  -- John Wallis -- on Mac-mini.local 
+was run on: Tue Mar 18 22:37:40 2025
+9,741,940,177 was Lines/Second  
+270609449.37 was Iterations/Seconds  
+1.000000e+09 was total Iterations  
+Total run was 3.695362458s 
+ 
+  -- John Wallis (cont.) -- on Mac-mini.local 
+was run on: Tue Mar 18 22:40:41 2025
+7,930,690,228 was Lines/Second  
+220296950.79 was Iterations/Seconds  
+4.000000e+10 was total Iterations  
+Total run was 3m1.57309875s 
+ 

@@ -40,6 +40,15 @@ var precisionOfRoot int    // this being global means we do not need to pass it 
 var workPiece int          // the square or cube of which we are to find a root
 var skip_redoing_loop int
 
+
+const colorReset = "\033[0m"
+const colorRed = "\033[31m"
+const colorGreen = "\033[32m"
+const colorYellow = "\033[33m"
+const colorPurple = "\033[35m"
+const colorCyan = "\033[36m"
+const colorWhite = "\033[37m"
+
 type Results struct { // define a new structure called Results with two fields; result, and pdiff ::: - -
 	result float64
 	pdiff  float64
