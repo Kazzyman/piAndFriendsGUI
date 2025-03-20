@@ -9,25 +9,24 @@ import (
 
 // @formatter:off
 
-// NOT!: (fyneFunc func(string), iters int, precision int) {
-	func NilakanthaBig(updateChan chan updateData, iters int, precision int) { // Changed signature ::: - -
+	func NilakanthaBig(fyneFunc func(string), iters int, precision int) { // Changed signature ::: - -
 
 	if iters > 36111222 {
-		// updateChan <- updateData{text:" ... "))
-		updateChan <- updateData{text: " ... working ... Nilakantha using big floats"} // Send to channel
+		// fyneFunc(fmt.Sprintf(" ... "))
+		fyneFunc(fmt.Sprintf(" ... working ... Nilakantha using big floats")) // Send to channel
 	}
 	if iters > 42000000 {
-		// updateChan <- updateData{text:"... werkin ..."}
-		updateChan <- updateData{text: "... werkin ..."} // Send to channel
+		// fyneFunc(fmt.Sprintf("... werkin ..."))
+		fyneFunc(fmt.Sprintf("... werkin ...")) // Send to channel
 	}
 	if iters > 55111222 {
-		updateChan <- updateData{text:"... working for a while ..."}
+		fyneFunc(fmt.Sprintf("... working for a while ..."))
 	}
 	if iters > 69111222 {
-		updateChan <- updateData{text:"... will be working for quite a while ..."}
+		fyneFunc(fmt.Sprintf("... will be working for quite a while ..."))
 	}
 	if iters > 80111222 {
-		updateChan <- updateData{text:"... a very long while ... working ..."}
+		fyneFunc(fmt.Sprintf("... a very long while ... working ..."))
 	}
 
 	start := time.Now()
@@ -90,41 +89,41 @@ import (
 		}
 
 		if iterBig == 20111222 {
-			// updateChan <- updateData{text:" ... doin some ... "))
-			updateChan <- updateData{text: " ... doin some ... "} // Send to channel
+			// fyneFunc(fmt.Sprintf(" ... doin some ... "))
+			fyneFunc(fmt.Sprintf(" ... doin some ... ")) // Send to channel
 		}
 		if iterBig == 36111222 {
-			updateChan <- updateData{text:" ... werkin ... "}
+			fyneFunc(fmt.Sprintf(" ... werkin ... "))
 		}
 		if iterBig == 42000000 {
-			updateChan <- updateData{text:"... still werkin ... Nilakantha Somayaji method using big.Float types -- with some patience one can generate 31 correct digits of pi this way."}
+			fyneFunc(fmt.Sprintf("... still werkin ... Nilakantha Somayaji method using big.Float types -- with some patience one can generate 31 correct digits of pi this way."))
 		}
 		if iterBig == 55111222 {
-			updateChan <- updateData{text:"... been working for a while ..."}
+			fyneFunc(fmt.Sprintf("... been working for a while ..."))
 		}
 		if iterBig == 69111222 {
-			updateChan <- updateData{text:"... been working for quite a while ..."}
+			fyneFunc(fmt.Sprintf("... been working for quite a while ..."))
 		}
 		if iterBig == 80111222 {
-			updateChan <- updateData{text:"... it's been a very long while ... but still working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while ... but still working ..."))
 		}
 		if iterBig == 180111222 {
-			updateChan <- updateData{text:"... it's been a very long while, 180,111,222 down, ... and still working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, 180,111,222 down, ... and still working ..."))
 		}
 		if iterBig == 280111222 {
-			updateChan <- updateData{text:"... it's been a very long while, 280,111,222 down, ... and still working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, 280,111,222 down, ... and still working ..."))
 		}
 		if iterBig == 480111222 {
-			updateChan <- updateData{text:"... it's been a very long while, 480,111,222 down, ... still working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, 480,111,222 down, ... still working ..."))
 		}
 		if iterBig == 680111222 {
-			updateChan <- updateData{text:"... it's been a very long while, 680,111,222 down, ...  working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, 680,111,222 down, ...  working ..."))
 		}
 		if iterBig == 880111222 {
-			updateChan <- updateData{text:"... it's been a very long while, down, 880,111,222, down ... still, working ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, down, 880,111,222, down ... still, working ..."))
 		}
 		if iterBig == 977111222 {
-			updateChan <- updateData{text:"... it's been a very long while, 977,111,222 already ... why am I still working? ..."}
+			fyneFunc(fmt.Sprintf("... it's been a very long while, 977,111,222 already ... why am I still working? ..."))
 		}
 	}
 	t := time.Now()
@@ -159,9 +158,9 @@ import (
 
 	if copyOfLastPosition > 55000 { // if length of pi is > 55,000 digits we have something really big
 		// print (log) to a special file
-		updateChan <- updateData{text:"\n\n\nWe have been tasked with making a lot of pie and it was sooo big it needed its own file ...\n"}
-		updateChan <- updateData{text:"\n\n  After allowing this process to finish (you may have to continue prodding this thing along for a while) ... \n"}
-		updateChan <- updateData{text:"... Go have a look in /.big_pie_is_in_here.txt to find all the digits of π you had requested. \n\n"}
+		fyneFunc(fmt.Sprintf("\n\n\nWe have been tasked with making a lot of pie and it was sooo big it needed its own file ...\n"))
+		fyneFunc(fmt.Sprintf("\n\n  After allowing this process to finish (you may have to continue prodding this thing along for a while) ... \n"))
+		fyneFunc(fmt.Sprintf("... Go have a look in /.big_pie_is_in_here.txt to find all the digits of π you had requested. \n\n"))
 
 		fileHandleBig, err1prslc2c := os.OpenFile("big_pie_is_in_here.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
 		check(err1prslc2c)                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
@@ -180,14 +179,14 @@ import (
 	} else if true {
 			// regularExpression := regexp.MustCompile(`^3.1.........................................................................................`)
 			// firstSectionOfPiFromWeb := regularExpression.FindStringSubmatch(piAs59766chars)
-			updateChan <- updateData{text:"\npi from the web begins thusly: 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534"}
-			updateChan <- updateData{
-			text: fmt.Sprintf("\npi as calculated herein is: %s", shortStringOfSumbig),
-			}
+			fyneFunc(fmt.Sprintf("\npi from the web begins thusly: 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534"))
 
-			updateChan <- updateData{
-			text: fmt.Sprintf("\n.... we have matched %d digits: ", copyOfLastPosition),
-			}
+		fyneFunc(fmt.Sprintf("\npi as calculated herein is: %s", shortStringOfSumbig))
+
+
+
+		fyneFunc(fmt.Sprintf("\n.... we have matched %d digits: ", copyOfLastPosition))
+			
 			
 
 			fileHandleNilakan, err1prslc2c := os.OpenFile("dataLog-From_Nilakantha_Method_lengthy_prints.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
@@ -211,10 +210,8 @@ import (
 		_, err2prslc2d := fmt.Fprintf(fileHandleDefault, "\nThese are the %d verified digits we have calculated  :: \n", copyOfLastPosition)
 		check(err2prslc2d)
 		// to screen
-		// updateChan <- updateData{text:"\n These are the %d verified digits we have calculated: \n", copyOfLastPosition))
-		updateChan <- updateData{
-			text: fmt.Sprintf("\n These are the %d verified digits we have calculated: \n", copyOfLastPosition),
-		}
+		// fyneFunc(fmt.Sprintf("\n These are the %d verified digits we have calculated: \n", copyOfLastPosition))
+		fyneFunc(fmt.Sprintf("\n These are the %d verified digits we have calculated: \n", copyOfLastPosition))
 
 		for _, oneChar := range stringVerOfCorrectDigits {
 			// to screen
@@ -225,7 +222,7 @@ import (
 		}
 		fileHandleDefault.Close()
 	}
-		updateChan <- updateData{text:"\n"}
+		fyneFunc(fmt.Sprintf("\n"))
 
 
 		fileHandleDefault, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
@@ -248,7 +245,7 @@ import (
 	
 
 	// print to screen:
-	updateChan <- updateData{text:" via Nilakantha with big floats. Written entirely by Richard Woolley\n"}
+	fyneFunc(fmt.Sprintf(" via Nilakantha with big floats. Written entirely by Richard Woolley\n"))
 	fmt.Printf("Total run with SetPrec at: %d and iters of %d was %s \n\n ", precision, iterBig, TotalRun)
 	// written entirely by Richard Woolley
 } // end of Nilakantha_Somayaji_with_big_Float_types() // -- AMFNilakantha_Somayaji_with_big_Float_typesB

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func countSLOC() { // ::: - -
+func countAndLogSLOC() { // ::: - -
 
 	// todo, do a regular expression to extract the file names (last / to .go inclusive)
 	// ... then, print out the names of those files over in functions.go about_app()
