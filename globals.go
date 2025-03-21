@@ -2,12 +2,20 @@ package main
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"image/color"
 	"time"
 )
 
 // @formatter:off
+
+var digits int 
+var calculating bool
+var outputLabel *widget.Label
+var buttons []*ColoredButton // Change to ColoredButton
+var scrollContainer *container.Scroll
 
 var copyOfLastPosition int
 

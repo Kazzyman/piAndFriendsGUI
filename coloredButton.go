@@ -21,6 +21,7 @@ func NewColoredButton(label string, backgroundColor color.Color, tapped func()) 
 	return btn
 }
 
+
 // Custom renderer methods for coloredButton
 func (b *ColoredButton) CreateRenderer() fyne.WidgetRenderer {
 	text := widget.NewLabel(b.Text)
@@ -38,6 +39,7 @@ func (b *ColoredButton) CreateRenderer() fyne.WidgetRenderer {
 	}
 }
 
+
 type coloredButtonRenderer struct {
 	button     *ColoredButton
 	text       *widget.Label // Change to *widget.Label
@@ -46,6 +48,23 @@ type coloredButtonRenderer struct {
 	objects    []fyne.CanvasObject
 }
 
+
+func (r *coloredButtonRenderer) Refresh() {
+	bgColor := r.button.BackgroundColor
+	if r.button.Disabled() {
+		if rgba, ok := bgColor.(color.RGBA); ok {
+			rgba.A = 160 // ::: Lower opacity for disabled state
+			r.background.FillColor = rgba
+		}
+	} else {
+		r.background.FillColor = bgColor
+	}
+	r.text.SetText(r.button.Text)
+	r.background.Refresh()
+	r.border.Refresh()
+	r.text.Refresh()
+}
+/* old non-dimming refresh 
 func (r *coloredButtonRenderer) Refresh() {
 	r.background.FillColor = r.button.BackgroundColor
 	r.text.SetText(r.button.Text) // Use SetText
@@ -53,6 +72,8 @@ func (r *coloredButtonRenderer) Refresh() {
 	r.border.Refresh()
 	r.text.Refresh()
 }
+ */
+
 func (r *coloredButtonRenderer) Layout(size fyne.Size) {
 	r.background.Resize(size)
 	r.border.Resize(size)

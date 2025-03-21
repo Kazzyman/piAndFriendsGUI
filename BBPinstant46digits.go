@@ -1,12 +1,17 @@
 package main
 
-/*
-func bbpFast46(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_formulaA
-	fmt.Println("Inside bbpFast46, digits:", digits)
-	fmt.Println("Inside bbpFast46, digits:", digits)
-	callBkPrn2canvas(fmt.Sprintf("bbpFast46 executed with %d digits", digits))
+import (
+	"fmt"
+	"math"
+	"math/big"
+	"os"
+	"time"
+)
 
-			codeSnippet := `
+func bbpFast46(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_formulaA
+	updateOutput(fmt.Sprintf("bbpFast46 executed with %d digits", digits))
+
+	codeSnippet := `
 		// We run the following code:
 
 			usingBigFloats = true
@@ -111,6 +116,8 @@ func bbpFast46(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_for
 		} // end of bbp_formula()
 		`
 
+	fyneFunc(fmt.Sprintf("\n%s\n", codeSnippet))
+
 	usingBigFloats = true
 	iters_bbp := 1
 	start := time.Now()
@@ -144,7 +151,7 @@ func bbpFast46(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_for
 	// Display in the GUI
 	fyneFunc(output)
 
-		// fmt.Printf("%[1]*.[2]*[3]f \n", 1, n, pi) // original from CLI version
+	// fmt.Printf("%[1]*.[2]*[3]f \n", 1, n, pi) // original from CLI version
 
 	// updateChan <- updateData{text:"%[1]*.[2]*[3]f \n", 1, n, pi} // does not work, even with the correct signature for updateChan <- updateData{text:"
 	fyneFunc(fmt.Sprintf("%[1]*.[2]*[3]f \n", 1, n, pi)) // n is the number of digits of pi to calculate
@@ -216,5 +223,3 @@ func workers(p uint) func(id int, result chan *big.Float) {
 	}
 	// adapted by Richard Woolley
 } // end of bbp_formula()
-
-*/

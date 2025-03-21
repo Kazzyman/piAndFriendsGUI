@@ -183,7 +183,7 @@ fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...\n\n", Lines
 	fyneFunc(fmt.Sprintf(""))
 
 LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
-fmt.Printf("Aprox %.0f lines of code were executed per second \n", LinesPerSecond)
+fyneFunc(fmt.Sprintf("Aprox %.0f lines of code were executed per second \n", LinesPerSecond))
 
 // store reults in a log file which can be displayed from within the program by selecting option #12
 fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file

@@ -112,3 +112,14 @@ func checkPi(stringOfSum string) int {
 	return copyOfLastPosition
 }
 
+
+// Updated output function with auto-scrolling
+func updateOutput(text string) {
+	current := outputLabel.Text
+	if len(current) > 99500 {
+		current = current[len(current)-10:]
+	}
+	outputLabel.SetText(current + text)
+	outputLabel.Refresh()
+	scrollContainer.ScrollToBottom()
+}

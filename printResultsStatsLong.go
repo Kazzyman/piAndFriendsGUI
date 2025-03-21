@@ -48,7 +48,7 @@ func printResultStatsLong(sumBig *big.Float, precision int, useAlternateFile str
 			_, err8prslc2c := fmt.Fprint(fileHandleBig, oneChar) // to a file
 			check(err8prslc2c)
 		}
-		_, err9prslc2c := fmt.Fprintf(fileHandleBig, "\n...the preceeding was logged one char at a time \n")
+		_, err9prslc2c := fmt.Fprintf(fileHandleBig, "\n...the preceding was logged one char at a time \n")
 		check(err9prslc2c)
 		fileHandleBig.Close()
 	} else {
