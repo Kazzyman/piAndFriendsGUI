@@ -14,7 +14,12 @@ import (
 var digits int 
 var calculating bool
 var outputLabel *widget.Label
-var buttons []*ColoredButton // Change to ColoredButton
+var chudBut []*ColoredButton
+var BPPbut []*ColoredButton
+var buttons1 []*ColoredButton // Change to ColoredButton
+var buttons2 []*ColoredButton // Change to ColoredButton
+var buttons3 []*ColoredButton // Change to ColoredButton
+var buttons4 []*ColoredButton // Change to ColoredButton
 var scrollContainer *container.Scroll
 
 var copyOfLastPosition int

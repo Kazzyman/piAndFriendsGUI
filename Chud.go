@@ -24,6 +24,8 @@ import (
 // This will be a little-bit tricky. We want to use callbacks etc. so that we can use the smoother-scrolling fyneFunc(fmt.Sprintf("")) way of doing prints ... 
 // ... but this chudnovsky section is a cascade of functions: chudnovskyBig()-->calcPi()-->finishChudIfs() 
 func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
+	// ::: fyneFunc will be the updateOutput[1-4] depending on from which window called -- so we pass fyneFunc to calcPi(fyneFunc, float64(digits), start, loops) thusly 
+	fyneFunc(fmt.Sprintf("\n... working ...\n"))
 	usingBigFloats = true
 	var loops int
 	start := time.Now() // start will be passed, and then passed back, in order to be compared with end time t
@@ -31,7 +33,7 @@ func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
 	pi := new(big.Float)
 
 	// ::: calcPi  <---- runs from here: v v v v v v v  
-	loops, pi, start = calcPi(updateOutput, float64(digits), start, loops)
+	loops, pi, start = calcPi(fyneFunc, float64(digits), start, loops)
 	// ::: calcPi ----- ^ ^ ^ 
 
 	if loops < 100 {
@@ -70,6 +72,7 @@ func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
 
 // calculate Pi for n number of digits
 func calcPi(fyneFunc func(string), digits float64, start time.Time, loops int) (int, *big.Float, time.Time) {
+	// ::: fyneFunc will be the proper one to match the calling window[1-4]
 
 	usingBigFloats = true
 	var i int
@@ -167,19 +170,19 @@ func calcPi(fyneFunc func(string), digits float64, start time.Time, loops int) (
 			fyneFunc(fmt.Sprintf("\n we are at %d loops, here comes a 800f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%0.[1]*[2]f \n", 800, pi))
 			// updateChan <- updateData{text: "%0.[1]*[2]f \n", int(digits), pi) // if digits was known to be the verified string of digits, then this is what we would want
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 200 {
 			// useAlternateFile = "no" // still no
 			fyneFunc(fmt.Sprintf("\n we are at %d loops, here comes a 999f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.999f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 400 {
 			// useAlternateFile = "no" // still no
 			fyneFunc(fmt.Sprintf("\n we are at %d loops, here comes a 1599f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.1599f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		//
 		//
@@ -188,55 +191,55 @@ func calcPi(fyneFunc func(string), digits float64, start time.Time, loops int) (
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n we are at %d loops, here comes a 1999f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.1999f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 1600 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 2200f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.2200f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 2000 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 2300f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.2300F", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 2400 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 2600f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.2600f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 2800 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 2900f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.2900f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 3200 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 3100f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.3100f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 4000 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 3300f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.3300f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 6000 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 3400f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.3400f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if i == 8000 {
 			useAlternateFile = "chudDid800orMoreLoops"
 			fyneFunc(fmt.Sprintf("\n\n we are at %d loops, here comes a 3500f-print of pi as a big float: \n", i))
 			fyneFunc(fmt.Sprintf("%.3500f", pi))
-			finishChudIfs(updateOutput, pi, digits, i, useAlternateFile, queryIfTimeToDie)
+			finishChudIfs(fyneFunc, pi, digits, i, useAlternateFile, queryIfTimeToDie)
 		}
 		if queryIfTimeToDie == 0 {
 			fyneFunc(fmt.Sprintf("if queryIfTimeToDie is 0, time to die"))

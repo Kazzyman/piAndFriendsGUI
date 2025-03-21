@@ -9,7 +9,7 @@ import (
 )
 
 func bbpFast46(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_formulaA
-	updateOutput(fmt.Sprintf("bbpFast46 executed with %d digits", digits))
+	fyneFunc(fmt.Sprintf("bbpFast46 executed with %d digits", digits))
 
 	codeSnippet := `
 		// We run the following code:

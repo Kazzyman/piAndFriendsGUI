@@ -11,22 +11,24 @@ import (
 
 	func NilakanthaBig(fyneFunc func(string), iters int, precision int) { // Changed signature ::: - -
 
+		fyneFunc(fmt.Sprintf("\n... working ...\n"))
+			
 	if iters > 36111222 {
 		// fyneFunc(fmt.Sprintf(" ... "))
-		fyneFunc(fmt.Sprintf(" ... working ... Nilakantha using big floats")) // Send to channel
+		fyneFunc(fmt.Sprintf("\n... working ... Nilakantha using big floats")) // Send to channel
 	}
 	if iters > 42000000 {
 		// fyneFunc(fmt.Sprintf("... werkin ..."))
-		fyneFunc(fmt.Sprintf("... werkin ...")) // Send to channel
+		fyneFunc(fmt.Sprintf("\n... werkin ...")) // Send to channel
 	}
 	if iters > 55111222 {
-		fyneFunc(fmt.Sprintf("... working for a while ..."))
+		fyneFunc(fmt.Sprintf("\n... working for a while ..."))
 	}
 	if iters > 69111222 {
-		fyneFunc(fmt.Sprintf("... will be working for quite a while ..."))
+		fyneFunc(fmt.Sprintf("\n... will be working for quite a while ..."))
 	}
 	if iters > 80111222 {
-		fyneFunc(fmt.Sprintf("... a very long while ... working ..."))
+		fyneFunc(fmt.Sprintf("\n... a very long while ... working ...\n"))
 	}
 
 	start := time.Now()
@@ -90,40 +92,40 @@ import (
 
 		if iterBig == 20111222 {
 			// fyneFunc(fmt.Sprintf(" ... doin some ... "))
-			fyneFunc(fmt.Sprintf(" ... doin some ... ")) // Send to channel
+			fyneFunc(fmt.Sprintf("\n ... doin some ... ")) // Send to channel
 		}
 		if iterBig == 36111222 {
-			fyneFunc(fmt.Sprintf(" ... werkin ... "))
+			fyneFunc(fmt.Sprintf("\n ... werkin ... "))
 		}
 		if iterBig == 42000000 {
-			fyneFunc(fmt.Sprintf("... still werkin ... Nilakantha Somayaji method using big.Float types -- with some patience one can generate 31 correct digits of pi this way."))
+			fyneFunc(fmt.Sprintf("\n... still werkin ... Nilakantha Somayaji method using big.Float types -- with some patience one can generate 31 correct digits of pi this way."))
 		}
 		if iterBig == 55111222 {
-			fyneFunc(fmt.Sprintf("... been working for a while ..."))
+			fyneFunc(fmt.Sprintf("\n... been working for a while ..."))
 		}
 		if iterBig == 69111222 {
-			fyneFunc(fmt.Sprintf("... been working for quite a while ..."))
+			fyneFunc(fmt.Sprintf("\n... been working for quite a while ..."))
 		}
 		if iterBig == 80111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while ... but still working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while ... but still working ..."))
 		}
 		if iterBig == 180111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, 180,111,222 down, ... and still working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 180,111,222 down, ... and still working ..."))
 		}
 		if iterBig == 280111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, 280,111,222 down, ... and still working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 280,111,222 down, ... and still working ..."))
 		}
 		if iterBig == 480111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, 480,111,222 down, ... still working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 480,111,222 down, ... still working ..."))
 		}
 		if iterBig == 680111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, 680,111,222 down, ...  working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 680,111,222 down, ...  working ..."))
 		}
 		if iterBig == 880111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, down, 880,111,222, down ... still, working ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, down, 880,111,222, down ... still, working ..."))
 		}
 		if iterBig == 977111222 {
-			fyneFunc(fmt.Sprintf("... it's been a very long while, 977,111,222 already ... why am I still working? ..."))
+			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 977,111,222 already ... why am I still working? ..."))
 		}
 	}
 	t := time.Now()
@@ -183,25 +185,25 @@ import (
 
 		fyneFunc(fmt.Sprintf("\npi as calculated herein is: %s", shortStringOfSumbig))
 
-
-
-		fyneFunc(fmt.Sprintf("\n.... we have matched %d digits: ", copyOfLastPosition))
+			floatIterBig := float64(iterBig)
+			printableIterbigWithcommas := formatFloat64WithThousandSeparators(floatIterBig)
+		fyneFunc(fmt.Sprintf("\n.... we have matched %d digits in %s iterations: ", copyOfLastPosition, printableIterbigWithcommas))
 			
-			
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-			fileHandleNilakan, err1prslc2c := os.OpenFile("dataLog-From_Nilakantha_Method_lengthy_prints.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
-			check(err1prslc2c)                                                                                                                            // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
-			defer fileHandleNilakan.Close()                                                                                                               // It’s idiomatic to defer a Close immediately after opening a file.
-			_, err2prslc2c := fmt.Fprintf(fileHandleNilakan,
-				"\n\nBelow are the %d verified digits we have calculated via Nilakantha using precision of %d and iterations of %d: \n",
-				copyOfLastPosition, precision, iterBig)
-			check(err2prslc2c)
-			for _, oneChar := range stringVerOfCorrectDigits {
-				// fmt.Print(oneChar) // to the console we log pi, one digit at a time
-				_, err8prslc2c := fmt.Fprint(fileHandleNilakan, oneChar) // to a file we log pi one digit at a time
-				check(err8prslc2c)
-			}
-			fileHandleNilakan.Close()
+	fileHandleNilakan, err1prslc2c := os.OpenFile("dataLog-From_Nilakantha_Method_lengthy_prints.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
+	check(err1prslc2c)                                                                                                                            // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
+	defer fileHandleNilakan.Close()                                                                                                               // It’s idiomatic to defer a Close immediately after opening a file.
+	_, err2prslc2c := fmt.Fprintf(fileHandleNilakan,
+		"\n\nBelow are the %d verified digits we have calculated via Nilakantha using precision of %d and iterations of %d: \n",
+		copyOfLastPosition, precision, iterBig)
+	check(err2prslc2c)
+	for _, oneChar := range stringVerOfCorrectDigits {
+		// fmt.Print(oneChar) // to the console we log pi, one digit at a time
+		_, err8prslc2c := fmt.Fprint(fileHandleNilakan, oneChar) // to a file we log pi one digit at a time
+		check(err8prslc2c)
+	}
+	fileHandleNilakan.Close()
 	} else {
 		fileHandleDefault, err1prslc2d := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
 		check(err1prslc2d)                                                                                                                    // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
@@ -246,6 +248,10 @@ import (
 
 	// print to screen:
 	fyneFunc(fmt.Sprintf(" via Nilakantha with big floats. Written entirely by Richard Woolley\n"))
-	fmt.Printf("Total run with SetPrec at: %d and iters of %d was %s \n\n ", precision, iterBig, TotalRun)
+		calculating = false
+		for _, btn := range buttons2 {
+			btn.Enable()
+		}
+	// fmt.Printf("Total run with SetPrec at: %d and iters of %d was %s \n\n ", precision, iterBig, TotalRun)
 	// written entirely by Richard Woolley
 } // end of Nilakantha_Somayaji_with_big_Float_types() // -- AMFNilakantha_Somayaji_with_big_Float_typesB

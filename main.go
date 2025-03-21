@@ -13,135 +13,120 @@ import (
 )
 
 // @formatter:off
+var outputLabel1 = widget.NewLabel("\nPress a button to estimate π...\n\n")
+var scrollContainer1 = container.NewVScroll(outputLabel1)
 
 func main() {
 	calculating = false
 	myApp := app.New()
 	myApp.Settings().SetTheme(theme.LightTheme())
-	window := myApp.NewWindow("Pi Estimation Demo")
-	window.Resize(fyne.NewSize(1900, 1600))
-
-	// UI setup
-	outputLabel = widget.NewLabel("\nPress a button to estimate π...\n\n")
-	outputLabel.Wrapping = fyne.TextWrapWord
-	scrollContainer = container.NewVScroll(outputLabel)
-	scrollContainer.SetMinSize(fyne.NewSize(1900, 1100))
-
+	window1 := myApp.NewWindow("Pi Estimation Demo")
+	window1.Resize(fyne.NewSize(1900, 1600))
+	outputLabel1.Wrapping = fyne.TextWrapWord
+	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
 	
-	// ::: Single input dialog, deprecated 
-	getSingleInput := func(title, prompt, defaultValue string, callback func(string, bool)) {
+	getSingleInputBpp1 := func(title, prompt, defaultValue string, callback func(string, bool)) {
+										fmt.Println("top of getSingleInputBpp1")
+		if calculating {
+										fmt.Println("calculating must have been yes")
+			return
+		}
+										fmt.Println("next1")
 		confirmed := false // Track if OK was clicked
-		d := dialog.NewEntryDialog(title, prompt, func(value string) { // change to dialog.NewForm() with a widget.Entry inside instead.
+		d := dialog.NewEntryDialog(title, prompt, func(value string) {
 			confirmed = true
 			callback(value, true)
-		}, window)
+		}, window1)
+										fmt.Println("next2")
 		d.SetText(defaultValue)
 		d.SetOnClosed(func() {
 			if !confirmed { // Only trigger cancel if OK wasn’t clicked
 				callback("", false)
 			}
 		})
+										fmt.Println("next3")
 		d.Show()
 	}
 
-	// ::: getSingleInput function, new way
-	getSingleInputNew := func(title, prompt, defaultValue string, callback func(string, bool)) {
-		// Create an entry widget
-		entry := widget.NewEntry()
-		entry.SetText(defaultValue)
-		entry.SetPlaceHolder(prompt)
-
-		// Create form item
-		formItems := []*widget.FormItem{
-			widget.NewFormItem("", entry), // Empty label since prompt is in placeholder
-		}
-
-		// Track if confirmed
-		confirmed := false
-
-		// Create the form dialog
-		d := dialog.NewForm(
-			title,          // Title
-			"OK",           // Confirm button text
-			"Cancel",       // Cancel button text
-			formItems,      // Form fields
-			func(conf bool) {
-				confirmed = conf
-				if conf {
-					callback(entry.Text, true)
-				}
-			},
-			window, // Parent window
-		)
-
-		// Handle cancel case
+	getSingleInputChud1 := func(title, prompt, defaultValue string, callback func(string, bool)) {
+		if calculating {return}
+		confirmed := false // Track if OK was clicked
+		d := dialog.NewEntryDialog(title, prompt, func(value string) {
+			confirmed = true
+			callback(value, true)
+		}, window1)
+		d.SetText(defaultValue)
 		d.SetOnClosed(func() {
-			if !confirmed {
+			if !confirmed { // Only trigger cancel if OK wasn’t clicked
+				calculating = false // ::: insufficient 
 				callback("", false)
 			}
 		})
-
-		// Show the dialog
 		d.Show()
 	}
 
 
-	// Custom colored ::: Buttons
-	archimedesBtn := NewColoredButton(
+	// Custom colored ::: Buttons1
+	archimedesBtn1 := NewColoredButton(
 		"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
 		func() {
 			if calculating {
 				return
 			}
 			calculating = true
-			for _, btn := range buttons {
+			for _, btn := range buttons1 {
 				btn.Disable()
 			}
-			updateOutput("\nRunning ArchimedesBig...\n\n")
+			updateOutput1("\nRunning ArchimedesBig...\n\n")
 			go func() {
-				ArchimedesBig(updateOutput) 
+				ArchimedesBig(updateOutput1) 
 				calculating = false
-				for _, btn := range buttons {
+				for _, btn := range buttons1 {
 					btn.Enable()
 				}
 			}()
 		},
 	)
-	JohnWallisBtn := NewColoredButton("John Wallis RUNS LONG -- does billions of calculations\n-- by Rick Woolley\n three\n four", color.RGBA{25, 200, 100, 215}, 
+	JohnWallisBtn1 := NewColoredButton("John Wallis RUNS LONG -- does billions of calculations\n-- by Rick Woolley\n three\n four", color.RGBA{25, 200, 100, 215}, 
 		func() {
 			if calculating {
 				return
 			}
 			calculating = true
-			for _, btn := range buttons {
+			for _, btn := range buttons1 {
 				btn.Disable()
 			}
-			updateOutput("\nRunning John Wallis...\n\n")
+			updateOutput1("\nRunning John Wallis...\n\n")
 			go func() {
-				JohnWallis(updateOutput)
+				JohnWallis(updateOutput1)
 				calculating = false
-				for _, btn := range buttons {
+				for _, btn := range buttons1 {
 					btn.Enable()
 				}
 			}()
 		},
 	)
-	BBPfast46Btn := NewColoredButton("BBP super-fast digits, up to 10,000\nIt only takes like 4s to do 10,000 digits of pi\nsays Rick Woolley", color.RGBA{100, 100, 255, 185}, 
+	BBPfast46Btn1 := NewColoredButton("BBP super-fast digits, up to 10,000\nIt only takes like 4s to do 10,000 digits of pi\nsays Rick Woolley", color.RGBA{100, 100, 255, 185}, 
 	func() {
 		if calculating {
 			return
 		}
-		calculating = true
-		for _, btn := range buttons {
-			btn.Disable()
-		}
-		updateOutput("\nRunning BBP-fast-46...\n\n")
+		updateOutput1("\nRunning BBP-fast-46 up to here...\n\n") // ::: gets this far at least 
 		
-		getSingleInput("Input Required", "Enter the number of digits for BBP calculation (e.g., 46):", "46", 
+		getSingleInputBpp1("Input Required", "Enter the number of digits for BBP calculation (e.g., 46):", "46", 
 			func(digitsStr string, ok bool) {
+				// calculating = true
+				for _, btn := range buttons1 {
+					btn.Disable()
+				}
+				for _, btn := range BPPbut {
+					calculating = true // keep it from being restarted
+					btn.Enable() // even though the button is enabled 
+				}
+				fmt.Println("back in BBPfast46Btn1")
 				if !ok {
-					updateOutput("BBP calculation canceled, make another selection")
-					for _, btn := range buttons {
+					updateOutput1("BBP calculation canceled, make another selection")
+					for _, btn := range buttons1 {
 						btn.Enable()
 					}
 					return
@@ -150,49 +135,64 @@ func main() {
 				val, err := strconv.Atoi(digitsStr)
 				if err != nil {
 					fmt.Println("Error converting input:", err)
-					updateOutput("Invalid input, using default 46 digits")
+					updateOutput1("Invalid input, using default 46 digits")
 				} else if val <= 0 {
-					updateOutput("Input must be positive, using default 46 digits")
+					fmt.Println("here in val <= 0")
+					updateOutput1("Input must be positive, using default 46 digits")
 				} else if val > 10000 {
-					updateOutput("Input must be less than 10,001, using default 46 digits")
+					fmt.Println("here in val > 10000")
+					updateOutput1("Input must be less than 10,001, using default 46 digits")
 				} else {
+					fmt.Printf("here at val is %d", val)
 					digits = val 
 				}
 				go func() {
-					bbpFast46(updateOutput, digits)
+					bbpFast46(updateOutput1, digits)
 					calculating = false
-					for _, btn := range buttons {
+					for _, btn := range buttons1 {
 						btn.Enable()
 					}
 				}()
 			})
 	})
 				// ::: spigot actually goes here in place of Gregory Leibniz
-				leibnizBtn := NewColoredButton("Gregory Leibniz\n-- circa 1676\n quick\n pi", color.RGBA{100, 255, 100, 215}, // Greenish for variety
+				leibnizBtn1 := NewColoredButton("Gregory Leibniz\n-- circa 1676\n quick\n pi", color.RGBA{100, 255, 100, 215}, // Greenish for variety
 					func() {
 						if calculating {
 							return
 						}
 						calculating = true
-						for _, btn := range buttons {
+						for _, btn := range buttons1 {
 							btn.Disable()
 						}
-						updateOutput("\nRunning Gregory Leibniz...\n\n")
+						updateOutput1("\nRunning Gregory Leibniz...\n\n")
 						go func() {
-							GregoryLeibniz(updateOutput) 
+							GregoryLeibniz(updateOutput1) 
 							calculating = false
-							for _, btn := range buttons {
+							for _, btn := range buttons1 {
 								btn.Enable()
 							}
 						}()
 					},
 				)
-	ChudnovskyBtn := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
-		getSingleInputNew("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 46):", "499555",
+	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
+		getSingleInputChud1("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 499888):", "499888",
 			func(digitsStr string, ok bool) {
+				if calculating {
+					fmt.Println("calculating must have been yes, top of chudnovsky")
+					return
+				}
+				// calculating = true
+				for _, btn := range buttons1 {
+					btn.Disable()
+				}
+				for _, btn := range chudBut {
+					calculating = true // keep it from being restarted
+					btn.Enable() // even though the button is enabled 
+				}
 				if !ok {
-					updateOutput("chudnovsky calculation canceled, make another selection")
-					for _, btn := range buttons {
+					updateOutput1("chudnovsky calculation canceled, make another selection")
+					for _, btn := range buttons1 {
 						btn.Enable()
 					}
 					return
@@ -201,56 +201,60 @@ func main() {
 				val, err := strconv.Atoi(digitsStr)
 				if err != nil {
 					fmt.Println("Error converting input:", err)
-					updateOutput("Invalid input, using default 46 digits")
+					updateOutput1("Invalid input, using default 499888 digits")
 				} else if val <= 0 {
-					updateOutput("Input must be positive, using default 46 digits")
+					updateOutput1("Input must be positive, using default 499888 digits")
 				} else if val > 500000 {
-					updateOutput("Input must be less than 500,001 -- using default of 46 digits")
+					updateOutput1("Input must be less than 500,001 -- using default of 499888 digits")
 				} else {
 					digits = val
 				}
 				go func() {
-					chudnovskyBig(updateOutput, digits)
+					chudnovskyBig(updateOutput1, digits)
 					calculating = false
-					for _, btn := range buttons {
+					for _, btn := range buttons1 {
 						btn.Enable()
 					}
 				}()
 			})
 	})
 
-	buttons = []*ColoredButton{archimedesBtn, JohnWallisBtn, BBPfast46Btn, leibnizBtn, ChudnovskyBtn}
+	chudBut = []*ColoredButton{ChudnovskyBtn1}
+	BPPbut = []*ColoredButton{BBPfast46Btn1}
+	
+	
+	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast46Btn1, leibnizBtn1, ChudnovskyBtn1} // array used only for range btn.Enable()
 
 	// ::: Layout
-	content := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
+	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
 
-		container.NewGridWithColumns(4, archimedesBtn, JohnWallisBtn, BBPfast46Btn, leibnizBtn,
-			ChudnovskyBtn),
+		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, BBPfast46Btn1, leibnizBtn1,
+			ChudnovskyBtn1),
 
-		scrollContainer,
+		scrollContainer1,
 	)
 	// ::: drop-down menus
 	logFilesMenu := fyne.NewMenu("Log Files",
-		fyne.NewMenuItem("View Log 1", func() { dialog.ShowInformation("Log Files", "Viewing Log 1", window) }),
-		fyne.NewMenuItem("View Log 2", func() { dialog.ShowInformation("Log Files", "Viewing Log 2", window) }),
+		fyne.NewMenuItem("View Log 1", func() { dialog.ShowInformation("Log Files", "Viewing Log 1", window1) }),
+		fyne.NewMenuItem("View Log 2", func() { dialog.ShowInformation("Log Files", "Viewing Log 2", window1) }),
 	)
 	windowsMenu := fyne.NewMenu("Collections",
-		fyne.NewMenuItem("Fast Pi calculators", func() { window.Show() }),
+		fyne.NewMenuItem("Fast Pi calculators", func() { window1.Show() }),
 		fyne.NewMenuItem("Classic Pi calculators", func() { createWindow2(myApp).Show() }),
 		fyne.NewMenuItem("Odd Pi calculators", func() { createWindow3(myApp).Show() }),
 		fyne.NewMenuItem("Misc Maths", func() { createWindow4(myApp).Show() }),
 	)
 		informationMenu := fyne.NewMenu("Information",
 		fyne.NewMenuItem("Help", func() {
-			dialog.ShowInformation("Information", "Help...", window)
+			dialog.ShowInformation("Information", "Help...", window1)
 		}),
 		fyne.NewMenuItem("About", func() {
-			dialog.ShowInformation("Information", "About...", window)
+			dialog.ShowInformation("Information", "About...", window1)
 		}),
 	)
 	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
-	window.SetMainMenu(mainMenu)
+	window1.SetMainMenu(mainMenu)
 	
-	window.SetContent(content)
-	window.ShowAndRun()
+	window1.SetContent(content1) // Dear grok; this was line 261 prior to me deleting some comment lines
+	window1.ShowAndRun()
 }

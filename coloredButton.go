@@ -53,7 +53,7 @@ func (r *coloredButtonRenderer) Refresh() {
 	bgColor := r.button.BackgroundColor
 	if r.button.Disabled() {
 		if rgba, ok := bgColor.(color.RGBA); ok {
-			rgba.A = 160 // ::: Lower opacity for disabled state
+			rgba.A = 145 // ::: Lower opacity for disabled state
 			r.background.FillColor = rgba
 		}
 	} else {

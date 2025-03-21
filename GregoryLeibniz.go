@@ -81,7 +81,7 @@ What follows is the actual source code for this method:
 			LinesPerIter = 11 // an estimate of the number of lines per iteration
 			fyneFunc(fmt.Sprintf("at aprox %0.2f lines of code per iteration ...\n", LinesPerIter))
 			LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
-			fmt.Printf("       %.0f lines of code were executed per second \n\n", LinesPerSecond)
+			fyneFunc(fmt.Sprintf("       %.0f lines of code were executed per second \n\n", LinesPerSecond))
 
 			fyneFunc(fmt.Sprintf("\n That was the Gregory-Leibniz series:\n\n"))
 			fyneFunc(fmt.Sprintf("π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...\n\n"))
@@ -185,7 +185,7 @@ What follows is the actual source code for this method:
 			stringOfTotal := formatFloat64WithThousandSeparators(linePerApp)
 			fyneFunc(fmt.Sprintf("at aprox %0.0f lines of code per iteration ... SLOC executed was aprox. %s \n", LinesPerIter, stringOfTotal))
 			LinesPerSecond = (LinesPerIter * iterFloat64) / elapsed.Seconds() // .Seconds() returns a float64
-			fmt.Printf("       %.0f lines of code were executed per second \n\n", LinesPerSecond)
+			fyneFunc(fmt.Sprintf("       %.0f lines of code were executed per second \n\n", LinesPerSecond))
 
 			fyneFunc(fmt.Sprintf("\n That was the Gregory-Leibniz series:\n\n"))
 			fyneFunc(fmt.Sprintf("π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...\n\n"))

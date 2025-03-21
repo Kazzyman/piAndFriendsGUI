@@ -114,12 +114,24 @@ func checkPi(stringOfSum string) int {
 
 
 // Updated output function with auto-scrolling
-func updateOutput(text string) {
-	current := outputLabel.Text
+func updateOutput1(text string) {
+	current := outputLabel1.Text
 	if len(current) > 99500 {
 		current = current[len(current)-10:]
 	}
-	outputLabel.SetText(current + text)
-	outputLabel.Refresh()
-	scrollContainer.ScrollToBottom()
+	outputLabel1.SetText(current + text)
+	outputLabel1.Refresh()
+	scrollContainer1.ScrollToBottom()
 }
+// fyneFunc(fmt.Sprintf("Send a message to the scroll area via fyne func"))
+// Updated output function with auto-scrolling
+func updateOutput2(text string) {
+	current := outputLabel2.Text
+	if len(current) > 99500 {
+		current = current[len(current)-10:]
+	}
+	outputLabel2.SetText(current + text)
+	outputLabel2.Refresh()
+	scrollContainer2.ScrollToBottom()
+}
+// fyneFunc(fmt.Sprintf("Send a message to the scroll area via fyne func"))
