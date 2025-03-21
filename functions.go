@@ -65,6 +65,27 @@ func formatInt64WithThousandSeparators(num int64) string {
 	return prefix + result
 }
 
+func formatFloat64WithThousandSeparators(numFloat64 float64) string {
+
+	numStr := strconv.FormatFloat(numFloat64, 'f', -1, 64)
+
+	// Handle negative numbers
+	prefix := ""
+	if strings.HasPrefix(numStr, "-") {
+		prefix = "-"
+		numStr = numStr[1:]
+	}
+
+	// Insert commas every three digits from the right
+	result := ""
+	for i, char := range numStr {
+		if i > 0 && (len(numStr)-i)%3 == 0 {
+			result += ","
+		}
+		result += string(char)
+	}
+	return prefix + result
+}
 
 func check(e error) { // create a func named check which takes one parameter "e" of type error ::: - -
 	if e != nil {
