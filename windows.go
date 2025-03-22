@@ -23,8 +23,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	outputLabel2.Wrapping = fyne.TextWrapWord
 	scrollContainer2.SetMinSize(fyne.NewSize(1900, 1050))
 
-	// ::: Fixed single input dialog
-		getSingleInput := func(title, prompt, defaultValue string, callback func(string, bool)) {
+		getSingleInput2 := func(title, prompt, defaultValue string, callback func(string, bool)) {
 			confirmed := false // Track if OK was clicked
 			d := dialog.NewEntryDialog(title, prompt, func(value string) {
 				confirmed = true
@@ -41,7 +40,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 
 	
 	// Dual input dialog
-	getDualInput := func(title, prompt1, prompt2, default1, default2 string, callback func(string, string, bool)) {
+	getDualInput2 := func(title, prompt1, prompt2, default1, default2 string, callback func(string, string, bool)) {
 		calculating = true
 		for _, btn := range buttons2 {
 			btn.Disable()
@@ -80,8 +79,8 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		d.Show()
 	}
 
-	// Custom colored ::: Buttons2
-				// Bailey chan -- will go here
+	// ::: Buttons2
+	// Bailey chan -- will go here
 				archimedesBtn2 := NewColoredButton(
 					"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
 					func() {
@@ -112,7 +111,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		for _, btn := range buttons2 {
 			btn.Disable()
 		}
-		getDualInput("Input Required", "Number of iterations (suggest 100,000 -> 29,890,000  -> 100,000,000):", "Precision (suggest 128 -> 512):", 
+		getDualInput2("Input Required", "Number of iterations (suggest 100,000 -> 29,890,000  -> 100,000,000):", "Precision (suggest 128 -> 512):", 
 			"30000000", "256", 
 			func(itersStr, precStr string, ok bool) {
 				calculating = true
@@ -186,8 +185,9 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			}()
 		},
 	)
+	// ::: temp, Bailey concur goes here
 	ChudnovskyBtn2 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
-		getSingleInput("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 46):", "46",
+		getSingleInput2("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 46):", "46",
 			func(digitsStr string, ok bool) {
 				if !ok {
 					updateOutput2("chudnovsky calculation canceled")

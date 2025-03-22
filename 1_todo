@@ -1,3 +1,5 @@
+Wallis should probably include input for extension 
+
 add to all the rune display trick from BBPinstant46
 bbpFast46 needs code to be more-elegant with displaying (and warning) re very large values of pi. 
 wallis needs input for alternately doing extra tens of billions of iterations
@@ -42,3 +44,12 @@ Ctrl-k  :: kill to end of line.
 option + return usually inserts a newline.
 shift + return inserts a newline in Grok-3 "ask anything" text box.
 
+Something so very simple simply cannot be so impossibly hard. 
+I have spent some 50 hours with multiple AI models trying to make this simple concept actually work. You all say that this or that will/should do it. Always you have been wrong.
+I think you may be blind to how simple and dirty a viable solution could be. 
+What if we forget all about OOP and Fyne protocols and just think simply, like in the old days of procedural programming.
+Lets use a global variable of the bool persuasion to keep track of when the coast is clear to venture forth with a project like calculating pi. 
+Maybe I will just set the flag at the end of each of my functions, or I could get fancy (if I must) and have each of my functions return a bool to act as the "all clear now" flag. 
+Then, it should be trivially easy to make the activation of a button, and/or the calling of a pi calculating function conditional on that global flag. 
+Let's have the simplest possible button handler that can possibly be made given the constraints of our Go+Fyne world. If, and only if, a "go routine" is really the only way to 
+launch a function such that it can write to the UI in an acceptable way then we will try to find a way to work with that. If and only if. KISS !!!!!

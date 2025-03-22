@@ -249,7 +249,7 @@ import (
 	// print to screen:
 	fyneFunc(fmt.Sprintf(" via Nilakantha with big floats. Written entirely by Richard Woolley\n"))
 		calculating = false
-		for _, btn := range buttons2 {
+		for _, btn := range buttons2 { // ::: ok, because normally I plan to only have this execute from window2
 			btn.Enable()
 		}
 	// fmt.Printf("Total run with SetPrec at: %d and iters of %d was %s \n\n ", precision, iterBig, TotalRun)
