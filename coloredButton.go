@@ -28,8 +28,8 @@ func (b *ColoredButton) CreateRenderer() fyne.WidgetRenderer {
 	text.Wrapping = fyne.TextWrapWord // Enable word wrapping
 	background := canvas.NewRectangle(b.BackgroundColor)
 	border := canvas.NewRectangle(color.Transparent)
-	border.StrokeColor = color.Gray{0x80}
-	border.StrokeWidth = 2
+	border.StrokeColor = color.Gray{0x60} // was 80 // space between buttons ? 
+	border.StrokeWidth = 3 // was 2
 	return &coloredButtonRenderer{
 		button:     b,
 		text:       text,
@@ -77,12 +77,12 @@ func (r *coloredButtonRenderer) Refresh() {
 func (r *coloredButtonRenderer) Layout(size fyne.Size) {
 	r.background.Resize(size)
 	r.border.Resize(size)
-	r.text.Resize(fyne.NewSize(size.Width-20, size.Height-20))
-	r.text.Move(fyne.NewPos(10, 10))
+	r.text.Resize(fyne.NewSize(size.Width-20, size.Height-20)) // were -20 -20   ::: ineffective   
+	r.text.Move(fyne.NewPos(15, 10)) // 10  10  ::: x is left margin, y is top margin;  10  1000 moves text down off the buttons
 }
 func (r *coloredButtonRenderer) MinSize() fyne.Size {
 	textSize := r.text.MinSize()
-	return fyne.NewSize(fyne.Max(textSize.Width+20, 200), fyne.Max(textSize.Height+20, 50))
+	return fyne.NewSize(fyne.Max(textSize.Width+20, 200), fyne.Max(textSize.Height+20, 50)) // +20,200  +20,50 ::: ineffective 
 }
 func (r *coloredButtonRenderer) BackgroundColor() color.Color {
 	return r.button.BackgroundColor

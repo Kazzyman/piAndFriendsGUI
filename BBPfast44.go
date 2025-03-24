@@ -175,9 +175,11 @@ func bbpFast44(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_for
 	TotalRun := elapsed.String() // cast time durations to a String type for Fprintf "formatted print"
 	_, err7 := fmt.Fprintf(fileHandle, "Total run was %s \n ", TotalRun)
 	check(err7)
-	calculating = false
-	for _, btn := range buttons1 { // ok, because I will only execute this from window1
-		btn.Enable()
+
+	// ::: Prepare to exit the BBP fast 44 method functions
+	calculating = false            // Allow another method to be selected.
+	for _, btn := range buttons1 { // ok to only Enable buttons1, because I expect to only ever execute this from window1
+		btn.Enable() // ::: Enable
 	}
 }
 

@@ -65,21 +65,14 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			container.NewHBox(submitButton),
 		)
 		d := dialog.NewCustom(title, "Dismiss dialogBox", form, window2)
-		/*
-				calculating = true // no effect
-			for _, btn := range buttons {
-				btn.Disable() // ::: not working ??
-			}
-			if entry2.Text == "0" {
-				return // ::: does not work to kill method -- but 0 should ??
-			}
-			// fmt.Println(*d) // :::
-		*/
+
 		d.Resize(fyne.NewSize(400, 300))
 		d.Show()
 	}
 
 	// ::: Buttons2
+	done := make(chan bool) // kill channel for all goroutines 
+	
 	// Bailey chan -- will go here
 				archimedesBtn2 := NewColoredButton(
 					"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
@@ -93,7 +86,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 						}
 						updateOutput2("\nRunning ArchimedesBig...\n\n")
 						go func() {
-							ArchimedesBig(updateOutput2)
+							ArchimedesBig(updateOutput2, done)
 							calculating = false
 							for _, btn := range buttons2 {
 								btn.Enable()
@@ -103,7 +96,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				)
 
 	// ::: nila 3 goes here ??
-	NilakanthaBtn2 := NewColoredButton("Nilakantha -- takes input", color.RGBA{255, 255, 100, 235}, func() {
+	NilakanthaBtn2 := NewColoredButton("Nilakantha -- input iterations\noutput up to 26 digits of pi", color.RGBA{255, 255, 100, 235}, func() {
 		if calculating {
 			return
 		}
@@ -111,8 +104,8 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		for _, btn := range buttons2 {
 			btn.Disable()
 		}
-		getDualInput2("Input Required", "Number of iterations (suggest 100,000 -> 29,890,000  -> 100,000,000):", "Precision (suggest 128 -> 512):", 
-			"30000000", "256", 
+		getDualInput2("Input Required", "Number of iterations (suggest 300,000 -> 30,000,000  -> 300,000,000):", "Precision (suggest 128):", 
+			"30000000", "128", // 30,000,000
 			func(itersStr, precStr string, ok bool) {
 				calculating = true
 				for _, btn := range buttons2 {
@@ -122,21 +115,22 @@ func createWindow2(myApp fyne.App) fyne.Window {
 					updateOutput2("Nilakantha calculation canceled")
 					return
 				}
-				iters := 30000000
-				precision := 256
+				iters := 30000000 // 30,000,000
+				precision := 128
+				itersStr = removeCommasAndPeriods(itersStr) // ::: allow user to enter a number with a comma
 				val1, err1 := strconv.Atoi(itersStr)
 				if err1 != nil {
-					fmt.Println("Error converting input1:", err1) // handle error
+					fmt.Println("Error converting iterations val1:", err1) // handle error
 					iters = 30000000
 				} else {
 					iters = val1
 				}
 				val2, err2 := strconv.Atoi(precStr)
 				if err2 != nil {
-					fmt.Println("Error converting input2:", err2) // handle error 
-					updateOutput2("setting precision to 512") 
+					fmt.Println("Error converting precision val2:", err2) // handle error 
+					updateOutput2("setting precision to 128") 
 					// fyneFunc(fmt.Sprintf("setting precision to 512")) //  ::: cannot do this instead because ??
-					precision = 512
+					precision = 128
 				} else {
 					precision = val2
 				}
@@ -147,7 +141,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				}
 			})
 	})
-	GregLeibnizBtn2 := NewColoredButton("Gregory Leibniz\n-- circa 1676\n quick\n pi", color.RGBA{100, 255, 100, 215}, // Greenish for variety
+	GregLeibnizBtn2 := NewColoredButton("Gregory Leibniz\n-- circa 1676\n quick - 4s, 9 digits of pi\n pi", color.RGBA{100, 255, 100, 215}, // Greenish for variety
 		func() {
 			if calculating {
 				return
@@ -166,7 +160,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			}()
 		},
 	)
-	GottfriedWilhelmLeibnizBtn2 := NewColoredButton("Gottfried Wilhelm Leibniz -- runs long", color.RGBA{100, 255, 100, 225}, 
+	GottfriedWilhelmLeibnizBtn2 := NewColoredButton("Gottfried Wilhelm Leibniz -- runs 20sec\ngives 10 digits of pi", color.RGBA{100, 255, 100, 225}, 
 		func() {
 			if calculating {
 				return

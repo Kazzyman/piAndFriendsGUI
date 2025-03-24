@@ -15,12 +15,12 @@ import (
 // @formatter:off
 var outputLabel1 = widget.NewLabel("\nPress a button to estimate π...\n\n")
 var scrollContainer1 = container.NewVScroll(outputLabel1)
+var myApp = app.New()
+var window1 = myApp.NewWindow("Pi Estimation Demo")
 
 func main() {
 	calculating = false
-	myApp := app.New()
 	myApp.Settings().SetTheme(theme.LightTheme())
-	window1 := myApp.NewWindow("Pi Estimation Demo")
 	window1.Resize(fyne.NewSize(1900, 1600))
 	outputLabel1.Wrapping = fyne.TextWrapWord
 	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
@@ -43,8 +43,12 @@ func main() {
 		d.Show()
 	}
 
+	// identical to the above except in name, i.e., Bpp1 vs Chud1; the latter being "deprecated" by Rick
+	/* Chud now using: showCustomEntryDialog(
 	getSingleInputChud1 := func(title, prompt, defaultValue string, callback func(string, bool)) {
-		if calculating {return}
+		if calculating {
+			return
+		}
 		confirmed := false // Track if OK was clicked
 		d := dialog.NewEntryDialog(title, prompt, func(value string) {
 			confirmed = true
@@ -58,11 +62,16 @@ func main() {
 		})
 		d.Show()
 	}
+	 */
 
 
+	done := make(chan bool) // kill channel for all goroutines 
+	done2 := make(chan bool) // kill channel for all goroutines 
+	done3 := make(chan bool) // kill channel for all goroutines // ::: remove some of these ??
+	
 	// Custom colored ::: Buttons1
 	archimedesBtn1 := NewColoredButton(
-		"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
+		"modified Archimedes \n-- by Rick Woolley\n 3012 digits of pi in under a minute\n four", color.RGBA{255, 100, 100, 215},
 		func() {
 			if calculating {
 				return
@@ -73,7 +82,7 @@ func main() {
 			}
 			updateOutput1("\nRunning ArchimedesBig...\n\n")
 			go func() {
-				ArchimedesBig(updateOutput1) 
+				ArchimedesBig(updateOutput1, done) 
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -81,8 +90,8 @@ func main() {
 			}()
 		},
 	)
-	JohnWallisBtn1 := NewColoredButton("John Wallis RUNS LONG -- does billions of calculations\n-- by Rick Woolley\n three\n four", color.RGBA{110, 110, 255, 185}, 
-		func() {
+	JohnWallisBtn1 := NewColoredButton("John Wallis 5m30s -- does 40 billion calculations\n-- by Rick Woolley\n just 10 digits of pi\n four", color.RGBA{110, 110, 255, 185}, 
+			func() {
 			if calculating {
 				return
 			}
@@ -91,8 +100,8 @@ func main() {
 				btn.Disable()
 			}
 			updateOutput1("\nRunning John Wallis...\n\n")
-			go func() {
-				JohnWallis(updateOutput1)
+			go func() { // made this the goroutine as per your example 
+				JohnWallis(updateOutput1, done) // made this a normal func call, per your example
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -196,48 +205,78 @@ func main() {
 					}()
 				})
 		})
-	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
-		getSingleInputChud1("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 499888):", "499888",
-			func(digitsStr string, ok bool) {
-				if calculating {
-					return
-				}
-				// calculating = true
-				for _, btn := range buttons1 {
-					btn.Disable()
-				}
-				for _, btn := range chudBut {
-					calculating = true // keep it from being restarted in parallel 
-					btn.Enable() // even though the button is enabled 
-				}
-				if !ok {
-					updateOutput1("chudnovsky calculation canceled, make another selection") 
-					for _, btn := range buttons1 {
-						btn.Enable()
+	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- 23,000 digits of pi\nin less than 8s", color.RGBA{255, 255, 100, 235}, func() {
+		if calculating {
+			return
+		}
+		for _, btn := range buttons1 {
+			btn.Disable()
+		}
+		for _, btn := range chudBut { // chudBut is an array with only one member
+			calculating = true // keep it from being restarted in parallel
+			btn.Enable() // even though the button is enabled
+		}
+
+		showCustomEntryDialog(
+			"Input Desired number of digits",
+			"Any number less than 49,999",
+			func(input string) {
+				if input != "" {
+					input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
+					val, err := strconv.Atoi(input)
+					if err != nil {
+						fmt.Println("Error converting input:", err)
+						updateOutput1("Invalid input, using default 49,000 digits")
+					} else if val <= 0 {
+						updateOutput1("Input must be positive, using default 49000 digits")
+					} else if val > 50000 {
+						updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
+					} else {
+						digits = val
 					}
-					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled. 
-					return
+					go func() {
+						chudnovskyBig(updateOutput1, digits)
+						calculating = false
+						for _, btn := range buttons1 {
+							btn.Enable()
+						}
+					}()
+				} else {
+					// dialog canceled 
+						updateOutput1("chudnovsky calculation canceled, make another selection")
+						for _, btn := range buttons1 {
+							btn.Enable()
+						}
+						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled.
+						return
 				}
-				digits = 499888
+			},
+		)
+		
+		
+		/*
+				getSingleInputChud1("Input Required", "Number of digits desired from the chudnovsky calculation (max 49,000):", "49000",
+			func(digitsStr string, ok bool) {
+				
+				digits = 49000
+				digitsStr = removeCommasAndPeriods(digitsStr) // allow user to enter a number with a comma
 				val, err := strconv.Atoi(digitsStr)
 				if err != nil {
 					fmt.Println("Error converting input:", err)
-					updateOutput1("Invalid input, using default 499888 digits")
+					updateOutput1("Invalid input, using default 49,000 digits")
 				} else if val <= 0 {
-					updateOutput1("Input must be positive, using default 499888 digits")
-				} else if val > 500000 {
-					updateOutput1("Input must be less than 500,001 -- using default of 499888 digits")
+					updateOutput1("Input must be positive, using default 49000 digits")
+				} else if val > 50000 {
+					updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
 				} else {
 					digits = val
 				}
-				go func() {
-					chudnovskyBig(updateOutput1, digits)
-					calculating = false
-					for _, btn := range buttons1 {
-						btn.Enable()
-					}
-				}()
-			})
+		 */
+		
+		
+
+				
+		
 	})
 
 	chudBut = []*ColoredButton{ChudnovskyBtn1} // used as bug fixes 
@@ -248,10 +287,8 @@ func main() {
 
 	// ::: Layout
 	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
-
 		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1,
 			ChudnovskyBtn1),
-
 		scrollContainer1,
 	)
 	// ::: drop-down menus
@@ -259,18 +296,31 @@ func main() {
 		fyne.NewMenuItem("View Log 1", func() { dialog.ShowInformation("Log Files", "Viewing Log 1", window1) }),
 		fyne.NewMenuItem("View Log 2", func() { dialog.ShowInformation("Log Files", "Viewing Log 2", window1) }),
 	)
-	windowsMenu := fyne.NewMenu("Collections",
+	windowsMenu := fyne.NewMenu("Collections/functions",
 		fyne.NewMenuItem("Fast Pi calculators", func() { window1.Show() }),
 		fyne.NewMenuItem("Classic Pi calculators", func() { createWindow2(myApp).Show() }),
 		fyne.NewMenuItem("Odd Pi calculators", func() { createWindow3(myApp).Show() }),
 		fyne.NewMenuItem("Misc Maths", func() { createWindow4(myApp).Show() }),
 	)
-		informationMenu := fyne.NewMenu("Information",
+	informationMenu := fyne.NewMenu("Actions and Information",
 		fyne.NewMenuItem("Help", func() {
 			dialog.ShowInformation("Information", "Help...", window1)
 		}),
-		fyne.NewMenuItem("About", func() {
-			dialog.ShowInformation("Information", "About...", window1)
+		fyne.NewMenuItem("Abort current method", func() {
+			select {
+			case <-done: // Check if already closed
+				updateOutput1("Goroutine1 already terminated\n")
+			case <-done2: // 
+				updateOutput1("Goroutine2 already terminated\n")
+			case <-done3:
+				updateOutput1("Goroutine3 already terminated\n")
+			default:
+				close(done) // Signal termination
+				close(done2)
+				close(done3)
+				updateOutput1("Termination signals sent to all current processes\n")
+			}			
+			// dialog.ShowInformation("Information", "About...", window1)
 		}),
 	)
 	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
