@@ -71,7 +71,7 @@ func main() {
 	
 	// Custom colored ::: Buttons1
 	archimedesBtn1 := NewColoredButton(
-		"modified Archimedes \n-- by Rick Woolley\n 3012 digits of pi in under a minute\n four", color.RGBA{255, 100, 100, 215},
+		"modified Archimedes \n-- by Rick Woolley, and Rick's personal favorite\n 3012 digits of pi in under a minute\n four", color.RGBA{255, 100, 100, 215},
 		func() {
 			if calculating {
 				return
@@ -111,6 +111,7 @@ func main() {
 	)
 	BBPfast44Btn1 := NewColoredButton("BBP super-fast digits, up to 10,000\nIt only takes like 4s to do 10,000 digits of pi\nsays Rick Woolley", color.RGBA{25, 200, 100, 215}, 
 	func() {
+		var BppDigits int 
 		if calculating {
 			return
 		}
@@ -134,7 +135,7 @@ func main() {
 					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled. 
 					return
 				}
-				digits = 190
+				BppDigits = 190
 				val, err := strconv.Atoi(digitsStr)
 				if err != nil {
 					fmt.Println("Error converting input:", err)
@@ -146,10 +147,10 @@ func main() {
 					fmt.Println("here in val > 10000")
 					updateOutput1("Input must be less than 10,001, using default 190 digits")
 				} else {
-					digits = val 
+					BppDigits = val 
 				}
 				go func() {
-					bbpFast44(updateOutput1, digits)
+					bbpFast44(updateOutput1, BppDigits) 
 					calculating = false
 					for _, btn := range buttons1 {
 						btn.Enable()
@@ -159,6 +160,7 @@ func main() {
 	})
 	SpigotBtn1 := NewColoredButton("Spigot (magic)\nInstantly spits out unlimited digits of pi\nsays Rick Woolley", color.RGBA{110, 110, 255, 185},
 		func() {
+			var spigotDigits int 
 			if calculating {
 				return
 			}
@@ -170,7 +172,7 @@ func main() {
 					for _, btn := range buttons1 {
 						btn.Disable()
 					}
-					for _, btn := range BPPbut {
+					for _, btn := range spigotBut {
 						calculating = true // keep it from being restarted in parallel 
 						btn.Enable() // even though the button is enabled 
 					}
@@ -182,7 +184,7 @@ func main() {
 						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled. 
 						return
 					}
-					digits = 160
+					spigotDigits = 160
 					val, err := strconv.Atoi(digitsStr)
 					if err != nil {
 						fmt.Println("Error converting input:", err)
@@ -194,10 +196,10 @@ func main() {
 						fmt.Println("here in val > 10000")
 						updateOutput1("Input must be less than 10,001, using default 160 digits")
 					} else {
-						digits = val
+						spigotDigits = val
 					}
 					go func() {
-						TheSpigot(updateOutput1, digits)
+						TheSpigot(updateOutput1, spigotDigits) // ::: func
 						calculating = false
 						for _, btn := range buttons1 {
 							btn.Enable()
@@ -205,7 +207,9 @@ func main() {
 					}()
 				})
 		})
-	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- 23,000 digits of pi\nin less than 8s", color.RGBA{255, 255, 100, 235}, func() {
+	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- 23,000 digits of pi\nin less than 8s", color.RGBA{255, 255, 100, 235}, 
+	func() {
+		var chudDigits int 
 		if calculating {
 			return
 		}
@@ -232,10 +236,10 @@ func main() {
 					} else if val > 50000 {
 						updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
 					} else {
-						digits = val
+						chudDigits = val
 					}
 					go func() {
-						chudnovskyBig(updateOutput1, digits)
+						chudnovskyBig(updateOutput1, chudDigits) // ::: func
 						calculating = false
 						for _, btn := range buttons1 {
 							btn.Enable()
@@ -278,17 +282,72 @@ func main() {
 				
 		
 	})
+	/*
+	.
+	.
+	 */
+	MontyBtn1 := NewColoredButton("Montycarlo using big floats, and float64-- 4 digits of pi\nin 21s\nRick's second favorite", color.RGBA{255, 255, 100, 235}, 
+	func() {
+		var MontDigits int 
+		if calculating {
+			return
+		}
+		for _, btn := range buttons1 {
+			btn.Disable()
+		}
+		for _, btn := range montBut { // chudBut is an array with only one member
+			calculating = true // keep it from being restarted in parallel
+			btn.Enable() // even though the button is enabled
+		}
+
+		showCustomEntryDialog(
+			"Input Desired number of grid elements",
+			"max 5k; 10,000 will produce 4 pi digits",
+			func(input string) {
+				if input != "" {
+					input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
+					val, err := strconv.Atoi(input)
+					if err != nil {
+						fmt.Println("Error converting input:", err)
+						updateOutput1("Invalid input, using default 10,000 digits")
+					} else if val <= 0 {
+						updateOutput1("Input must be positive, using default 10,000 digits")
+					} else if val > 50000 {
+						updateOutput1("Input must be less than 50,000 -- using default of 10,000 digits")
+					} else {
+						MontDigits = val
+					}
+					go func() {
+						Monty(updateOutput1, MontDigits) // ::: func 
+						calculating = false
+						for _, btn := range buttons1 {
+							btn.Enable()
+						}
+					}()
+				} else {
+					// dialog canceled 
+					updateOutput1("MontyCarlo calculation canceled, make another selection")
+					for _, btn := range buttons1 {
+						btn.Enable()
+					}
+					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled.
+					return
+				}
+			},
+		)
+	})
 
 	chudBut = []*ColoredButton{ChudnovskyBtn1} // used as bug fixes 
 	BPPbut = []*ColoredButton{BBPfast44Btn1}
-	BPPbut = []*ColoredButton{SpigotBtn1}
+	spigotBut = []*ColoredButton{SpigotBtn1}
+	montBut = []*ColoredButton{MontyBtn1}
 	
-	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1, ChudnovskyBtn1} // array used only for range btn.Enable() // will have 7-8
+	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1} // array used only for range btn.Enable() // will have 7-8
 
 	// ::: Layout
 	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
 		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1,
-			ChudnovskyBtn1),
+			ChudnovskyBtn1, MontyBtn1), 
 		scrollContainer1,
 	)
 	// ::: drop-down menus

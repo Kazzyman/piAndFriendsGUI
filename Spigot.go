@@ -149,7 +149,7 @@ func delChar(s string, index int) string {
 	fyneFunc(fmt.Sprintf("\nThe code for this method follows:\n%s\n", codeSnippet))
 
 	fyneFunc(fmt.Sprintf("\nThe forgoing is the entire code for this method.\n\n... from A trick I mooched off of GitHub ...\n\n"))
-	fyneFunc(fmt.Sprintf("Spigot executed with a request for %d digits, and produced:\n\n", digits)) // ::: pi is then printed one char at a time in the loop below
+	fyneFunc(fmt.Sprintf("Spigot executed with a request for %d digits, and produced:\n\n", numberOfDigitsToCalc)) // ::: pi is then printed one char at a time in the loop below
 
 	usingBigFloats = false
 

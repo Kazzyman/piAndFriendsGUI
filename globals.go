@@ -11,11 +11,13 @@ import (
 
 // @formatter:off
 
-var digits int 
+// var digits int 
 var calculating bool
 var outputLabel *widget.Label
 var chudBut []*ColoredButton
+var spigotBut []*ColoredButton
 var BPPbut []*ColoredButton
+var montBut []*ColoredButton
 var buttons1 []*ColoredButton // Change to ColoredButton
 var buttons2 []*ColoredButton // Change to ColoredButton
 var buttons3 []*ColoredButton // Change to ColoredButton

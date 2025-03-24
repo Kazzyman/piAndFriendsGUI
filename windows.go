@@ -183,11 +183,12 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	ChudnovskyBtn2 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
 		getSingleInput2("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 46):", "46",
 			func(digitsStr string, ok bool) {
+				var chudDigits int 
 				if !ok {
 					updateOutput2("chudnovsky calculation canceled")
 					return
 				}
-				digits = 46
+				chudDigits = 46
 				val, err := strconv.Atoi(digitsStr)
 				if err != nil {
 					fmt.Println("Error converting input:", err) // handel error 
@@ -197,10 +198,10 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				} else if val > 10000 {
 					updateOutput2("Input must be less than 10,001, using default 46 digits")
 				} else {
-					digits = val
+					chudDigits = val
 				}
 				go func() {
-					chudnovskyBig(updateOutput2, digits)
+					chudnovskyBig(updateOutput2, chudDigits)
 					calculating = false
 					for _, btn := range buttons2 {
 						btn.Enable()
