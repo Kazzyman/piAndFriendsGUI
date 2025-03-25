@@ -13,6 +13,7 @@ import (
 )
 
 // @formatter:off
+
 var outputLabel1 = widget.NewLabel("\nPress a button to estimate π...\n\n")
 var scrollContainer1 = container.NewVScroll(outputLabel1)
 var myApp = app.New()
@@ -24,50 +25,8 @@ func main() {
 	window1.Resize(fyne.NewSize(1900, 1600))
 	outputLabel1.Wrapping = fyne.TextWrapWord
 	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
-	
-	getSingleInputBpp1 := func(title, prompt, defaultValue string, callback func(string, bool)) {
-		if calculating {
-			return
-		}
-		confirmed := false // Track if OK was clicked
-		d := dialog.NewEntryDialog(title, prompt, func(value string) {
-			confirmed = true
-			callback(value, true)
-		}, window1)
-		d.SetText(defaultValue)
-		d.SetOnClosed(func() {
-			if !confirmed { // Only trigger cancel if OK wasn’t clicked
-				callback("", false)
-			}
-		})
-		d.Show()
-	}
 
-	// identical to the above except in name, i.e., Bpp1 vs Chud1; the latter being "deprecated" by Rick
-	/* Chud now using: showCustomEntryDialog(
-	getSingleInputChud1 := func(title, prompt, defaultValue string, callback func(string, bool)) {
-		if calculating {
-			return
-		}
-		confirmed := false // Track if OK was clicked
-		d := dialog.NewEntryDialog(title, prompt, func(value string) {
-			confirmed = true
-			callback(value, true)
-		}, window1)
-		d.SetText(defaultValue)
-		d.SetOnClosed(func() {
-			if !confirmed { // Only trigger cancel if OK wasn’t clicked
-				callback("", false)
-			}
-		})
-		d.Show()
-	}
-	 */
-
-
-	done := make(chan bool) // kill channel for all goroutines 
-	done2 := make(chan bool) // kill channel for all goroutines 
-	done3 := make(chan bool) // kill channel for all goroutines // ::: remove some of these ??
+	done := make(chan bool) // local, kill channel for all listening goroutines::: only Archimedes, and Wallis fon window1
 	
 	// Custom colored ::: Buttons1
 	archimedesBtn1 := NewColoredButton(
@@ -80,9 +39,14 @@ func main() {
 			for _, btn := range buttons1 {
 				btn.Disable()
 			}
+			// ::: We want to cause the button that corresponds to the currently executing method to remain bright, while the other buttons remain dimmed...
+			for _, btn := range archiBut { // This trick accomplishes that because the archiBut array comes after the creation of archimedesBtn1
+				calculating = true // This keeps archimedesBtn1 from being restarted in parallel with itself...
+				btn.Enable() // ... even though we herewith enable archimedesBtn1  ::: note that simply doing: archimedesBtn1.Enable() would not work...
+			} // ::: ... because, we are inside of the creation of archimedesBtn1 [ it is a timing and scoping issue ]
 			updateOutput1("\nRunning ArchimedesBig...\n\n")
 			go func() {
-				ArchimedesBig(updateOutput1, done) 
+				ArchimedesBig(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -90,6 +54,10 @@ func main() {
 			}()
 		},
 	)
+	/*
+	.
+	.
+	 */
 	JohnWallisBtn1 := NewColoredButton("John Wallis 5m30s -- does 40 billion calculations\n-- by Rick Woolley\n just 10 digits of pi\n four", color.RGBA{110, 110, 255, 185}, 
 			func() {
 			if calculating {
@@ -99,9 +67,13 @@ func main() {
 			for _, btn := range buttons1 {
 				btn.Disable()
 			}
+			for _, btn := range walisBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
 			updateOutput1("\nRunning John Wallis...\n\n")
 			go func() { // made this the goroutine as per your example 
-				JohnWallis(updateOutput1, done) // made this a normal func call, per your example
+				JohnWallis(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -109,124 +81,148 @@ func main() {
 			}()
 		},
 	)
+	/*
+	.
+	.
+	 */
 	BBPfast44Btn1 := NewColoredButton("BBP super-fast digits, up to 10,000\nIt only takes like 4s to do 10,000 digits of pi\nsays Rick Woolley", color.RGBA{25, 200, 100, 215}, 
 	func() {
-		var BppDigits int 
-		if calculating {
-			return
-		}
-		updateOutput1("\nRunning BBP-fast-190 up to here...\n\n") 
-		
-		getSingleInputBpp1("Input Required", "Enter the number of digits for BBP calculation (e.g., 190):", "190", 
-			func(digitsStr string, ok bool) {
-				// calculating = true
-				for _, btn := range buttons1 {
-					btn.Disable()
-				}
-				for _, btn := range BPPbut {
-					calculating = true // keep it from being restarted in parallel 
-					btn.Enable() // even though the button is enabled 
-				}
-				if !ok {
-					updateOutput1("BBP calculation canceled, make another selection")
-					for _, btn := range buttons1 {
-						btn.Enable()
-					}
-					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled. 
-					return
-				}
-				BppDigits = 190
-				val, err := strconv.Atoi(digitsStr)
-				if err != nil {
-					fmt.Println("Error converting input:", err)
-					updateOutput1("Invalid input, using default 190 digits")
-				} else if val <= 0 {
-					fmt.Println("here in val <= 0")
-					updateOutput1("Input must be positive, using default 190 digits")
-				} else if val > 10000 {
-					fmt.Println("here in val > 10000")
-					updateOutput1("Input must be less than 10,001, using default 190 digits")
-				} else {
-					BppDigits = val 
-				}
-				go func() {
-					bbpFast44(updateOutput1, BppDigits) 
-					calculating = false
-					for _, btn := range buttons1 {
-						btn.Enable()
-					}
-				}()
-			})
-	})
-	SpigotBtn1 := NewColoredButton("Spigot (magic)\nInstantly spits out unlimited digits of pi\nsays Rick Woolley", color.RGBA{110, 110, 255, 185},
-		func() {
-			var spigotDigits int 
+		var BppDigits int
 			if calculating {
 				return
 			}
-			updateOutput1("\nRunning The Spigot...\n\n")
-
-			getSingleInputBpp1("Input Required", "Enter the number of digits for Spigot calculation (e.g., 160):", "160",
-				func(digitsStr string, ok bool) {
-					// calculating = true
-					for _, btn := range buttons1 {
-						btn.Disable()
-					}
-					for _, btn := range spigotBut {
-						calculating = true // keep it from being restarted in parallel 
-						btn.Enable() // even though the button is enabled 
-					}
-					if !ok {
-						updateOutput1("Spigot calculation canceled, make another selection")
-						for _, btn := range buttons1 {
-							btn.Enable()
-						}
-						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled. 
-						return
-					}
-					spigotDigits = 160
-					val, err := strconv.Atoi(digitsStr)
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range BPPbut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}			
+		updateOutput1("\nRunning BBP-fast-190 up to here...\n\n")
+			
+		showCustomEntryDialog(
+			"Input Desired number of digits",
+			"Any number less than 190",
+			func(input string) {
+				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+					input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
+					val, err := strconv.Atoi(input)
 					if err != nil {
 						fmt.Println("Error converting input:", err)
-						updateOutput1("Invalid input, using default 160 digits")
+						updateOutput1("Invalid input, using default 190 digits")
 					} else if val <= 0 {
-						fmt.Println("here in val <= 0")
-						updateOutput1("Input must be positive, using default 160 digits")
+						updateOutput1("Input must be positive, using default 190 digits")
 					} else if val > 10000 {
-						fmt.Println("here in val > 10000")
-						updateOutput1("Input must be less than 10,001, using default 160 digits")
+						updateOutput1("Input must be less than 191 -- using default of 190 digits")
 					} else {
-						spigotDigits = val
+						BppDigits = val
 					}
 					go func() {
-						TheSpigot(updateOutput1, spigotDigits) // ::: func
+						bbpFast44(updateOutput1, BppDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 						calculating = false
 						for _, btn := range buttons1 {
 							btn.Enable()
 						}
 					}()
-				})
+				} else {
+					// dialog canceled 
+					updateOutput1("spigot calculation canceled, make another selection")
+					for _, btn := range buttons1 {
+						btn.Enable()
+					}
+					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+					// return // don't think I need this, don't know how it got here ?
+				}
+			},
+		)
+	})
+	/*
+	.
+	.
+	 */
+	SpigotBtn1 := NewColoredButton(
+		"Spigot (magic)\nInstantly spits out unlimited digits of pi\n\nsays Rick Woolley",
+		color.RGBA{110, 110, 255, 185},
+		func() {
+			var spigotDigits int
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range spigotBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
+			updateOutput1("\nRunning The Spigot...\n\n")
+			
+			showCustomEntryDialog(
+				"Input Desired number of digits",
+				"Any number less than 461",
+				func(input string) {
+					if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+						input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
+						val, err := strconv.Atoi(input)
+						if err != nil {
+							fmt.Println("Error converting input:", err)
+							updateOutput1("Invalid input, using default 460 digits")
+						} else if val <= 0 {
+							updateOutput1("Input must be positive, using default 460 digits")
+						} else if val > 460 {
+							updateOutput1("Input must be less than 461 -- using default of 460 digits")
+						} else {
+							spigotDigits = val
+						}
+						go func() {
+							TheSpigot(updateOutput1, spigotDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+							calculating = false
+							for _, btn := range buttons1 {
+								btn.Enable()
+							}
+						}()
+					} else {
+						// dialog canceled 
+						updateOutput1("spigot calculation canceled, make another selection")
+						for _, btn := range buttons1 {
+							btn.Enable()
+						}
+						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+						// return // don't think I need this, don't know how it got here ?
+					}
+				},
+			)
 		})
-	ChudnovskyBtn1 := NewColoredButton("chudnovsky -- 23,000 digits of pi\nin less than 8s", color.RGBA{255, 255, 100, 235}, 
+	/*
+	.
+	.
+	 */
+	ChudnovskyBtn1 := NewColoredButton(
+		"chudnovsky -- 23,000 digits of pi\nin less than 8s",
+		color.RGBA{255, 255, 100, 235}, 
 	func() {
-		var chudDigits int 
-		if calculating {
-			return
-		}
-		for _, btn := range buttons1 {
-			btn.Disable()
-		}
-		for _, btn := range chudBut { // chudBut is an array with only one member
-			calculating = true // keep it from being restarted in parallel
-			btn.Enable() // even though the button is enabled
-		}
+		var chudDigits int
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range chudBut { // chudBut is an array with only one member
+				calculating = true // keep it from being restarted in parallel
+				btn.Enable() // even though the button is enabled
+			}
+		updateOutput1("\nRunning Chudnovsky...\n\n")
 
 		showCustomEntryDialog(
 			"Input Desired number of digits",
 			"Any number less than 49,999",
 			func(input string) {
-				if input != "" {
-					input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
+				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+					input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
 					val, err := strconv.Atoi(input)
 					if err != nil {
 						fmt.Println("Error converting input:", err)
@@ -239,7 +235,7 @@ func main() {
 						chudDigits = val
 					}
 					go func() {
-						chudnovskyBig(updateOutput1, chudDigits) // ::: func
+						chudnovskyBig(updateOutput1, chudDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 						calculating = false
 						for _, btn := range buttons1 {
 							btn.Enable()
@@ -251,98 +247,79 @@ func main() {
 						for _, btn := range buttons1 {
 							btn.Enable()
 						}
-						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled.
-						return
+						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+					// return // don't think I need this, don't know how it got here ?
 				}
 			},
 		)
-		
-		
-		/*
-				getSingleInputChud1("Input Required", "Number of digits desired from the chudnovsky calculation (max 49,000):", "49000",
-			func(digitsStr string, ok bool) {
-				
-				digits = 49000
-				digitsStr = removeCommasAndPeriods(digitsStr) // allow user to enter a number with a comma
-				val, err := strconv.Atoi(digitsStr)
-				if err != nil {
-					fmt.Println("Error converting input:", err)
-					updateOutput1("Invalid input, using default 49,000 digits")
-				} else if val <= 0 {
-					updateOutput1("Input must be positive, using default 49000 digits")
-				} else if val > 50000 {
-					updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
-				} else {
-					digits = val
-				}
-		 */
-		
-		
-
-				
-		
 	})
 	/*
 	.
 	.
 	 */
-	MontyBtn1 := NewColoredButton("Montycarlo using big floats, and float64-- 4 digits of pi\nin 21s\nRick's second favorite", color.RGBA{255, 255, 100, 235}, 
+	MontyBtn1 := NewColoredButton(
+		"Monte Carlo ; using big floats, & float64 \n4 digits of pi in 21s ; 7 digits possible in 1h30m w/ 119k grid\n\n-*-*- Rick's second-favorite method -*-*-",
+		color.RGBA{255, 255, 100, 235}, 
 	func() {
-		var MontDigits int 
-		if calculating {
-			return
-		}
-		for _, btn := range buttons1 {
-			btn.Disable()
-		}
-		for _, btn := range montBut { // chudBut is an array with only one member
-			calculating = true // keep it from being restarted in parallel
-			btn.Enable() // even though the button is enabled
-		}
-
+		var MontDigits string
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range montBut { // montBut is an array with only one member
+				calculating = true // keep it from being restarted in parallel
+				btn.Enable() // even though the button is enabled
+			}
+		updateOutput1("\nRunning Monte Carlo ...\n\n")
+			
 		showCustomEntryDialog(
 			"Input Desired number of grid elements",
-			"max 5k; 10,000 will produce 4 pi digits",
+			"max 120,000; 10,000 will produce 4 pi digits, 110,00 may get you 5 digits",
 			func(input string) {
-				if input != "" {
+				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
 					input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
-					val, err := strconv.Atoi(input)
+					val, err := strconv.Atoi(input) // val is now an int and input is a string
 					if err != nil {
 						fmt.Println("Error converting input:", err)
 						updateOutput1("Invalid input, using default 10,000 digits")
-					} else if val <= 0 {
-						updateOutput1("Input must be positive, using default 10,000 digits")
-					} else if val > 50000 {
-						updateOutput1("Input must be less than 50,000 -- using default of 10,000 digits")
+					} else if val <= 1 {
+						updateOutput1("Input must be greater than 1, using default 10,000 digits")
+					} else if val > 120000 {
+						updateOutput1("Input must be less than 120,001 -- using default of 10,000 digits")
 					} else {
-						MontDigits = val
+						MontDigits = strconv.Itoa(val) // val here is a number, an int to be precise. So, we use strconv.Itoa to convert the int to a string and assign it to MontDigits. 
 					}
-					go func() {
-						Monty(updateOutput1, MontDigits) // ::: func 
-						calculating = false
-						for _, btn := range buttons1 {
-							btn.Enable()
-						}
-					}()
+						go func() {
+							Monty(updateOutput1, MontDigits) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+							calculating = false
+							for _, btn := range buttons1 {
+								btn.Enable()
+							}
+						}()
 				} else {
 					// dialog canceled 
-					updateOutput1("MontyCarlo calculation canceled, make another selection")
+					updateOutput1("Monte Carlo calculation canceled, make another selection")
 					for _, btn := range buttons1 {
 						btn.Enable()
 					}
-					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled.
-					return
+					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+					// return // don't think I need this, don't know how it got here ?
 				}
 			},
 		)
 	})
 
-	chudBut = []*ColoredButton{ChudnovskyBtn1} // used as bug fixes 
-	BPPbut = []*ColoredButton{BBPfast44Btn1}
-	spigotBut = []*ColoredButton{SpigotBtn1}
-	montBut = []*ColoredButton{MontyBtn1}
+	archiBut = []*ColoredButton{archimedesBtn1} // 1
+	walisBut = []*ColoredButton{JohnWallisBtn1} // 1
+	BPPbut = []*ColoredButton{BBPfast44Btn1} // 2
+	spigotBut = []*ColoredButton{SpigotBtn1} // 2
+	chudBut = []*ColoredButton{ChudnovskyBtn1} // 3      used as bug preventions // keep methods from being started or restarted in parallel (over-lapping) 
+	montBut = []*ColoredButton{MontyBtn1} // 3
 	
-	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1} // array used only for range btn.Enable() // will have 7-8
+	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1} // used only for range btn.Enable()
 
 	// ::: Layout
 	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
@@ -369,15 +346,9 @@ func main() {
 			select {
 			case <-done: // Check if already closed
 				updateOutput1("Goroutine1 already terminated\n")
-			case <-done2: // 
-				updateOutput1("Goroutine2 already terminated\n")
-			case <-done3:
-				updateOutput1("Goroutine3 already terminated\n")
 			default:
 				close(done) // Signal termination
-				close(done2)
-				close(done3)
-				updateOutput1("Termination signals sent to all current processes\n")
+				updateOutput1("Termination signals sent to all current processes that may be listening\n")
 			}			
 			// dialog.ShowInformation("Information", "About...", window1)
 		}),

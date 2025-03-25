@@ -14,10 +14,14 @@ import (
 // var digits int 
 var calculating bool
 var outputLabel *widget.Label
+
+var archiBut []*ColoredButton
+var walisBut []*ColoredButton
 var chudBut []*ColoredButton
 var spigotBut []*ColoredButton
 var BPPbut []*ColoredButton
 var montBut []*ColoredButton
+
 var buttons1 []*ColoredButton // Change to ColoredButton
 var buttons2 []*ColoredButton // Change to ColoredButton
 var buttons3 []*ColoredButton // Change to ColoredButton

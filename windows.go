@@ -71,9 +71,9 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	}
 
 	// ::: Buttons2
-	done := make(chan bool) // kill channel for all goroutines 
+	done := make(chan bool) // local, kill channel for all goroutines that are listening: 
 	
-	// Bailey chan -- will go here
+	// ::: Bailey chan -- will go here
 				archimedesBtn2 := NewColoredButton(
 					"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
 					func() {
@@ -134,7 +134,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				} else {
 					precision = val2
 				}
-				go NilakanthaBig(updateOutput2, iters, precision)
+				go NilakanthaBig(updateOutput2, iters, precision) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons2 {
 					btn.Enable()
@@ -152,7 +152,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			}
 			updateOutput2("\nRunning Gregory Leibniz...\n\n")
 			go func() {
-				GregoryLeibniz(updateOutput2)
+				GregoryLeibniz(updateOutput2) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons2 {
 					btn.Enable()
@@ -171,7 +171,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			}
 			updateOutput2("\nRunning Gregory Leibniz...\n\n")
 			go func() {
-				GottfriedWilhelmLeibniz(updateOutput2)
+				GottfriedWilhelmLeibniz(updateOutput2) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons2 {
 					btn.Enable()

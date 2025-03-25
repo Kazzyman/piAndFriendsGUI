@@ -8,6 +8,7 @@ import (
 )
 
 // @formatter:off
+
 func JohnWallis(fyneFunc func(string), done chan bool) { // case 8: // -- AMFJohnWallisA
 
 	codeSnippet := `

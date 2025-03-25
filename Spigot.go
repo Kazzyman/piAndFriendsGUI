@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// @formatter:off
+
 func TheSpigot(fyneFunc func(string), numberOfDigitsToCalc int) {
 	codeSnippet := `
 import (
@@ -237,30 +239,30 @@ func SpigotCalculation(fyneFunc func(string), n int) { // Rick's version does no
 	fyneFunc(fmt.Sprintf("\nFinished.\n%s\n\n", pi))
 
 	// ::: here comes our calculated pi with the decimal inserted; printed from an array that we accumulated for this purpose: 
-	fyneFunc(fmt.Sprintf("\nHere comes our calculated pi with the decimal inserted:\n"))
+	fyneFunc(fmt.Sprintf("\nHere comes our calculated pi with the decimal inserted:\n\nSpigot has ended ... \n\n"))
 	for _, character := range piWithInsertedDecimalPoint { // ok, because I will only execute this from window1
 		fyneFunc(fmt.Sprintf("%s", character))
 	}
 
-	// Rick's code : File prints
-	t := time.Now()
-	elapsed := t.Sub(start)
-	// log stats to a log file
-	fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
-	check(err1)                                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
-	defer fileHandle.Close()                                                                                                // It’s idiomatic to defer a Close immediately after opening a file.
-	Hostname, _ := os.Hostname()
-	_, err0 := fmt.Fprintf(fileHandle, "\n  -- Spigot -- on %s \n", Hostname)
-	check(err0)
-	current_time := time.Now()
-	_, err6 := fmt.Fprint(fileHandle, "was run on: ", current_time.Format(time.ANSIC), "\n")
-	check(err6)
-	TotalRun := elapsed.String() // cast time durations to a String type for Fprintf "formatted print"
-	_, err7 := fmt.Fprintf(fileHandle, "Total run was %s \n", TotalRun)
-	check(err7)
-	_, err8 := fmt.Fprintf(fileHandle, "To calculate Pi to %d digits\n", n)
-	check(err8)
-	// end Rick's code
+	// Rick's code ::: File prints
+		t := time.Now()
+		elapsed := t.Sub(start)
+		// log stats to a log ::: file
+			fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
+			check(err1)                                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
+			defer fileHandle.Close()                                                                                                // It’s idiomatic to defer a Close immediately after opening a file.
+			Hostname, _ := os.Hostname()
+			_, err0 := fmt.Fprintf(fileHandle, "\n  -- Spigot -- on %s \n", Hostname)
+			check(err0)
+			current_time := time.Now()
+			_, err6 := fmt.Fprint(fileHandle, "was run on: ", current_time.Format(time.ANSIC), "\n")
+			check(err6)
+			TotalRun := elapsed.String() // cast time durations to a String type for Fprintf "formatted print"
+			_, err7 := fmt.Fprintf(fileHandle, "Total run was %s \n", TotalRun)
+			check(err7)
+			_, err8 := fmt.Fprintf(fileHandle, "To calculate Pi to %d digits\n", n)
+			check(err8)
+		// end Rick's code
 }
 
 func delChar(s string, index int) string {
