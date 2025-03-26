@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
@@ -12,34 +13,38 @@ import (
 
 // @formatter:off
 
+var bgsc2 = canvas.NewRectangle(color.NRGBA{R: 130, G: 160, B: 250, A: 140}) // Light blue // was: 130, 160, 250, 160
+var bgwc2 = canvas.NewRectangle(color.NRGBA{R: 110, G: 255, B: 160, A: 150}) // Light green
+
 var outputLabel2 = widget.NewLabel("Classic Pi calculators, make a selection")
 var scrollContainer2 = container.NewScroll(outputLabel2)
+var window2 = myApp.NewWindow("Rick's Pi Estimation Demo, set #2")
 
 // Three Additional Windows: 
 // ::: ------------------------------------------------------------------------------------------------------------------------------------------------------------
 func createWindow2(myApp fyne.App) fyne.Window {
-	window2 := myApp.NewWindow("Classic Pi calculators")
 	window2.Resize(fyne.NewSize(1900, 1600))
 	outputLabel2.Wrapping = fyne.TextWrapWord
 	scrollContainer2.SetMinSize(fyne.NewSize(1900, 1050))
 
-		getSingleInput2 := func(title, prompt, defaultValue string, callback func(string, bool)) {
-			confirmed := false // Track if OK was clicked
-			d := dialog.NewEntryDialog(title, prompt, func(value string) {
-				confirmed = true
-				callback(value, true)
-			}, window2)
-			d.SetText(defaultValue)
-			d.SetOnClosed(func() {
-				if !confirmed { // Only trigger cancel if OK wasn’t clicked
-					callback("", false)
-				}
-			})
-			d.Show()
-		}
+	coloredScroll2 := container.NewMax(bgsc2, scrollContainer2) // Light blue-ish scroll bg
 
-	
-	// Dual input dialog
+	// ::: Get single input dialog < - - - - - - - - - - - - - - - - - - - - - - - - < -
+	getSingleInput2 := func(title, prompt, defaultValue string, callback func(string, bool)) {
+		confirmed := false // Track if OK was clicked
+		d := dialog.NewEntryDialog(title, prompt, func(value string) {
+			confirmed = true
+			callback(value, true)
+		}, window2)
+		d.SetText(defaultValue)
+		d.SetOnClosed(func() {
+			if !confirmed { // Only trigger cancel if OK wasn’t clicked
+				callback("", false)
+			}
+		})
+		d.Show()
+	}
+	// ::: Dual input dialog < - - - - - - - - - - - - - - - - - - - - - - - - < -
 	getDualInput2 := func(title, prompt1, prompt2, default1, default2 string, callback func(string, string, bool)) {
 		calculating = true
 		for _, btn := range buttons2 {
@@ -74,35 +79,83 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	done := make(chan bool) // local, kill channel for all goroutines that are listening: 
 	
 	// ::: Bailey chan -- will go here
-				archimedesBtn2 := NewColoredButton(
-					"modified Archimedes \n-- by Rick Woolley\n three\n four", color.RGBA{255, 100, 100, 215},
-					func() {
-						if calculating {
-							return
+	BBPfast44Btn2 := NewColoredButton(
+		"BBP, the Bailey–Borwein–Plouffe formula for π, circa 1995\n" +
+			"FAST -- only runs 4s to produce 10,000 digits of Pi" +
+			"uses channels: GOMAXPROCS(numCPU), and using Go's big floats\n" +
+			"                     --- done here by Rick Woolley ---          ",
+		color.RGBA{25, 200, 100, 215},
+		func() {
+			var BppDigits int
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons2 {
+				btn.Disable()
+			}
+			for _, btn := range BPPbut2 { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
+			updateOutput2("\nRunning BBP-fast-190 up to here...\n\n")
+
+			showCustomEntryDialog2(
+				"Input Desired number of digits",
+				"Any number less than 190",
+				func(input string) {
+					if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+						input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
+						val, err := strconv.Atoi(input)
+						if err != nil {
+							fmt.Println("Error converting input:", err)
+							updateOutput2("Invalid input, using default 190 digits")
+						} else if val <= 0 {
+							updateOutput2("Input must be positive, using default 190 digits")
+						} else if val > 10000 {
+							updateOutput2("Input must be less than 191 -- using default of 190 digits")
+						} else {
+							BppDigits = val
 						}
-						calculating = true
-						for _, btn := range buttons2 {
-							btn.Disable()
-						}
-						updateOutput2("\nRunning ArchimedesBig...\n\n")
 						go func() {
-							ArchimedesBig(updateOutput2, done)
+							bbpFast44(updateOutput2, BppDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
 							for _, btn := range buttons2 {
 								btn.Enable()
 							}
 						}()
-					},
-				)
-
+					} else {
+						// dialog canceled 
+						updateOutput2("spigot calculation canceled, make another selection")
+						for _, btn := range buttons2 {
+							btn.Enable()
+						}
+						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+					}
+				},
+			)
+		})
+	/*
+	.
+	.
+	 */
+	
 	// ::: nila 3 goes here ??
-	NilakanthaBtn2 := NewColoredButton("Nilakantha -- input iterations\noutput up to 26 digits of pi", color.RGBA{255, 255, 100, 235}, func() {
+	NilakanthaBtn2 := NewColoredButton(
+		"Nilakantha -- input iterations\n" +
+		"output up to 26 digits of pi",
+		color.RGBA{255, 255, 100, 235},
+	func() {
 		if calculating {
 			return
 		}
 		calculating = true
 		for _, btn := range buttons2 {
 			btn.Disable()
+		}
+		for _, btn := range nilaBut2 { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+			calculating = true
+			btn.Enable()
 		}
 		getDualInput2("Input Required", "Number of iterations (suggest 300,000 -> 30,000,000  -> 300,000,000):", "Precision (suggest 128):", 
 			"30000000", "128", // 30,000,000
@@ -141,46 +194,21 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				}
 			})
 	})
-	GregLeibnizBtn2 := NewColoredButton("Gregory Leibniz\n-- circa 1676\n quick - 4s, 9 digits of pi\n pi", color.RGBA{100, 255, 100, 215}, // Greenish for variety
-		func() {
-			if calculating {
-				return
-			}
-			calculating = true
-			for _, btn := range buttons2 {
-				btn.Disable()
-			}
-			updateOutput2("\nRunning Gregory Leibniz...\n\n")
-			go func() {
-				GregoryLeibniz(updateOutput2) // ::: probably want to add a done channel to this one
-				calculating = false
-				for _, btn := range buttons2 {
-					btn.Enable()
-				}
-			}()
-		},
-	)
-	GottfriedWilhelmLeibnizBtn2 := NewColoredButton("Gottfried Wilhelm Leibniz -- runs 20sec\ngives 10 digits of pi", color.RGBA{100, 255, 100, 225}, 
-		func() {
-			if calculating {
-				return
-			}
-			calculating = true
-			for _, btn := range buttons2 {
-				btn.Disable()
-			}
-			updateOutput2("\nRunning Gregory Leibniz...\n\n")
-			go func() {
-				GottfriedWilhelmLeibniz(updateOutput2) // ::: probably want to add a done channel to this one
-				calculating = false
-				for _, btn := range buttons2 {
-					btn.Enable()
-				}
-			}()
-		},
-	)
+
 	// ::: temp, Bailey concur goes here
-	ChudnovskyBtn2 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235}, func() {
+	ChudnovskyBtn2 := NewColoredButton("chudnovsky -- takes input", color.RGBA{255, 255, 100, 235},
+	func() {
+		if calculating {
+			return
+		}
+		calculating = true
+		for _, btn := range buttons2 {
+			btn.Disable()
+		}
+		for _, btn := range chudBut2 { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+			calculating = true
+			btn.Enable()
+		}
 		getSingleInput2("Input Required", "Enter the number of digits for the chudnovsky calculation (e.g., 46):", "46",
 			func(digitsStr string, ok bool) {
 				var chudDigits int 
@@ -209,20 +237,22 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				}()
 			})
 	})
-	buttons2 = []*ColoredButton{archimedesBtn2, NilakanthaBtn2, GregLeibnizBtn2, GottfriedWilhelmLeibnizBtn2, ChudnovskyBtn2} // array used only for range btn.Enable()
+
+	BPPbut2 = []*ColoredButton{BBPfast44Btn2}
+	chudBut2 = []*ColoredButton{ChudnovskyBtn2}
+	nilaBut2 = []*ColoredButton{}
+
+	buttons2 = []*ColoredButton{BBPfast44Btn2, NilakanthaBtn2, ChudnovskyBtn2} // array used only for range btn.Enable()
 
 	// ::: Layout
-	content2 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
-
-		container.NewGridWithColumns(4, archimedesBtn2, NilakanthaBtn2, GregLeibnizBtn2, GottfriedWilhelmLeibnizBtn2,
-			ChudnovskyBtn2),
-
-		scrollContainer2, // ::: was and probably should be scrollContainer1 ?????
-	)
-	window2.SetContent(content2)
-	// Main-thread update loop using Fyne's lifecycle
-	window2.Canvas().SetOnTypedRune(func(r rune) {
-		// Dummy handler to keep canvas active
+		content2 := container.NewVBox(
+			widget.NewLabel("\nSelect a method to estimate π:\n"),
+			container.NewGridWithColumns(4, BBPfast44Btn2, NilakanthaBtn2, ChudnovskyBtn2),
+			coloredScroll2, // Use coloredScroll2 directly or windowContent2 if you want an extra layer
+		)
+		windowContent2 := container.NewMax(bgwc2, content2) // Light green window bg
+	
+	window2.Canvas().SetOnTypedRune(func(r rune) { // Main-thread update loop using Fyne's lifecycle
 	})
 
 	// Drop-Down Menus
@@ -250,18 +280,38 @@ func createWindow2(myApp fyne.App) fyne.Window {
 			createWindow4(myApp).Show()
 		}),
 	)
-	informationMenu := fyne.NewMenu("Information",
+	informationMenu := fyne.NewMenu("Actions and Information",
 		fyne.NewMenuItem("Help", func() {
 			dialog.ShowInformation("Information", "Help...", window2)
 		}),
-		fyne.NewMenuItem("About", func() {
-			dialog.ShowInformation("Information", "About...", window2)
+		fyne.NewMenuItem("Abort current method", func() {
+			select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below. 
+			// // Check if the done channel is already closed (chan receive [<-] succeeds on a closed chan and false is returned in the case of chan type bool)
+			case <-done: // chan syntax for receive on chan "done"
+				updateOutput2("\nGoroutines already notified to terminate\n")
+			default: // chan was open but empty, receive has "failed" (nothing to receive: "blocks"), case has "failed" (does not trigger), chan has blocked until a value is sent on the chan; default ensues 
+				close(done) // "else" close the done chan, which will be interpreted as a termination signal by all listening processes
+				// Assume chan initialization as: done := make(chan bool) // understanding that "bools are false upon creation, and chans nil till initialized"
+				updateOutput2("\nTermination signals were sent to all current processes that may be listening\n")
+			}
+			/*
+				operation (<-ch) on a closed channel:
+				    Succeeds immediately (no blocking/waiting).
+				    Returns the zero value of the channel’s type (false for chan bool, 0 for chan int, "" for chan string, etc.).
+				When you try <-ch on an empty, open channel, it doesn’t fail — it blocks. Blocking means the operation pauses (waits) until something is put into the pipe
+				... but in the context of a select, waiting is not succeeding, hence the default case is run.
+			*/
+			/*
+				Switch: Like picking a door based on a number you’re holding — door 1, 2, or 3 opens depending on your number. Your num matches no doors? You get the default door.
+					vs
+				Select: Like waiting at a row of mailboxes for a letter to arrive — you grab the first one you see, or immediately walk away if you see none (default).
+			*/
 		}),
 	)
-	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
-	window2.SetMainMenu(mainMenu)
-	
-	window2.SetContent(content2)
+		mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
+		window2.SetMainMenu(mainMenu)
+
+		window2.SetContent(windowContent2) // Set once with the full layout
 	return window2
 } // end of createWindow2
 

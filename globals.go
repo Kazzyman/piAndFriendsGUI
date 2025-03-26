@@ -18,9 +18,14 @@ var outputLabel *widget.Label
 var archiBut []*ColoredButton
 var walisBut []*ColoredButton
 var chudBut []*ColoredButton
+var chudBut2 []*ColoredButton
 var spigotBut []*ColoredButton
-var BPPbut []*ColoredButton
+var BPPbut2 []*ColoredButton
 var montBut []*ColoredButton
+var gaussBut []*ColoredButton
+var customBut []*ColoredButton
+var gottfieBut []*ColoredButton
+var nilaBut2 []*ColoredButton
 
 var buttons1 []*ColoredButton // Change to ColoredButton
 var buttons2 []*ColoredButton // Change to ColoredButton

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
@@ -14,27 +15,50 @@ import (
 
 // @formatter:off
 
-var outputLabel1 = widget.NewLabel("\nPress a button to estimate π...\n\n")
+// Build objects to set background colors: bgsc for scroll area (light green), bgwc for entire window (light blue), layered via NewMax.
+// Build objects to set background colors for scroll-area1 (bgsc), and the entire window1 (bgwc)
+var bgsc = canvas.NewRectangle(color.NRGBA{R: 150, G: 180, B: 160, A: 240}) // Light green
+var bgwc = canvas.NewRectangle(color.NRGBA{R: 110, G: 160, B: 255, A: 150}) // Light blue, lower number for A: means less opaque, or more transparent
+
+// Create scrollContainer1 to display outputLabel1 with initial user prompt.
+// Build/define scrollContainer1 as containing outputLabel1 with its initial greeting message
+var outputLabel1 = widget.NewLabel("\nSelect one of the brightly-colored panels to estimate π via featured method...\n\n")
 var scrollContainer1 = container.NewVScroll(outputLabel1)
+
+// Create app and window1 which is an extension of myApp
+// Initialize the Fyne app (myApp) and create window1 as its main window. Technically not a case of "extension"
 var myApp = app.New()
-var window1 = myApp.NewWindow("Pi Estimation Demo")
+var window1 = myApp.NewWindow("Rick's Pi Estimation Demo, set #1")
 
 func main() {
-	calculating = false
-	myApp.Settings().SetTheme(theme.LightTheme())
+	calculating = false // set the global the-coast-is-clear flag
+	myApp.Settings().SetTheme(theme.LightTheme()) // establish a Theme that will work well with dialog boxes
 	window1.Resize(fyne.NewSize(1900, 1600))
-	outputLabel1.Wrapping = fyne.TextWrapWord
-	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
-
-	done := make(chan bool) // local, kill channel for all listening goroutines::: only Archimedes, and Wallis fon window1
 	
-	// Custom colored ::: Buttons1
+	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap 
+	
+	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
+	
+	coloredScroll := container.NewMax(bgsc, scrollContainer1) // Combine background and scroll, Layer light green background behind scroll content.
+	
+	windowContent := container.NewMax(bgwc, coloredScroll) // Layer the background and content; Layer light blue background across the entire window content.
+
+	done := make(chan bool) // local, channel for all listening goroutines; sends termination signal ::: only Archimedes, and Wallis for window1
+/*
+.
+.
+ */
+	// Custom colored ::: Buttons1 - - - - - - - - - follow - - - - - - - - - - - v v v v v v v v v - - - - - - 
+	/*
+	.
+	.
+	 */
 	archimedesBtn1 := NewColoredButton(
-		"Archimedes method for finding π, modified by Richard Woolley\n" +
-			"a purely geometric method which is easy to understand\n" +
-			"produces 3,012 digits of delicious Pi in under a minute\n" +
-			"             -*-*-*- Rick's personal favorite -*-*-*-          ",
-			color.RGBA{255, 100, 100, 215},
+	"Archimedes method for finding π, modified by Richard Woolley\n" +
+		"a purely geometric method which is easy to understand\n" +
+		"produces 3,012 digits of delicious Pi in under a minute\n" +
+		"             -*-*-*- Rick's personal favorite -*-*-*-          ",
+		color.RGBA{255, 110, 110, 215},
 		func() {
 			if calculating {
 				return
@@ -63,11 +87,12 @@ func main() {
 	.
 	 */
 	JohnWallisBtn1 := NewColoredButton(
-		"John Wallis infinite series -- 40 billion iterations -- runs 5m30s\n" +
+	"John Wallis infinite series -- 40 billion iterations -- runs 5m30s\n" +
 		"π = 2 * ((2/1)*(2/3)) * ((4/3)*(4/5)) * ((6/5)*(6/7)) ...\n" +
 		"only manages to do 10 digits of Pi in well-over five minutes\n" +
-		"an infinite series circa 1655    --- served here by Rick Woolley ---",		color.RGBA{110, 110, 255, 185}, 
-			func() {
+		"an infinite series circa 1655    --- served here by Rick Woolley ---",
+		color.RGBA{110, 110, 255, 185}, 
+		func() {
 			if calculating {
 				return
 			}
@@ -93,73 +118,12 @@ func main() {
 	.
 	.
 	 */
-	BBPfast44Btn1 := NewColoredButton(
-		"BBP, the Bailey–Borwein–Plouffe formula for π, circa 1995\n" +
-			"FAST -- only runs 4s to produce 10,000 digits of Pi" +
-			"uses channels: GOMAXPROCS(numCPU), and using Go's big floats\n" +
-			"                     --- done here by Rick Woolley ---          ",
-			color.RGBA{25, 200, 100, 215}, 
-	func() {
-		var BppDigits int
-			if calculating {
-				return
-			}
-			calculating = true
-			for _, btn := range buttons1 {
-				btn.Disable()
-			}
-			for _, btn := range BPPbut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
-				calculating = true
-				btn.Enable()
-			}			
-		updateOutput1("\nRunning BBP-fast-190 up to here...\n\n")
-			
-		showCustomEntryDialog(
-			"Input Desired number of digits",
-			"Any number less than 190",
-			func(input string) {
-				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
-					input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
-					val, err := strconv.Atoi(input)
-					if err != nil {
-						fmt.Println("Error converting input:", err)
-						updateOutput1("Invalid input, using default 190 digits")
-					} else if val <= 0 {
-						updateOutput1("Input must be positive, using default 190 digits")
-					} else if val > 10000 {
-						updateOutput1("Input must be less than 191 -- using default of 190 digits")
-					} else {
-						BppDigits = val
-					}
-					go func() {
-						bbpFast44(updateOutput1, BppDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
-						calculating = false
-						for _, btn := range buttons1 {
-							btn.Enable()
-						}
-					}()
-				} else {
-					// dialog canceled 
-					updateOutput1("spigot calculation canceled, make another selection")
-					for _, btn := range buttons1 {
-						btn.Enable()
-					}
-					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
-					// return // don't think I need this, don't know how it got here ?
-				}
-			},
-		)
-	})
-	/*
-	.
-	.
-	 */
 	SpigotBtn1 := NewColoredButton(
-		"The Spigot Algorithm, a Leibniz series. Served hot, bite by byte\n" +
-			"spits out a nearly-unlimited, continuous stream of Pi goodness\n" +
-			"This trick made possible by a bit of code mooched off of GitHub\n" +
-			"bakes π without using any floating-point arithmetic",
-		color.RGBA{110, 110, 255, 185},
+	"The Spigot Algorithm, a Leibniz series. Served hot, bite by byte\n" +
+		"spits out a nearly-unlimited, continuous stream of Pi goodness\n" +
+		"This trick made possible by a bit of code mooched off of GitHub\n" +
+		"bakes π without using any floating-point arithmetic",
+		color.RGBA{255, 255, 100, 235},
 		func() {
 			var spigotDigits int
 			if calculating {
@@ -206,149 +170,249 @@ func main() {
 							btn.Enable()
 						}
 						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
-						// return // don't think I need this, don't know how it got here ?
 					}
 				},
 			)
-		})
+		}, 
+	)
 	/*
 	.
 	.
 	pi = \frac{1}{12} \left[ \sum_{n=0}^{\infty} \frac{(-1)^n (6n)! (13591409 + 545140134n)}{(3n)! (n!)^3 (640320^{3n + 3/2})} \right]^{-1}      */ 
 	ChudnovskyBtn1 := NewColoredButton(
-		"Chudnovsky -- by David & Gregory Chudnovsky -- late 1980s\n" +
-			"extremely efficient, quickly bakes world-record quantities of Pi\n" +
-			"this algorithm is a rapidly converging infinite series which\n" +
-			"leverages properties of j-invariant from elliptic function theory",
-		color.RGBA{255, 255, 100, 235}, 
-	func() {
-		// 
-		var chudDigits int
-			if calculating {
-				return
-			}
-			calculating = true
-			for _, btn := range buttons1 {
-				btn.Disable()
-			}
-			for _, btn := range chudBut { // chudBut is an array with only one member
-				calculating = true // keep it from being restarted in parallel
-				btn.Enable() // even though the button is enabled
-			}
-		updateOutput1("\nRunning Chudnovsky...\n\n")
-
-		showCustomEntryDialog(
-			"Input Desired number of digits",
-			"Any number less than 49,999",
-			func(input string) {
-				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
-					input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
-					val, err := strconv.Atoi(input)
-					if err != nil {
-						fmt.Println("Error converting input:", err)
-						updateOutput1("Invalid input, using default 49,000 digits")
-					} else if val <= 0 {
-						updateOutput1("Input must be positive, using default 49000 digits")
-					} else if val > 50000 {
-						updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
-					} else {
-						chudDigits = val
-					}
-					go func() {
-						chudnovskyBig(updateOutput1, chudDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
-						calculating = false
-						for _, btn := range buttons1 {
-							btn.Enable()
-						}
-					}()
-				} else {
-					// dialog canceled 
-						updateOutput1("chudnovsky calculation canceled, make another selection")
-						for _, btn := range buttons1 {
-							btn.Enable()
-						}
-						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
-					// return // don't think I need this, don't know how it got here ?
+	"Chudnovsky -- by David & Gregory Chudnovsky -- late 1980s\n" +
+		"extremely efficient, quickly bakes world-record quantities of Pi\n" +
+		"this algorithm is a rapidly converging infinite series which\n" +
+		"leverages properties of j-invariant from elliptic function theory",
+		color.RGBA{100, 255, 100, 215}, 
+		func() {
+			// 
+			var chudDigits int
+				if calculating {
+					return
 				}
-			},
-		)
-	})
-	/*
-	.
-	.
-	 */
-	MontyBtn1 := NewColoredButton(
-		"Monte Carlo method for converging on π  --  big floats, & float64\n" +
-			"Flavor: no fancy equations are used, only Go's pure randomness\n" +
-			"4 digits of pi in 21s ; 7 digits possible in 1h30m w/ 119k grid\n" +
-			"                   -*-*- Rick's second-favorite method -*-*-     ",
-		color.RGBA{255, 255, 100, 235}, 
-	func() {
-		var MontDigits string
-			if calculating {
-				return
-			}
-			calculating = true
-			for _, btn := range buttons1 {
-				btn.Disable()
-			}
-			for _, btn := range montBut { // montBut is an array with only one member
-				calculating = true // keep it from being restarted in parallel
-				btn.Enable() // even though the button is enabled
-			}
-		updateOutput1("\nRunning Monte Carlo ...\n\n")
-			
-		showCustomEntryDialog(
-			"Input Desired number of grid elements",
-			"max 120,000; 10,000 will produce 4 pi digits, 110,00 may get you 5 digits",
-			func(input string) {
-				if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
-					input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
-					val, err := strconv.Atoi(input) // val is now an int and input is a string
-					if err != nil {
-						fmt.Println("Error converting input:", err)
-						updateOutput1("Invalid input, using default 10,000 digits")
-					} else if val <= 1 {
-						updateOutput1("Input must be greater than 1, using default 10,000 digits")
-					} else if val > 120000 {
-						updateOutput1("Input must be less than 120,001 -- using default of 10,000 digits")
-					} else {
-						MontDigits = strconv.Itoa(val) // val here is a number, an int to be precise. So, we use strconv.Itoa to convert the int to a string and assign it to MontDigits. 
-					}
+				calculating = true
+				for _, btn := range buttons1 {
+					btn.Disable()
+				}
+				for _, btn := range chudBut { 
+					calculating = true 
+					btn.Enable() 
+				}
+			updateOutput1("\nRunning Chudnovsky...\n\n")
+	
+			showCustomEntryDialog(
+				"Input Desired number of digits",
+				"Any number less than 49,999",
+				func(input string) {
+					if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+						input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
+						val, err := strconv.Atoi(input)
+						if err != nil {
+							fmt.Println("Error converting input:", err)
+							updateOutput1("Invalid input, using default 49,000 digits")
+						} else if val <= 0 {
+							updateOutput1("Input must be positive, using default 49000 digits")
+						} else if val > 50000 {
+							updateOutput1("Input must be less than 50,000 -- using default of 49,000 digits")
+						} else {
+							chudDigits = val
+						}
 						go func() {
-							Monty(updateOutput1, MontDigits) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+							chudnovskyBig(updateOutput1, chudDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
 							for _, btn := range buttons1 {
 								btn.Enable()
 							}
 						}()
-				} else {
-					// dialog canceled 
-					updateOutput1("Monte Carlo calculation canceled, make another selection")
-					for _, btn := range buttons1 {
-						btn.Enable()
+					} else {
+						// dialog canceled 
+							updateOutput1("chudnovsky calculation canceled, make another selection")
+							for _, btn := range buttons1 {
+								btn.Enable()
+							}
+							calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
 					}
-					calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
-					// return // don't think I need this, don't know how it got here ?
+				},
+			)
+		},
+	)
+	/*
+	.
+	.
+	 */
+	MontyBtn1 := NewColoredButton(
+	"Monte Carlo method for converging on π  --  big floats, & float64\n" +
+		"Flavor: no fancy equations are used, only Go's pure randomness\n" +
+		"4 digits of pi in 21s ; 7 digits possible in 1h30m w/ 119k grid\n" +
+		"                   -*-*- Rick's second-favorite method -*-*-     ",
+		color.RGBA{255, 255, 100, 235},
+		func() {
+			var MontDigits string
+				if calculating {
+					return
 				}
-			},
-		)
-	})
-
-	archiBut = []*ColoredButton{archimedesBtn1} // 1
-	walisBut = []*ColoredButton{JohnWallisBtn1} // 1
-	BPPbut = []*ColoredButton{BBPfast44Btn1} // 2
-	spigotBut = []*ColoredButton{SpigotBtn1} // 2
-	chudBut = []*ColoredButton{ChudnovskyBtn1} // 3      used as bug preventions // keep methods from being started or restarted in parallel (over-lapping) 
-	montBut = []*ColoredButton{MontyBtn1} // 3
+				calculating = true
+				for _, btn := range buttons1 {
+					btn.Disable()
+				}
+				for _, btn := range montBut { 
+					calculating = true 
+					btn.Enable() 
+				}
+			updateOutput1("\nRunning Monte Carlo ...\n\n")
+				
+			showCustomEntryDialog(
+				"Input Desired number of grid elements",
+				"max 120,000; 10,000 will produce 4 pi digits, 110,00 may get you 5 digits",
+				func(input string) {
+					if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
+						input = removeCommasAndPeriods(input) // ::: allow user to enter a number with a comma
+						val, err := strconv.Atoi(input) // val is now an int and input is a string
+						if err != nil {
+							fmt.Println("Error converting input:", err)
+							updateOutput1("Invalid input, using default 10,000 digits")
+						} else if val <= 1 {
+							updateOutput1("Input must be greater than 1, using default 10,000 digits")
+						} else if val > 120000 {
+							updateOutput1("Input must be less than 120,001 -- using default of 10,000 digits")
+						} else {
+							MontDigits = strconv.Itoa(val) // val here is a number, an int to be precise. So, we use strconv.Itoa to convert the int to a string and assign it to MontDigits. 
+						}
+							go func() {
+								Monty(updateOutput1, MontDigits) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+								calculating = false
+								for _, btn := range buttons1 {
+									btn.Enable()
+								}
+							}()
+					} else {
+						// dialog canceled 
+						updateOutput1("Monte Carlo calculation canceled, make another selection")
+						for _, btn := range buttons1 {
+							btn.Enable()
+						}
+						calculating = false // ::: this is the trick to allow others to run after the dialog is canceled/dismissed.
+					}
+				},
+			)
+		},
+	)
+	/*
+	.
+	.
+	 */
+	GaussBtn1 := NewColoredButton(
+	"Gauss_Legendre\n" +
+		"π = 2 * ((2/1)*(2/3)) * ((4/3)*(4/5)) * ((6/5)*(6/7)) ...\n" +
+		"only manages to do 10 digits of Pi in well-over five minutes\n" +
+		"an infinite series circa 1655    --- served here by Rick Woolley ---",
+		color.RGBA{100, 255, 100, 215},
+		func() {
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range gaussBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
+			updateOutput1("\nRunning Gauss...\n\n")
+			go func() { // made this the goroutine as per your example 
+				Gauss_Legendre(updateOutput1) // ::: func < - - - - - - - - - - - - - < -
+				calculating = false
+				for _, btn := range buttons1 {
+					btn.Enable()
+				}
+			}()
+		},
+	)
+	/*
+	.
+	.
+	 */
+	CustomSeriesBtn1 := NewColoredButton(
+	"Custom Series Unsure where it is from\n" +
+		"but it is very quick -- 4s gets us 9 digits of Pi\n" +
+		"π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...",
+		color.RGBA{255, 120, 120, 215}, // Greenish for variety
+		func() {
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range customBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
+			updateOutput2("\nRunning Custom Series ...\n\n")
+			go func() {
+				CustomSeries(updateOutput1) // ::: probably want to add a done channel to this one
+				calculating = false
+				for _, btn := range buttons1 {
+					btn.Enable()
+				}
+			}()
+		},
+	)
+	/*
+	.
+	.
+	 */
+	GregoryLeibnizBtn1 := NewColoredButton(
+	"Gregory-Leibniz -- runs 20sec -- gives 10 digits of Pi\n" +
+		"James Gregory (1638–1675),  Leibniz: (1646-1716)\n" +
+		"π = 4 * ( 1 - 1/3 + 1/5 - 1/7 + 1/9 ...) ",
+		color.RGBA{110, 110, 255, 185},
+		func() {
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range gottfieBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
+				calculating = true
+				btn.Enable()
+			}
+			updateOutput2("\nRunning Gregory-Leibniz...\n\n")
+			go func() {
+				GregoryLeibniz(updateOutput1) // ::: probably want to add a done channel to this one
+				calculating = false
+				for _, btn := range buttons1 {
+					btn.Enable()
+				}
+			}()
+		},
+	)
+	/*
+	.
+	.
+	 */
 	
-	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1} // used only for range btn.Enable()
+	archiBut = []*ColoredButton{archimedesBtn1} // all these are a trick/kluge used as bug preventions // keep methods from being started or restarted in parallel (over-lapping) 
+	walisBut = []*ColoredButton{JohnWallisBtn1} 
+	spigotBut = []*ColoredButton{SpigotBtn1} 
+	chudBut = []*ColoredButton{ChudnovskyBtn1} 
+	montBut = []*ColoredButton{MontyBtn1} 
+	gaussBut = []*ColoredButton{GaussBtn1}
+	customBut = []*ColoredButton{CustomSeriesBtn1}
+	gottfieBut = []*ColoredButton{GregoryLeibnizBtn1}
+	
+	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,} // used only for range btn.Enable()
 
 	// ::: Layout
 	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
-		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, BBPfast44Btn1, SpigotBtn1,
-			ChudnovskyBtn1, MontyBtn1), 
-		scrollContainer1,
+		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, SpigotBtn1,
+			ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,),
+		windowContent,
 	)
 	
 	// ::: drop-down menus
@@ -392,7 +456,12 @@ func main() {
 	)
 	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
 	window1.SetMainMenu(mainMenu)
+
+	// Apply window background to the entire content
+	windowWithBackground := container.NewMax(bgwc, content1)
+
+	window1.SetContent(windowWithBackground)
 	
-	window1.SetContent(content1) 
+	// window1.SetContent(content1) 
 	window1.ShowAndRun()
 }

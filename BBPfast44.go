@@ -178,7 +178,7 @@ func bbpFast44(fyneFunc func(string), digits int) { // case 42: // -- AMFbbp_for
 
 	// ::: Prepare to exit the BBP fast 44 method functions
 	calculating = false            // Allow another method to be selected.
-	for _, btn := range buttons1 { // ok to only Enable buttons1, because I expect to only ever execute this from window1
+	for _, btn := range buttons2 { // ok to only Enable buttons1, because I expect to only ever execute this from window2
 		btn.Enable() // ::: Enable
 	}
 }

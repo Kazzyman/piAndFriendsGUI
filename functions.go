@@ -254,3 +254,28 @@ func showCustomEntryDialog(title, message string, callback func(string)) {
 
 	d.Show()
 }
+func showCustomEntryDialog2(title, message string, callback func(string)) {
+	// Create an Entry widget
+	entry := widget.NewEntry()
+	entry.SetPlaceHolder("e.g. 23,000")
+
+	// Set the size to fit ~7 characters (100 units is a safe estimate)
+	entry.Resize(fyne.NewSize(70, entry.MinSize().Height)) // Use Resize instead of MinSize assignment
+
+	// Create content with label and entry
+	content := container.New(
+		layout.NewVBoxLayout(),
+		widget.NewLabel(message),
+		entry,
+	)
+
+	// Create custom dialog with OK button (Cancel is implicit)
+	d := dialog.NewCustom(title, "OK", content, window2)
+
+	// Handle user input when dialog closes
+	d.SetOnClosed(func() {
+		callback(entry.Text) // Pass the entry text (empty if canceled)
+	})
+
+	d.Show()
+}
