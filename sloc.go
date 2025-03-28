@@ -16,48 +16,48 @@ func countAndLogSLOC() { // ::: - -
 
 	numberOfFilesExplored := 0
 
-	filenameOfThisFile1 := "/Users/quasar/groksDemoGUIcolors/main.go"
+	filenameOfThisFile1 := "/Users/quasar/piAndFriendsGUI/main.go"
 	blankLines1, singleComments1, commentBlock11, commentBlock21, commentBlock31, runes11, runes21, runes31, totalLines1, nonEmptyLines1 := reportSLOCstats(filenameOfThisFile1)
 	numberOfFilesExplored++
-	filenameOfThisFile2 := "/Users/quasar/groksDemoGUIcolors/constants.go"
+	filenameOfThisFile2 := "/Users/quasar/piAndFriendsGUI/constants.go"
 	blankLines2, singleComments2, commentBlock12, commentBlock22, commentBlock32, runes12, runes22, runes32, totalLines2, nonEmptyLines2 := reportSLOCstats(filenameOfThisFile2)
 	numberOfFilesExplored++
-	filenameOfThisFile5 := "/Users/quasar/groksDemoGUIcolors/sloc.go"
+	filenameOfThisFile5 := "/Users/quasar/piAndFriendsGUI/sloc.go"
 	blankLines5, singleComments5, commentBlock15, commentBlock25, commentBlock35, runes15, runes25, runes35, totalLines5, nonEmptyLines5 := reportSLOCstats(filenameOfThisFile5)
 	numberOfFilesExplored++
-	filenameOfThisFile6 := "/Users/quasar/groksDemoGUIcolors/functions.go"
+	filenameOfThisFile6 := "/Users/quasar/piAndFriendsGUI/functions.go"
 	blankLines6, singleComments6, commentBlock16, commentBlock26, commentBlock36, runes16, runes26, runes36, totalLines6, nonEmptyLines6 := reportSLOCstats(filenameOfThisFile6)
 	numberOfFilesExplored++
-	filenameOfThisFile7 := "/Users/quasar/groksDemoGUIcolors/globals.go"
+	filenameOfThisFile7 := "/Users/quasar/piAndFriendsGUI/globals.go"
 	blankLines7, singleComments7, commentBlock17, commentBlock27, commentBlock37, runes17, runes27, runes37, totalLines7, nonEmptyLines7 := reportSLOCstats(filenameOfThisFile7)
 	numberOfFilesExplored++
-	filenameOfThisFile8 := "/Users/quasar/groksDemoGUIcolors/achemedies.go"
+	filenameOfThisFile8 := "/Users/quasar/piAndFriendsGUI/Archimedes.go"
 	blankLines8, singleComments8, commentBlock18, commentBlock28, commentBlock38, runes18, runes28, runes38, totalLines8, nonEmptyLines8 := reportSLOCstats(filenameOfThisFile8)
 	numberOfFilesExplored++
-	filenameOfThisFile9 := "/Users/quasar/groksDemoGUIcolors/Chud.go"
+	filenameOfThisFile9 := "/Users/quasar/piAndFriendsGUI/Chud.go"
 	blankLines9, singleComments9, commentBlock19, commentBlock29, commentBlock39, runes19, runes29, runes39, totalLines9, nonEmptyLines9 := reportSLOCstats(filenameOfThisFile9)
 	numberOfFilesExplored++
-	filenameOfThisFile10 := "/Users/quasar/groksDemoGUIcolors/coloredButton.go"
+	filenameOfThisFile10 := "/Users/quasar/piAndFriendsGUI/coloredButton.go"
 	blankLines10, singleComments10, commentBlock110, commentBlock210, commentBlock310, runes110, runes210, runes310, totalLines10, nonEmptyLines10 := reportSLOCstats(filenameOfThisFile10)
 	numberOfFilesExplored++
-	filenameOfThisFile11 := "/Users/quasar/groksDemoGUIcolors/go.mod"
+	filenameOfThisFile11 := "/Users/quasar/piAndFriendsGUI/go.mod"
 	blankLines11, singleComments11, commentBlock111, commentBlock211, commentBlock311, runes111, runes211, runes311, totalLines11, nonEmptyLines11 := reportSLOCstats(filenameOfThisFile11)
 	numberOfFilesExplored++
-	filenameOfThisFile14 := "/Users/quasar/groksDemoGUIcolors/gottfriedWilhelmLeibniz.go"
+	filenameOfThisFile14 := "/Users/quasar/piAndFriendsGUI/GregoryLiebniz.go"
 	blankLines14, singleComments14, commentBlock114, commentBlock214, commentBlock314, runes114, runes214, runes314, totalLines14, nonEmptyLines14 := reportSLOCstats(filenameOfThisFile14)
 	numberOfFilesExplored++
-	filenameOfThisFile15 := "/Users/quasar/groksDemoGUIcolors/gregoryLeibniz.go"
+	filenameOfThisFile15 := "/Users/quasar/piAndFriendsGUI/CustomSeries.go"
 	blankLines15, singleComments15, commentBlock115, commentBlock215, commentBlock315, runes115, runes215, runes315, totalLines15, nonEmptyLines15 := reportSLOCstats(filenameOfThisFile15)
 	numberOfFilesExplored++
-	filenameOfThisFile16 := "/Users/quasar/groksDemoGUIcolors/nilakantha.go"
+	filenameOfThisFile16 := "/Users/quasar/piAndFriendsGUI/nilakantha.go"
 	blankLines, singleComments, commentBlock01, commentBlock02, commentBlock03, runes01, runes02, runes03, totalLines16, nonEmptyLines16 := reportSLOCstats(filenameOfThisFile16)
 	numberOfFilesExplored++
 
-	filenameOfThisFile17 := "/Users/quasar/groksDemoGUIcolors/emptyFile.no" // ::: new file here ?
+	filenameOfThisFile17 := "/Users/quasar/piAndFriendsGUI/emptyFile.no" // ::: new file here ?
 	blankLines91, singleComments91, commentBlock104, commentBlock205, commentBlock206, runes104, runes205, runes306, totalLines17, nonEmptyLines17 := reportSLOCstats(filenameOfThisFile17)
 	numberOfFilesExplored++
 
-	filenameOfThisFile18 := "/Users/quasar/groksDemoGUIcolors/windows.go"
+	filenameOfThisFile18 := "/Users/quasar/piAndFriendsGUI/windows.go"
 	blankLines91x, singleComments91x, commentBlock104x, commentBlock205x, commentBlock206x, runes104x, runes205x, runes306x, totalLines17x, nonEmptyLines17x := reportSLOCstats(filenameOfThisFile18)
 	numberOfFilesExplored++
 

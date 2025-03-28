@@ -24,7 +24,7 @@ import (
 
 // This will be a little-bit tricky. We want to use callbacks etc. so that we can use the smoother-scrolling fyneFunc(fmt.Sprintf("")) way of doing prints ... 
 // ... but this chudnovsky section is a cascade of functions: chudnovskyBig()-->calcPi()-->finishChudIfsAndPrint() 
-func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
+func chudnovskyBig(fyneFunc func(string), digits int, done chan bool) { // ::: - -
 
 	// fyneFunc(fmt.Sprintf("\nThe forgoing is the entire code for this method.\n\n"))
 
@@ -37,7 +37,7 @@ func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
 	pi := new(big.Float)
 
 	// ::: calcPi  <---- runs from here: v v v v v v v  
-	loops, pi, start = calcPi(fyneFunc, float64(digits), start)
+	loops, pi, start = calcPi(fyneFunc, float64(digits), start, done)
 	// ::: calcPi ----- ^ ^ ^ 
 
 	/*
@@ -92,7 +92,7 @@ func chudnovskyBig(fyneFunc func(string), digits int) { // ::: - -
 .
  */
 // calculate Pi for n number of digits
-func calcPi(fyneFunc func(string), digits float64, start time.Time) (int, *big.Float, time.Time) {
+func calcPi(fyneFunc func(string), digits float64, start time.Time, done chan bool) (int, *big.Float, time.Time) {
 	// ::: fyneFunc will be the proper one to match the calling window[1-4] therefore prints will go where they should 
 runeToPrint := `
 	/**
@@ -153,6 +153,13 @@ runeToPrint := `
 
 
 	for ; n > 0; n-- {
+		select {
+		case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+			// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+			// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+			fmt.Println("Goroutine chud-func-calcPi for-loop (1 of 1) is being terminated by select case finding the done channel to be already closed")
+			return i, pi, start // Exit the goroutine
+		default:
 		i++
 
 		// L calculation
@@ -292,6 +299,7 @@ runeToPrint := `
 		//  was run on: Sun May  7 08:50:23 2023
 		//  Total run was 8h4m39.7847064s
 		// AND THE CALCULATION WAS INDEPENDANTLY VERIFIED !!!!!!!!!!!
+		} // end of select
 	} // end of for loop way up thar :: it prompts periodically to continue or die
 
 	// ::: we are out of the loop, so we do the following just once:

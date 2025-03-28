@@ -10,14 +10,22 @@ import (
 
 // @formatter:off
 
-func Monty(fyneFunc func(string), gridSizeAsString string) {
+func Monty(fyneFunc func(string), gridSizeAsString string, done chan bool) {
 	// Produce an alternate string suitable for printing, with commas every three digits from the right
 		withCommas := ""
 		for i, char := range gridSizeAsString {
+			select {
+			case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+				// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+				// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+				fmt.Println("Goroutine Monty for-loop (1 of 2) is being terminated by select case finding the done channel to be already closed")
+				return // Exit the goroutine
+			default:
 			if i > 0 && (len(gridSizeAsString)-i)%3 == 0 {
 				withCommas += ","
 			}
 			withCommas += string(char)
+			}
 		}
 		// ::: screen
 		fyneFunc(fmt.Sprintf("\n\nSize of the grid has been set to: %s\n", withCommas))
@@ -59,7 +67,7 @@ func Monty(fyneFunc func(string), gridSizeAsString string) {
 			return
 		}
 		
-	piApprox := GridPi(fyneFunc, gridSize) // ::: run GridPi < - - - - - - - - - - < -
+	piApprox := GridPi(fyneFunc, gridSize, done) // ::: run GridPi < - - - - - - - - - - < -
 
 		// ::: screen
 		fyneFunc(fmt.Sprintf("\nSize of the grid was set at: %s\n", withCommas))
@@ -76,13 +84,20 @@ func Monty(fyneFunc func(string), gridSizeAsString string) {
 /*
 .
  */
-func GridPi(fyneFunc func(string), gridSize int) *big.Float {
+func GridPi(fyneFunc func(string), gridSize int, done chan bool) *big.Float {
 	start := time.Now()
 		insideCircle := big.NewInt(0)
 		totalPoints := big.NewInt(int64(gridSize * gridSize))
 		increment := big.NewFloat(1.0 / float64(gridSize)).SetPrec(256)
 		halfIncrement := new(big.Float).Quo(increment, big.NewFloat(2.0)).SetPrec(256)
 	for i := 0; i < gridSize; i++ {
+		select {
+		case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+			// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+			// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+			fmt.Println("Goroutine Monty for-loop (2 of 2) is being terminated by select case finding the done channel to be already closed")
+			return increment // Exit the goroutine ::: We had to return some kind of a big float ... 
+		default:
 		for j := 0; j < gridSize; j++ {
 			// ::: x = (i * increment) + halfIncrement
 				x := new(big.Float).SetPrec(256)
@@ -101,6 +116,7 @@ func GridPi(fyneFunc func(string), gridSize int) *big.Float {
 			iterationsForMonte16j = j
 		}
 		iterationsForMonte16i = i
+		}
 	}
 	iterationsForMonteTotal = iterationsForMonte16j * iterationsForMonte16i
 		four := big.NewFloat(4.0).SetPrec(256)

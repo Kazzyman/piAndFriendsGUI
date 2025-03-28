@@ -18,7 +18,7 @@ var bgwc2 = canvas.NewRectangle(color.NRGBA{R: 110, G: 255, B: 160, A: 150}) // 
 
 var outputLabel2 = widget.NewLabel("Classic Pi calculators, make a selection")
 var scrollContainer2 = container.NewScroll(outputLabel2)
-var window2 = myApp.NewWindow("Rick's Pi Estimation Demo, set #2")
+var window2 = myApp.NewWindow("Rick's Pi calculation Demo, set #2")
 
 // Three Additional Windows: 
 // ::: ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 							BppDigits = val
 						}
 						go func() {
-							bbpFast44(updateOutput2, BppDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+							bbpFast44(updateOutput2, BppDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
 							for _, btn := range buttons2 {
 								btn.Enable()
@@ -187,7 +187,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 				} else {
 					precision = val2
 				}
-				go NilakanthaBig(updateOutput2, iters, precision) // ::: probably want to add a done channel to this one
+				go NilakanthaBig(updateOutput2, iters, precision, done) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons2 {
 					btn.Enable()
@@ -229,7 +229,7 @@ func createWindow2(myApp fyne.App) fyne.Window {
 					chudDigits = val
 				}
 				go func() {
-					chudnovskyBig(updateOutput2, chudDigits)
+					chudnovskyBig(updateOutput2, chudDigits, done)
 					calculating = false
 					for _, btn := range buttons2 {
 						btn.Enable()

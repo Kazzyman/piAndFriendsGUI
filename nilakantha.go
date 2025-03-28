@@ -10,7 +10,7 @@ import (
 
 // @formatter:off
 
-func NilakanthaBig(fyneFunc func(string), iters int, precision int) { // Changed signature ::: - -
+func NilakanthaBig(fyneFunc func(string), iters int, precision int, done chan bool) { // Changed signature ::: - -
 var printThisThen string
 var printThis []string
 var lenOfPi int
@@ -78,7 +78,14 @@ var lenOfPi int
 	}(fileHandleBig) 
 
 	iterBig = 1
-	for iterBig < iters { 
+	for iterBig < iters {
+		select {
+		case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+			// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+			// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+			fmt.Println("Goroutine Nilakantha for-loop (1 of 1) is being terminated by select case finding the done channel to be already closed")
+			return // Exit the goroutine
+		default:
 		
 		/*
 		  -- Nilakantha Somayaji -- on Mac-mini.local
@@ -137,6 +144,7 @@ var lenOfPi int
 		}
 		if iterBig == 977111222 {
 			fyneFunc(fmt.Sprintf("\n... it's been a very long while, 977,111,222 already ... why am I still working? ..."))
+		}
 		}
 	} // end of the loop, the only calculating loop
 	t := time.Now()

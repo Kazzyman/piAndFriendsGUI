@@ -8,7 +8,7 @@ import (
 
 // @formatter:off
 
-func GregoryLeibniz(fyneFunc func(string)){
+func GregoryLeibniz(fyneFunc func(string), done chan bool) {
 	// Open a log file 
 	fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
 	check(err1)                              // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
@@ -35,6 +35,13 @@ func GregoryLeibniz(fyneFunc func(string)){
 	iterFloat64 = 0 // global
 	
 	for iterInt64 < 4000000000 {
+		select {
+		case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+			// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+			// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+			fmt.Println("Goroutine Gregory-Leibniz for-loop (1 of 2) is being terminated by select case finding the done channel to be already closed")
+			return // Exit the goroutine
+		default:
 		iterFloat64++
 		iterInt64++
 		
@@ -122,6 +129,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 						_, err7 := fmt.Fprintf(fileHandle, "Total runTime was %s \n", TotalRun) // add total runtime of this calculation
 							check(err7)
 			} // end of last if
+			}
 	} // end of first for loop
 	
 
@@ -136,6 +144,13 @@ func GregoryLeibniz(fyneFunc func(string)){
 		start = time.Now()
 
 		for iterInt64 < 9000000000 {
+			select {
+			case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
+				// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
+				// ::: if the channel known by the moniker "done" is already closed, that/it is to be interpreted as the abort signal by all listening processes. 
+				fmt.Println("Goroutine Gregory-Leibniz for-loop (2 of 2) is being terminated by select case finding the done channel to be already closed")
+				return // Exit the goroutine
+			default:
 			iterFloat64++
 			iterInt64++
 			denom = denom + 2
@@ -206,6 +221,7 @@ func GregoryLeibniz(fyneFunc func(string)){
 			
 				_, err7 := fmt.Fprintf(fileHandle, "Total runTime was %s \n", TotalRun) // add total runtime of this calculation
 					check(err7)
+			}
 			}
 		}
 		

@@ -20,30 +20,38 @@ import (
 var bgsc = canvas.NewRectangle(color.NRGBA{R: 150, G: 180, B: 160, A: 240}) // Light green
 var bgwc = canvas.NewRectangle(color.NRGBA{R: 110, G: 160, B: 255, A: 150}) // Light blue, lower number for A: means less opaque, or more transparent
 
+var pie float64
+
 // Create scrollContainer1 to display outputLabel1 with initial user prompt.
 // Build/define scrollContainer1 as containing outputLabel1 with its initial greeting message
 var outputLabel1 = widget.NewLabel("\nSelect one of the brightly-colored panels to estimate π via featured method...\n\n")
-var scrollContainer1 = container.NewVScroll(outputLabel1)
+var scrollContainer1 = container.NewVScroll(outputLabel1) // ::: my working line prior to grok 
 
 // Create app and window1 which is an extension of myApp
 // Initialize the Fyne app (myApp) and create window1 as its main window. Technically not a case of "extension"
 var myApp = app.New()
-var window1 = myApp.NewWindow("Rick's Pi Estimation Demo, set #1")
+var window1 = myApp.NewWindow("Rick's Pi calculation Demo, set #1")
 
 func main() {
+	countAndLogSLOC()
 	calculating = false // set the global the-coast-is-clear flag
 	myApp.Settings().SetTheme(theme.LightTheme()) // establish a Theme that will work well with dialog boxes
 	window1.Resize(fyne.NewSize(1900, 1600))
-	
-	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap 
+
+	scrollContainer1 = container.NewVScroll(outputLabel1)
 	
 	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
 	
-	coloredScroll := container.NewMax(bgsc, scrollContainer1) // Combine background and scroll, Layer light green background behind scroll content.
-	
-	windowContent := container.NewMax(bgwc, coloredScroll) // Layer the background and content; Layer light blue background across the entire window content.
+	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap
 
-	done := make(chan bool) // local, channel for all listening goroutines; sends termination signal ::: only Archimedes, and Wallis for window1
+	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
+
+		coloredScroll := container.NewMax(bgsc, scrollContainer1) // Combine background and scroll, Layer light green background behind scroll content.
+	
+		windowContent := container.NewMax(bgwc, coloredScroll) // Layer the background and content; Layer light blue background across the entire window content.
+
+	// done := make(chan bool) // local, channel for all listening goroutines; sends termination signal ::: only Archimedes, and Wallis for window1
+
 /*
 .
 .
@@ -53,12 +61,14 @@ func main() {
 	.
 	.
 	 */
+	var currentDone chan bool // ::: Tracks the active done channel
 	archimedesBtn1 := NewColoredButton(
 	"Archimedes method for finding π, modified by Richard Woolley\n" +
-		"a purely geometric method which is easy to understand\n" +
+		"easy to understand geometric method using big.Float variables\n" +
 		"produces 3,012 digits of delicious Pi in under a minute\n" +
 		"             -*-*-*- Rick's personal favorite -*-*-*-          ",
 		color.RGBA{255, 110, 110, 215},
+		
 		func() {
 			if calculating {
 				return
@@ -67,19 +77,29 @@ func main() {
 			for _, btn := range buttons1 {
 				btn.Disable()
 			}
-			// ::: We want to cause the button that corresponds to the currently executing method to remain bright, while the other buttons remain dimmed...
+			// We want to cause the button that corresponds to the currently executing method to remain bright, while the other buttons remain dimmed...
 			for _, btn := range archiBut { // This trick accomplishes that because the archiBut array comes after the creation of archimedesBtn1
 				calculating = true // This keeps archimedesBtn1 from being restarted in parallel with itself...
-				btn.Enable() // ... even though we herewith enable archimedesBtn1  ::: note that simply doing: archimedesBtn1.Enable() would not work...
-			} // ::: ... because, we are inside of the creation of archimedesBtn1 [ it is a timing and scoping issue ]
+				btn.Enable() // ... even though we herewith enable archimedesBtn1 ... note that simply doing: archimedesBtn1.Enable() would not work...
+			} //  ... because, we are inside of the creation of archimedesBtn1 [ it is a timing and scoping issue ]
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning ArchimedesBig...\n\n")
-			go func() {
+			go func(done chan bool) { // ::: go func now takes an argument
+				defer func() {       // ::: new defer func with global calculating flag set 
+					calculating = false
+					updateOutput1("Calculation finished or aborted\n")
+				}()
 				ArchimedesBig(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
+				//  ::: are these next four lines needed?
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
 				}
-			}()
+			}(currentDone) // ::: pass via closure
+			/*
+			passing the currentDone channel via a closure to the goroutine. This is a common and idiomatic way in Go to ensure that the goroutine uses the specific 
+			channel instance you’ve just created (or assigned) within the button handler, rather than relying on some outer or potentially stale reference.
+			*/
 		},
 	)
 	/*
@@ -92,6 +112,7 @@ func main() {
 		"only manages to do 10 digits of Pi in well-over five minutes\n" +
 		"an infinite series circa 1655    --- served here by Rick Woolley ---",
 		color.RGBA{110, 110, 255, 185}, 
+		
 		func() {
 			if calculating {
 				return
@@ -101,29 +122,56 @@ func main() {
 				btn.Disable()
 			}
 			for _, btn := range walisBut { // Refer to the comments in the initial assignment and creation of archimedesBtn1
-				calculating = true
 				btn.Enable()
 			}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning John Wallis...\n\n")
-			go func() { // made this the goroutine as per your example 
-				JohnWallis(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
+			go func(done chan bool) { // ::: go func now takes an argument
+				defer func() {       // ::: new defer func with global calculating flag set 
+					calculating = false // this does not appear to work 
+					updateOutput1("Calculation finished or aborted\n")
+				}()
+						fmt.Printf("here before JohnWallisBtn1 calculating is %t\n", calculating) // this executes 
+				pie = JohnWallis(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
+						fmt.Printf("here after JohnWallisBtn1 calculating is %t\n", calculating) // this does not execute, not does the first line in JohnWallis()
+						
+					current := outputLabel1.Text
+					outputLabel1.SetText(current + fmt.Sprintf("\n\nπ ≈ %.11f\n", pie))
+				// ::: are these next four lines needed?
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
 				}
-			}()
+			}(currentDone)
+			fmt.Printf("here at the end of JohnWallisBtn1 calculating is %t\n", calculating) // this executes 
 		},
 	)
-	/*
-	.
-	.
+	/* Grok's example :
+		JohnWallisBtn1 := widget.NewButton("Wallis", func() {
+			if calculating {
+				return
+			}
+			calculating = true
+			currentDone = make(chan bool) // New channel per run
+			updateOutput1("\nRunning John Wallis...\n")
+			go func(done chan bool) {
+				defer func() {
+					calculating = false
+					updateOutput1("Calculation finished or aborted\n")
+				}()
+				pi := JohnWallis(updateOutput1, done)
+				updateOutput1(fmt.Sprintf("Result: π ≈ %.10f\n", pi))
+			}(currentDone)
+		})
 	 */
+
 	SpigotBtn1 := NewColoredButton(
 	"The Spigot Algorithm, a Leibniz series. Served hot, bite by byte\n" +
 		"spits out a nearly-unlimited, continuous stream of Pi goodness\n" +
 		"This trick made possible by a bit of code mooched off of GitHub\n" +
 		"bakes π without using any floating-point arithmetic",
 		color.RGBA{255, 255, 100, 235},
+		
 		func() {
 			var spigotDigits int
 			if calculating {
@@ -137,6 +185,7 @@ func main() {
 				calculating = true
 				btn.Enable()
 			}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning The Spigot...\n\n")
 			
 			showCustomEntryDialog(
@@ -156,13 +205,17 @@ func main() {
 						} else {
 							spigotDigits = val
 						}
-						go func() {
-							TheSpigot(updateOutput1, spigotDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+						go func(done chan bool) { // ::: go func now takes an argument
+							defer func() {       // ::: new defer func with global calculating flag set 
+								calculating = false // this does not appear to work 
+								updateOutput1("Calculation finished or aborted\n")
+							}()
+							TheSpigot(updateOutput1, spigotDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
 							for _, btn := range buttons1 {
 								btn.Enable()
 							}
-						}()
+						}(currentDone)
 					} else {
 						// dialog canceled 
 						updateOutput1("spigot calculation canceled, make another selection")
@@ -185,6 +238,7 @@ func main() {
 		"this algorithm is a rapidly converging infinite series which\n" +
 		"leverages properties of j-invariant from elliptic function theory",
 		color.RGBA{100, 255, 100, 215}, 
+		
 		func() {
 			// 
 			var chudDigits int
@@ -199,6 +253,7 @@ func main() {
 					calculating = true 
 					btn.Enable() 
 				}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning Chudnovsky...\n\n")
 	
 			showCustomEntryDialog(
@@ -218,13 +273,17 @@ func main() {
 						} else {
 							chudDigits = val
 						}
-						go func() {
-							chudnovskyBig(updateOutput1, chudDigits) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+						go func(done chan bool) { // ::: go func now takes an argument
+							defer func() {       // ::: new defer func with global calculating flag set 
+								calculating = false // this does not appear to work 
+								updateOutput1("Calculation finished or aborted\n")
+							}()
+							chudnovskyBig(updateOutput1, chudDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
 							for _, btn := range buttons1 {
 								btn.Enable()
 							}
-						}()
+						}(currentDone)
 					} else {
 						// dialog canceled 
 							updateOutput1("chudnovsky calculation canceled, make another selection")
@@ -247,6 +306,7 @@ func main() {
 		"4 digits of pi in 21s ; 7 digits possible in 1h30m w/ 119k grid\n" +
 		"                   -*-*- Rick's second-favorite method -*-*-     ",
 		color.RGBA{255, 255, 100, 235},
+		
 		func() {
 			var MontDigits string
 				if calculating {
@@ -260,6 +320,7 @@ func main() {
 					calculating = true 
 					btn.Enable() 
 				}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning Monte Carlo ...\n\n")
 				
 			showCustomEntryDialog(
@@ -279,13 +340,17 @@ func main() {
 						} else {
 							MontDigits = strconv.Itoa(val) // val here is a number, an int to be precise. So, we use strconv.Itoa to convert the int to a string and assign it to MontDigits. 
 						}
-							go func() {
-								Monty(updateOutput1, MontDigits) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
-								calculating = false
-								for _, btn := range buttons1 {
-									btn.Enable()
-								}
+						go func(done chan bool) { // ::: go func now takes an argument
+							defer func() {       // ::: new defer func with global calculating flag set 
+								calculating = false // this does not appear to work 
+								updateOutput1("Calculation finished or aborted\n")
 							}()
+							Monty(updateOutput1, MontDigits, done) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
+							calculating = false
+							for _, btn := range buttons1 {
+								btn.Enable()
+							}
+						}(currentDone)
 					} else {
 						// dialog canceled 
 						updateOutput1("Monte Carlo calculation canceled, make another selection")
@@ -303,11 +368,12 @@ func main() {
 	.
 	 */
 	GaussBtn1 := NewColoredButton(
-	"Gauss_Legendre\n" +
-		"π = 2 * ((2/1)*(2/3)) * ((4/3)*(4/5)) * ((6/5)*(6/7)) ...\n" +
+	"Gauss-Legendre -- C F Gauss, refined by Adrien-Marie Legendre\n" +
+		"π ≈ (aₙ + bₙ)² / (4 tₙ)\n" +
 		"only manages to do 10 digits of Pi in well-over five minutes\n" +
 		"an infinite series circa 1655    --- served here by Rick Woolley ---",
 		color.RGBA{100, 255, 100, 215},
+		
 		func() {
 			if calculating {
 				return
@@ -320,14 +386,19 @@ func main() {
 				calculating = true
 				btn.Enable()
 			}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning Gauss...\n\n")
-			go func() { // made this the goroutine as per your example 
-				Gauss_Legendre(updateOutput1) // ::: func < - - - - - - - - - - - - - < -
+			go func(done chan bool) { // ::: go func now takes an argument
+				defer func() {       // ::: new defer func with global calculating flag set 
+					calculating = false // this does not appear to work 
+					updateOutput1("Calculation finished or aborted\n")
+				}()
+				Gauss_Legendre(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
 				}
-			}()
+			}(currentDone)
 		},
 	)
 	/*
@@ -335,11 +406,13 @@ func main() {
 	.
 	 */
 	CustomSeriesBtn1 := NewColoredButton(
-	"Custom Series Unsure where it is from\n" +
+	"Custom series -- unsure where it is from ... \n" +
 		"but it is very quick -- 4s gets us 9 digits of Pi\n" +
 		"π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...",
 		color.RGBA{255, 120, 120, 215}, // Greenish for variety
+		
 		func() {
+			// WallisParent <- "Dick"
 			if calculating {
 				return
 			}
@@ -351,14 +424,19 @@ func main() {
 				calculating = true
 				btn.Enable()
 			}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput2("\nRunning Custom Series ...\n\n")
-			go func() {
-				CustomSeries(updateOutput1) // ::: probably want to add a done channel to this one
+			go func(done chan bool) { // ::: go func now takes an argument
+				defer func() {       // ::: new defer func with global calculating flag set 
+					calculating = false // this does not appear to work 
+					updateOutput1("Calculation finished or aborted\n")
+				}()
+				CustomSeries(updateOutput1, done) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
 				}
-			}()
+			}(currentDone)
 		},
 	)
 	/*
@@ -367,9 +445,10 @@ func main() {
 	 */
 	GregoryLeibnizBtn1 := NewColoredButton(
 	"Gregory-Leibniz -- runs 20sec -- gives 10 digits of Pi\n" +
-		"James Gregory (1638–1675),  Leibniz: (1646-1716)\n" +
+		"James Gregory 1638–1675  Gottfried Wilhelm Leibniz 1646-1716\n" +
 		"π = 4 * ( 1 - 1/3 + 1/5 - 1/7 + 1/9 ...) ",
 		color.RGBA{110, 110, 255, 185},
+		
 		func() {
 			if calculating {
 				return
@@ -382,14 +461,19 @@ func main() {
 				calculating = true
 				btn.Enable()
 			}
+			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput2("\nRunning Gregory-Leibniz...\n\n")
-			go func() {
-				GregoryLeibniz(updateOutput1) // ::: probably want to add a done channel to this one
+			go func(done chan bool) { // ::: go func now takes an argument
+				defer func() {       // ::: new defer func with global calculating flag set 
+					calculating = false // this does not appear to work 
+					updateOutput1("Calculation finished or aborted\n")
+				}()
+				GregoryLeibniz(updateOutput1, done) // ::: probably want to add a done channel to this one
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
 				}
-			}()
+			}(currentDone)
 		},
 	)
 	/*
@@ -397,7 +481,7 @@ func main() {
 	.
 	 */
 	
-	archiBut = []*ColoredButton{archimedesBtn1} // all these are a trick/kluge used as bug preventions // keep methods from being started or restarted in parallel (over-lapping) 
+	archiBut = []*ColoredButton{archimedesBtn1} // All these are a trick/kluge used as bug preventions // to keep methods from being started or restarted in parallel (over-lapping) 
 	walisBut = []*ColoredButton{JohnWallisBtn1} 
 	spigotBut = []*ColoredButton{SpigotBtn1} 
 	chudBut = []*ColoredButton{ChudnovskyBtn1} 
@@ -408,13 +492,13 @@ func main() {
 	
 	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,} // used only for range btn.Enable()
 
-	// ::: Layout
-	content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
-		container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, SpigotBtn1,
-			ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,),
-		windowContent,
-	)
-	
+		// ::: Layout
+		content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
+			container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, SpigotBtn1,
+				ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,),
+			windowContent,
+		)
+
 	// ::: drop-down menus
 	logFilesMenu := fyne.NewMenu("Log Files",
 		fyne.NewMenuItem("View Log 1", func() { dialog.ShowInformation("Log Files", "Viewing Log 1", window1) }),
@@ -431,37 +515,57 @@ func main() {
 			dialog.ShowInformation("Information", "Help...", window1)
 		}),
 		fyne.NewMenuItem("Abort current method", func() {
-			select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below. 
-			// // Check if the done channel is already closed (chan receive [<-] succeeds on a closed chan and false is returned in the case of chan type bool)
-			case <-done: // chan syntax for receive on chan "done"
-				updateOutput1("\nGoroutines already notified to terminate\n")
-			default: // chan was open but empty, receive has "failed" (nothing to receive: "blocks"), case has "failed" (does not trigger), chan has blocked until a value is sent on the chan; default ensues 
-				close(done) // "else" close the done chan, which will be interpreted as a termination signal by all listening processes
-				// Assume chan initialization as: done := make(chan bool) // understanding that "bools are false upon creation, and chans nil till initialized"
-				updateOutput1("\nTermination signals were sent to all current processes that may be listening\n")
-			}			
-			/*
-			operation (<-ch) on a closed channel:
-			    Succeeds immediately (no blocking/waiting).
-			    Returns the zero value of the channel’s type (false for chan bool, 0 for chan int, "" for chan string, etc.).
-			When you try <-ch on an empty, open channel, it doesn’t fail — it blocks. Blocking means the operation pauses (waits) until something is put into the pipe
-			... but in the context of a select, waiting is not succeeding, hence the default case is run.
-			*/
-			/*
-			Switch: Like picking a door based on a number you’re holding — door 1, 2, or 3 opens depending on your number. Your num matches no doors? You get the default door. 
-				vs
-			Select: Like waiting at a row of mailboxes for a letter to arrive — you grab the first one you see, or immediately walk away if you see none (default).
-			*/
+			if currentDone == nil {
+				updateOutput1("\nNo active calculation to abort\n")
+				return
+			}
+			select {
+			case <-currentDone:
+				updateOutput1("\nDone channel already closed\n")
+			default:
+				close(currentDone)
+				updateOutput1("\nTermination signal sent\n")
+			}
 		}),
 	)
+			
+			/*
+							select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below.
+					// // Check if the done channel is already closed (chan receive [<-] succeeds on a closed chan (it receives/reads that the channel is closed) and false is returned in the case of chan type bool)
+					case <-done: // chan syntax for receive on/from chan "done"
+						updateOutput1("\nMenu select determined that done-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n")
+						fmt.Printf("\nMenu select-case determined that calculating is %t\n", calculating)
+					default: // chan was open but empty, receive has "failed" (nothing to receive: "blocks"), case has "failed" (does not trigger), chan has blocked until a value is sent on the chan; default ensues
+						close(done) // "else" close the done chan, which will be interpreted as a termination signal by all listening processes
+						// Assume chan initialization as: done := make(chan bool) // understanding that "bools are false upon creation, and chans nil till initialized"
+						updateOutput1("\nTermination signals were sent to all current processes that may be listening\n")
+						fmt.Printf("\nMenu select-default determined that calculating is %t\n", calculating)
+					}
+
+				/
+				operation (<-ch) on a closed channel:
+				    Succeeds immediately (no blocking/waiting).
+				    Returns the zero value of the channel’s type (false for chan bool, 0 for chan int, "" for chan string, etc.).
+				When you try <-ch on an empty, open channel, it doesn’t fail — it blocks. Blocking means the operation pauses (waits) until something is put into the pipe
+				... but in the context of a select, waiting is not succeeding, hence the default case is run.
+			/
+			/
+				Switch: Like picking a door based on a number you’re holding — door 1, 2, or 3 opens depending on your number. Your num matches no doors? You get the default door.
+					vs
+				Select: Like waiting at a row of mailboxes for a letter to arrive — you grab the first one you see, or immediately walk away if you see none (default).
+			/
+		}),
+	)
+			 */
+
+
 	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
 	window1.SetMainMenu(mainMenu)
-
+	
 	// Apply window background to the entire content
 	windowWithBackground := container.NewMax(bgwc, content1)
-
+	
 	window1.SetContent(windowWithBackground)
 	
-	// window1.SetContent(content1) 
 	window1.ShowAndRun()
 }
