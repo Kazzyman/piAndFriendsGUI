@@ -90,7 +90,6 @@ func main() {
 					updateOutput1("Calculation finished or aborted\n")
 				}()
 				ArchimedesBig(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
-				//  ::: are these next four lines needed?
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -106,6 +105,7 @@ func main() {
 	.
 	.
 	 */
+	
 	JohnWallisBtn1 := NewColoredButton(
 	"John Wallis infinite series -- 40 billion iterations -- runs 5m30s\n" +
 		"π = 2 * ((2/1)*(2/3)) * ((4/3)*(4/5)) * ((6/5)*(6/7)) ...\n" +
@@ -137,7 +137,6 @@ func main() {
 						
 					current := outputLabel1.Text
 					outputLabel1.SetText(current + fmt.Sprintf("\n\nπ ≈ %.11f\n", pie))
-				// ::: are these next four lines needed?
 				calculating = false
 				for _, btn := range buttons1 {
 					btn.Enable()
@@ -146,24 +145,10 @@ func main() {
 			fmt.Printf("here at the end of JohnWallisBtn1 calculating is %t\n", calculating) // this executes 
 		},
 	)
-	/* Grok's example :
-		JohnWallisBtn1 := widget.NewButton("Wallis", func() {
-			if calculating {
-				return
-			}
-			calculating = true
-			currentDone = make(chan bool) // New channel per run
-			updateOutput1("\nRunning John Wallis...\n")
-			go func(done chan bool) {
-				defer func() {
-					calculating = false
-					updateOutput1("Calculation finished or aborted\n")
-				}()
-				pi := JohnWallis(updateOutput1, done)
-				updateOutput1(fmt.Sprintf("Result: π ≈ %.10f\n", pi))
-			}(currentDone)
-		})
-	 */
+/*
+.
+.
+ */
 
 	SpigotBtn1 := NewColoredButton(
 	"The Spigot Algorithm, a Leibniz series. Served hot, bite by byte\n" +
@@ -300,6 +285,7 @@ func main() {
 	.
 	.
 	 */
+	
 	MontyBtn1 := NewColoredButton(
 	"Monte Carlo method for converging on π  --  big floats, & float64\n" +
 		"Flavor: no fancy equations are used, only Go's pure randomness\n" +
@@ -367,6 +353,7 @@ func main() {
 	.
 	.
 	 */
+	
 	GaussBtn1 := NewColoredButton(
 	"Gauss-Legendre -- C F Gauss, refined by Adrien-Marie Legendre\n" +
 		"π ≈ (aₙ + bₙ)² / (4 tₙ)\n" +
@@ -405,6 +392,7 @@ func main() {
 	.
 	.
 	 */
+	
 	CustomSeriesBtn1 := NewColoredButton(
 	"Custom series -- unsure where it is from ... \n" +
 		"but it is very quick -- 4s gets us 9 digits of Pi\n" +
@@ -443,6 +431,7 @@ func main() {
 	.
 	.
 	 */
+	
 	GregoryLeibnizBtn1 := NewColoredButton(
 	"Gregory-Leibniz -- runs 20sec -- gives 10 digits of Pi\n" +
 		"James Gregory 1638–1675  Gottfried Wilhelm Leibniz 1646-1716\n" +
@@ -519,44 +508,40 @@ func main() {
 				updateOutput1("\nNo active calculation to abort\n")
 				return
 			}
-			select {
+			select { // ::: refer to copious comments below, in comment block: 
 			case <-currentDone:
-				updateOutput1("\nDone channel already closed\n")
+				updateOutput1("\nMenu select determined that done-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n")
 			default:
 				close(currentDone)
-				updateOutput1("\nTermination signal sent\n")
+				updateOutput1("\nTermination signals were sent to all current processes that may be listening\n")
 			}
 		}),
 	)
-			
-			/*
-							select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below.
-					// // Check if the done channel is already closed (chan receive [<-] succeeds on a closed chan (it receives/reads that the channel is closed) and false is returned in the case of chan type bool)
-					case <-done: // chan syntax for receive on/from chan "done"
-						updateOutput1("\nMenu select determined that done-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n")
-						fmt.Printf("\nMenu select-case determined that calculating is %t\n", calculating)
-					default: // chan was open but empty, receive has "failed" (nothing to receive: "blocks"), case has "failed" (does not trigger), chan has blocked until a value is sent on the chan; default ensues
-						close(done) // "else" close the done chan, which will be interpreted as a termination signal by all listening processes
-						// Assume chan initialization as: done := make(chan bool) // understanding that "bools are false upon creation, and chans nil till initialized"
-						updateOutput1("\nTermination signals were sent to all current processes that may be listening\n")
-						fmt.Printf("\nMenu select-default determined that calculating is %t\n", calculating)
-					}
-
-				/
-				operation (<-ch) on a closed channel:
-				    Succeeds immediately (no blocking/waiting).
-				    Returns the zero value of the channel’s type (false for chan bool, 0 for chan int, "" for chan string, etc.).
-				When you try <-ch on an empty, open channel, it doesn’t fail — it blocks. Blocking means the operation pauses (waits) until something is put into the pipe
-				... but in the context of a select, waiting is not succeeding, hence the default case is run.
-			/
-			/
-				Switch: Like picking a door based on a number you’re holding — door 1, 2, or 3 opens depending on your number. Your num matches no doors? You get the default door.
-					vs
-				Select: Like waiting at a row of mailboxes for a letter to arrive — you grab the first one you see, or immediately walk away if you see none (default).
-			/
-		}),
-	)
-			 */
+	/* ::: more: 
+	select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below.
+	// Check if the currentDone channel is already closed (chan receive [<-] succeeds on a closed chan (it receives/reads that the channel is closed, successfully) -- false is returned in the case of chan type bool)
+		case <-currentDone: // chan syntax for receive on/from chan "currentDone"
+			updateOutput1("\nMenu select determined that done-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n") // ::: via closed chan status 
+						// fmt.Printf("\nMenu select-case determined that calculating is %t\n", calculating)
+		default: // chan was open but empty, receive has "failed" (nothing to receive: "blocks"), case has "failed" (does not trigger), chan has blocked until a value is sent on the chan; default ensues
+			close(currentDone) // "else" close the currentDone chan, which will be interpreted as a termination signal by all listening processes
+			updateOutput1("\nTermination signals were sent to all current processes that may be listening\n") // ::: ... by way of closed chan status 
+						// fmt.Printf("\nMenu select-default determined that calculating is %t\n", calculating)
+		}
+	/
+		operation (<-ch) on a closed channel:
+			Succeeds immediately (no blocking/waiting).
+			Returns the zero value of the channel’s type (false for chan bool, 0 for chan int, "" for chan string, etc.).
+		When you try <-ch on an empty, open channel, it doesn’t fail — it blocks. Blocking means the operation pauses (waits) until something is put into the pipe
+		... but in the context of a select, waiting is not succeeding, hence the default case is run.
+	/
+	/
+		Switch: Like picking a door based on a number you’re holding — door 1, 2, or 3 opens depending on your number. Your num matches no doors? You get the default door.
+			vs
+		Select: Like waiting at a row of mailboxes for a letter to arrive — you grab the first one you see, or immediately walk away if you see none (default).
+	/
+...
+	 */
 
 
 	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)

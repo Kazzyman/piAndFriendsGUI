@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+// @formatter:off
+
 func countAndLogSLOC() { // ::: - -
 
 	// todo, do a regular expression to extract the file names (last / to .go inclusive)
@@ -19,74 +21,117 @@ func countAndLogSLOC() { // ::: - -
 	filenameOfThisFile1 := "/Users/quasar/piAndFriendsGUI/main.go"
 	blankLines1, singleComments1, commentBlock11, commentBlock21, commentBlock31, runes11, runes21, runes31, totalLines1, nonEmptyLines1 := reportSLOCstats(filenameOfThisFile1)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile2 := "/Users/quasar/piAndFriendsGUI/constants.go"
 	blankLines2, singleComments2, commentBlock12, commentBlock22, commentBlock32, runes12, runes22, runes32, totalLines2, nonEmptyLines2 := reportSLOCstats(filenameOfThisFile2)
 	numberOfFilesExplored++
+	
+	// ... missing 3 and 4 
+	
 	filenameOfThisFile5 := "/Users/quasar/piAndFriendsGUI/sloc.go"
 	blankLines5, singleComments5, commentBlock15, commentBlock25, commentBlock35, runes15, runes25, runes35, totalLines5, nonEmptyLines5 := reportSLOCstats(filenameOfThisFile5)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile6 := "/Users/quasar/piAndFriendsGUI/functions.go"
 	blankLines6, singleComments6, commentBlock16, commentBlock26, commentBlock36, runes16, runes26, runes36, totalLines6, nonEmptyLines6 := reportSLOCstats(filenameOfThisFile6)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile7 := "/Users/quasar/piAndFriendsGUI/globals.go"
 	blankLines7, singleComments7, commentBlock17, commentBlock27, commentBlock37, runes17, runes27, runes37, totalLines7, nonEmptyLines7 := reportSLOCstats(filenameOfThisFile7)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile8 := "/Users/quasar/piAndFriendsGUI/Archimedes.go"
 	blankLines8, singleComments8, commentBlock18, commentBlock28, commentBlock38, runes18, runes28, runes38, totalLines8, nonEmptyLines8 := reportSLOCstats(filenameOfThisFile8)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile9 := "/Users/quasar/piAndFriendsGUI/Chud.go"
 	blankLines9, singleComments9, commentBlock19, commentBlock29, commentBlock39, runes19, runes29, runes39, totalLines9, nonEmptyLines9 := reportSLOCstats(filenameOfThisFile9)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile10 := "/Users/quasar/piAndFriendsGUI/coloredButton.go"
 	blankLines10, singleComments10, commentBlock110, commentBlock210, commentBlock310, runes110, runes210, runes310, totalLines10, nonEmptyLines10 := reportSLOCstats(filenameOfThisFile10)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile11 := "/Users/quasar/piAndFriendsGUI/go.mod"
 	blankLines11, singleComments11, commentBlock111, commentBlock211, commentBlock311, runes111, runes211, runes311, totalLines11, nonEmptyLines11 := reportSLOCstats(filenameOfThisFile11)
 	numberOfFilesExplored++
-	filenameOfThisFile14 := "/Users/quasar/piAndFriendsGUI/GregoryLiebniz.go"
+	
+	filenameOfThisFile12 := "/Users/quasar/piAndFriendsGUI/Wallis.go"
+	blankLines12, singleComments12, commentBlock112, commentBlock212, commentBlock312, runes112, runes212, runes312, totalLines12, nonEmptyLines12 := reportSLOCstats(filenameOfThisFile12)
+	numberOfFilesExplored++
+	
+	filenameOfThisFile13 := "/Users/quasar/piAndFriendsGUI/BBPfast44.go"
+	blankLines13, singleComments13, commentBlock113, commentBlock213, commentBlock313, runes113, runes213, runes313, totalLines13, nonEmptyLines13 := reportSLOCstats(filenameOfThisFile13)
+	numberOfFilesExplored++
+	
+	filenameOfThisFile14 := "/Users/quasar/piAndFriendsGUI/GregoryLeibniz.go"
 	blankLines14, singleComments14, commentBlock114, commentBlock214, commentBlock314, runes114, runes214, runes314, totalLines14, nonEmptyLines14 := reportSLOCstats(filenameOfThisFile14)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile15 := "/Users/quasar/piAndFriendsGUI/CustomSeries.go"
 	blankLines15, singleComments15, commentBlock115, commentBlock215, commentBlock315, runes115, runes215, runes315, totalLines15, nonEmptyLines15 := reportSLOCstats(filenameOfThisFile15)
 	numberOfFilesExplored++
+	
 	filenameOfThisFile16 := "/Users/quasar/piAndFriendsGUI/nilakantha.go"
-	blankLines, singleComments, commentBlock01, commentBlock02, commentBlock03, runes01, runes02, runes03, totalLines16, nonEmptyLines16 := reportSLOCstats(filenameOfThisFile16)
+	blankLines16, singleComments16, commentBlock116, commentBlock216, commentBlock316, runes116, runes216, runes316, totalLines16, nonEmptyLines16 := reportSLOCstats(filenameOfThisFile16)
 	numberOfFilesExplored++
-
-	filenameOfThisFile17 := "/Users/quasar/piAndFriendsGUI/emptyFile.no" // ::: new file here ?
-	blankLines91, singleComments91, commentBlock104, commentBlock205, commentBlock206, runes104, runes205, runes306, totalLines17, nonEmptyLines17 := reportSLOCstats(filenameOfThisFile17)
+	
+	filenameOfThisFile17 := "/Users/quasar/piAndFriendsGUI/Gauss.go"
+	blankLines17, singleComments17, commentBlock117, commentBlock217, commentBlock317, runes117, runes217, runes317, totalLines17, nonEmptyLines17 := reportSLOCstats(filenameOfThisFile17)
 	numberOfFilesExplored++
-
+	
 	filenameOfThisFile18 := "/Users/quasar/piAndFriendsGUI/windows.go"
-	blankLines91x, singleComments91x, commentBlock104x, commentBlock205x, commentBlock206x, runes104x, runes205x, runes306x, totalLines17x, nonEmptyLines17x := reportSLOCstats(filenameOfThisFile18)
+	blankLines18, singleComments18, commentBlock118, commentBlock218, commentBlock318, runes118, runes218, runes318, totalLines18, nonEmptyLines18 := reportSLOCstats(filenameOfThisFile18)
+	numberOfFilesExplored++
+	
+	filenameOfThisFile19 := "/Users/quasar/piAndFriendsGUI/Spigot.go"
+	blankLines19, singleComments19, commentBlock119, commentBlock219, commentBlock319, runes119, runes219, runes319, totalLines19, nonEmptyLines19 := reportSLOCstats(filenameOfThisFile19)
+	numberOfFilesExplored++
+	
+	filenameOfThisFile20 := "/Users/quasar/piAndFriendsGUI/Monty.go"
+	blankLines20, singleComments20, commentBlock120, commentBlock220, commentBlock320, runes120, runes220, runes320, totalLines20, nonEmptyLines20 := reportSLOCstats(filenameOfThisFile20)
 	numberOfFilesExplored++
 
 	// fileExplored = numberOfFilesExplored // Used only in countSLOC() and the associated about_app()
 
-	totalLines := totalLines17x + totalLines1 + totalLines2 + totalLines5 + totalLines6 + totalLines7 + totalLines8 + totalLines9 + totalLines10 + totalLines14 + totalLines15 + totalLines16 + totalLines11 + totalLines17
+	
+	
+	// totalLines is ::: The Total lines of Code (exclusive of data) -- assume this means data files such as are found in Jap Language apps 
+	totalLines := totalLines1 + totalLines2 +         totalLines5 + totalLines6 + totalLines7 + totalLines8 + totalLines9 + totalLines10 + totalLines11 + totalLines12 + totalLines13 + totalLines14 +
+	+ totalLines15 + totalLines16 + totalLines17 + totalLines18 + totalLines19 + totalLines20
 
-	nonEmptyLines := nonEmptyLines17x + nonEmptyLines1 + nonEmptyLines2 + nonEmptyLines5 + nonEmptyLines6 + nonEmptyLines7 + nonEmptyLines8 + nonEmptyLines9 + nonEmptyLines10 + nonEmptyLines14 + nonEmptyLines15 + nonEmptyLines16 +
-		nonEmptyLines11 + nonEmptyLines17
+	
+	// ::: the Total lines of executable Code:
+	nonEmptyLines := nonEmptyLines1 + nonEmptyLines2 +      nonEmptyLines5 + nonEmptyLines6 + nonEmptyLines7 + nonEmptyLines8 + nonEmptyLines9 + nonEmptyLines10 + nonEmptyLines11 + nonEmptyLines12 +
+		nonEmptyLines13 + nonEmptyLines14 + nonEmptyLines15 + nonEmptyLines16 + nonEmptyLines17 + nonEmptyLines18 + nonEmptyLines19 + nonEmptyLines20
 
-	blankLinesTotal := blankLines91x + blankLines15 + blankLines + blankLines14 + blankLines11 + blankLines10 + blankLines9 + blankLines8 + blankLines7 + blankLines6 + blankLines5 + blankLines2 + blankLines1 + blankLines91
+	
+	// black lines and all forms of comment lines :
+	blankLinesTotal := blankLines1 + blankLines2 +      blankLines5 + blankLines6 + blankLines7 + blankLines8 + blankLines9 + blankLines10 + blankLines11 + blankLines12 + blankLines13 + blankLines14 + 
+		blankLines15 + blankLines16 + blankLines17 + blankLines18 + blankLines19 + blankLines20
 
-	singleCommentsTotal := singleComments91x + singleComments15 + singleComments + singleComments14 + singleComments11 + singleComments10 + singleComments9 + singleComments8 + singleComments7 + singleComments6 + singleComments5 +
-		singleComments2 + singleComments1 + singleComments91
+	singleCommentsTotal := singleComments1 + singleComments2 +        singleComments5 + singleComments6 + singleComments7 + singleComments8 + singleComments9 + singleComments10 + singleComments11 + singleComments12 +
+		singleComments13 + singleComments14 + singleComments15 + singleComments16 + singleComments17 + singleComments18 + singleComments19 + singleComments20
 
-	commentBlock1Total := commentBlock104x + commentBlock01 + commentBlock115 + commentBlock114 + commentBlock111 + commentBlock110 + commentBlock19 + commentBlock18 + commentBlock17 + commentBlock16 + commentBlock15 + commentBlock12 +
-		commentBlock11 + commentBlock104
-	commentBlock2Total := commentBlock205x + commentBlock215 + commentBlock02 + commentBlock214 + commentBlock211 + commentBlock210 + commentBlock29 + commentBlock28 + commentBlock27 + commentBlock26 + commentBlock25 + commentBlock22 +
-		commentBlock21 + commentBlock205
-	commentBlock3Total := commentBlock206x + commentBlock315 + commentBlock03 + commentBlock314 + commentBlock311 + commentBlock310 + commentBlock39 + commentBlock38 + commentBlock37 + commentBlock36 + commentBlock35 + commentBlock32 +
-		commentBlock31 + commentBlock206
+	commentBlock1Total := commentBlock11 + commentBlock12 +         commentBlock15 + commentBlock16 + commentBlock17 + commentBlock18 + commentBlock19 + commentBlock110 +
+		commentBlock111 + commentBlock112 + commentBlock113 + commentBlock114 + commentBlock115 + commentBlock116 + commentBlock117 + commentBlock118 + commentBlock119 + commentBlock120
+		
+	commentBlock2Total := commentBlock21 + commentBlock22 +       commentBlock25 + commentBlock26 + commentBlock27 + commentBlock28 + commentBlock29 + commentBlock210 + commentBlock211 + commentBlock212 +
+	commentBlock213 + commentBlock214 + commentBlock215 + commentBlock216 + commentBlock217 + commentBlock218 + commentBlock219 + commentBlock220 
+		
+	commentBlock3Total := commentBlock31 + commentBlock32 +       commentBlock35 + commentBlock36 + commentBlock37 + commentBlock38 + commentBlock39 + commentBlock310 + commentBlock311 + commentBlock312 +
+		commentBlock313 + commentBlock314 + commentBlock315 + commentBlock316 + commentBlock317 + commentBlock318 + commentBlock319 + commentBlock320
 
-	runes1Total := runes104x + runes115 + runes01 + runes114 + runes111 + runes110 + runes19 + runes18 + runes17 + runes16 + runes15 + runes12 + runes11 + runes104
-	runes2Total := runes205x + runes215 + runes02 + runes214 + runes211 + runes210 + runes29 + runes28 + runes27 + runes26 + runes25 + runes22 + runes21 + runes205
-	runes3Total := runes306x + runes315 + runes03 + runes314 + runes311 + runes310 + runes39 + runes38 + runes37 + runes36 + runes35 + runes32 + runes31 + runes306
+	runes1Total := runes11 +  + runes12 +       runes15 + runes16 + runes17 + runes18 + runes19 + runes110 + runes111 + runes112 + runes113 + runes114 + runes115 + runes116 + runes117 + runes118 + runes119 + runes120
+	runes2Total := runes21 +  + runes22 +       runes25 + runes26 + runes27 + runes28 + runes29 + runes210 + runes211 + runes212 + runes213 + runes214 + runes215 + runes216 + runes217 + runes218 + runes219 + runes220
+	runes3Total := runes31 +  + runes32 +       runes35 + runes36 + runes37 + runes38 + runes39 + runes310 + runes311 + runes312 + runes313 + runes314 + runes315 + runes316 + runes317 + runes318 + runes319 + runes320
 
-	grandTotal := blankLinesTotal + singleCommentsTotal + commentBlock2Total + runes2Total
+	// grand total is really just of non-coding lines 
+	grandTotal := blankLinesTotal + singleCommentsTotal +
+		commentBlock1Total + commentBlock2Total + commentBlock3Total +
+		runes1Total + runes2Total + runes3Total
 
-	sumOfCodePlusNon := grandTotal + nonEmptyLines
+	sumOfCodePlusNon := grandTotal + nonEmptyLines // the actual grand total 
 
 	fileHandle, err := os.OpenFile("slocLog.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	check_error(err)
