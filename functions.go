@@ -70,17 +70,6 @@ func formatInt64WithThousandSeparators(num int64) string {
 	return prefix + result
 }
 
-/*
-	numStr := strconv.FormatInt(num, 10) // num is int64
-	// Insert commas every three digits from the right
-	result := ""
-	for i, char := range numStr {
-		if i > 0 && (len(numStr)-i)%3 == 0 {
-			result += ","
-		}
-		result += string(char)
-	} // result is your string
- */
 
 func formatFloat64WithThousandSeparators(numFloat64 float64) string {
 

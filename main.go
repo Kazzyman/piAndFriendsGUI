@@ -15,22 +15,25 @@ import (
 
 // @formatter:off
 
-// Build objects to set background colors: bgsc for scroll area (light green), bgwc for entire window (light blue), layered via NewMax.
-// Build objects to set background colors for scroll-area1 (bgsc), and the entire window1 (bgwc)
-var bgsc = canvas.NewRectangle(color.NRGBA{R: 150, G: 180, B: 160, A: 240}) // Light green
-var bgwc = canvas.NewRectangle(color.NRGBA{R: 110, G: 160, B: 255, A: 150}) // Light blue, lower number for A: means less opaque, or more transparent
-
-var pie float64
-
-// Create scrollContainer1 to display outputLabel1 with initial user prompt.
-// Build/define scrollContainer1 as containing outputLabel1 with its initial greeting message
-var outputLabel1 = widget.NewLabel("\nSelect one of the brightly-colored panels to estimate π via featured method...\n\n")
-var scrollContainer1 = container.NewVScroll(outputLabel1) // ::: my working line prior to grok 
-
-// Create app and window1 which is an extension of myApp
-// Initialize the Fyne app (myApp) and create window1 as its main window. Technically not a case of "extension"
-var myApp = app.New()
-var window1 = myApp.NewWindow("Rick's Pi calculation Demo, set #1")
+var (
+		// Build objects to set background colors: bgsc for scroll area (light green), bgwc for entire window (light blue), layered via NewMax.
+		// Build objects to set background colors for scroll-area1 (bgsc), and the entire window1 (bgwc)
+			bgsc = canvas.NewRectangle(color.NRGBA{R: 150, G: 180, B: 160, A: 240}) // Light green
+			bgwc = canvas.NewRectangle(color.NRGBA{R: 110, G: 160, B: 255, A: 150}) // Light blue, lower number for A: means less opaque, or more transparent
+		
+		pie float64
+		
+		// Create scrollContainer1 to display outputLabel1 with initial user prompt.
+		// Build/define scrollContainer1 as containing outputLabel1 with its initial greeting message
+			outputLabel1 = widget.NewLabel("\nSelect one of the brightly-colored panels to estimate π via featured method...\n\n")
+			scrollContainer1 = container.NewVScroll(outputLabel1) // ::: my working line prior to grok 
+		
+		// Create app and window1 which is an extension of myApp
+		// Initialize the Fyne app (myApp) and create window1 as its main window. Technically not a case of "extension"
+			myApp = app.New()
+			window1 = myApp.NewWindow("Rick's Pi calculation Demo, set #1") // ::: maybe use the new window1 below ??? - -
+			currentDone    chan bool      // Channel to signal termination ::: Tracks the active done channel - -
+)
 
 func main() {
 	countAndLogSLOC()
@@ -50,8 +53,24 @@ func main() {
 	
 		windowContent := container.NewMax(bgwc, coloredScroll) // Layer the background and content; Layer light blue background across the entire window content.
 
-	// done := make(chan bool) // local, channel for all listening goroutines; sends termination signal ::: only Archimedes, and Wallis for window1
+/*
+.
+.
+ */
+	// Terminal-like display
+	terminalDisplay := widget.NewTextGrid()
+	terminalDisplay.SetText("Terminal Output:\n\nWaiting for calculation...")
 
+	// Button only being used as a title-label for nifty_scoreBoard
+	calcButton := widget.NewButton("Calculate Pi on a ScoreBoard", func() {
+		updateOutput1("\n- * - * - that button does nothing - * - * -\n\n")
+	})
+
+	// Layout for scoreboard section
+	contentForScoreBoard := container.NewVBox(
+		calcButton,
+		terminalDisplay,
+	)
 /*
 .
 .
@@ -61,11 +80,10 @@ func main() {
 	.
 	.
 	 */
-	var currentDone chan bool // ::: Tracks the active done channel
 	archimedesBtn1 := NewColoredButton(
 	"Archimedes method for finding π, modified by Richard Woolley\n" +
 		"easy to understand geometric method using big.Float variables\n" +
-		"produces 3,012 digits of delicious Pi in under a minute\n" +
+		"produces 3,012 digits of delicious Pi in under a minute, 230BCE\n" +
 		"             -*-*-*- Rick's personal favorite -*-*-*-          ",
 		color.RGBA{255, 110, 110, 215},
 		
@@ -87,7 +105,7 @@ func main() {
 			go func(done chan bool) { // ::: go func now takes an argument
 				defer func() {       // ::: new defer func with global calculating flag set 
 					calculating = false
-					updateOutput1("Calculation finished or aborted\n")
+					updateOutput1("Calculation definitely finished; possibly aborted\n")
 				}()
 				ArchimedesBig(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
 				calculating = false
@@ -129,7 +147,7 @@ func main() {
 			go func(done chan bool) { // ::: go func now takes an argument
 				defer func() {       // ::: new defer func with global calculating flag set 
 					calculating = false // this does not appear to work 
-					updateOutput1("Calculation finished or aborted\n")
+					updateOutput1("Calculation definitely finished; possibly aborted\n")
 				}()
 						fmt.Printf("here before JohnWallisBtn1 calculating is %t\n", calculating) // this executes 
 				pie = JohnWallis(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
@@ -193,7 +211,7 @@ func main() {
 						go func(done chan bool) { // ::: go func now takes an argument
 							defer func() {       // ::: new defer func with global calculating flag set 
 								calculating = false // this does not appear to work 
-								updateOutput1("Calculation finished or aborted\n")
+								updateOutput1("Calculation definitely finished; possibly aborted\n")
 							}()
 							TheSpigot(updateOutput1, spigotDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
@@ -261,7 +279,7 @@ func main() {
 						go func(done chan bool) { // ::: go func now takes an argument
 							defer func() {       // ::: new defer func with global calculating flag set 
 								calculating = false // this does not appear to work 
-								updateOutput1("Calculation finished or aborted\n")
+								updateOutput1("Calculation definitely finished; possibly aborted\n")
 							}()
 							chudnovskyBig(updateOutput1, chudDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
@@ -289,7 +307,7 @@ func main() {
 	MontyBtn1 := NewColoredButton(
 	"Monte Carlo method for converging on π  --  big floats, & float64\n" +
 		"Flavor: no fancy equations are used, only Go's pure randomness\n" +
-		"4 digits of pi in 21s ; 7 digits possible in 1h30m w/ 119k grid\n" +
+		"4 digits of pi in 21s; 7 digits possible in 1h30m with a 119k grid\n" +
 		"                   -*-*- Rick's second-favorite method -*-*-     ",
 		color.RGBA{255, 255, 100, 235},
 		
@@ -329,7 +347,7 @@ func main() {
 						go func(done chan bool) { // ::: go func now takes an argument
 							defer func() {       // ::: new defer func with global calculating flag set 
 								calculating = false // this does not appear to work 
-								updateOutput1("Calculation finished or aborted\n")
+								updateOutput1("Calculation definitely finished; possibly aborted\n")
 							}()
 							Monty(updateOutput1, MontDigits, done) // ::: func < - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
@@ -378,7 +396,7 @@ func main() {
 			go func(done chan bool) { // ::: go func now takes an argument
 				defer func() {       // ::: new defer func with global calculating flag set 
 					calculating = false // this does not appear to work 
-					updateOutput1("Calculation finished or aborted\n")
+					updateOutput1("Calculation definitely finished; possibly aborted\n")
 				}()
 				Gauss_Legendre(updateOutput1, done) // ::: func < - - - - - - - - - - - - - < -
 				calculating = false
@@ -394,7 +412,7 @@ func main() {
 	 */
 	
 	CustomSeriesBtn1 := NewColoredButton(
-	"Custom series -- unsure where it is from ... \n" +
+	"Custom series -- I don't remember where it's from ... \n" +
 		"but it is very quick -- 4s gets us 9 digits of Pi\n" +
 		"π = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...",
 		color.RGBA{255, 120, 120, 215}, // Greenish for variety
@@ -413,11 +431,11 @@ func main() {
 				btn.Enable()
 			}
 			currentDone = make(chan bool) // ::: New channel per run
-			updateOutput2("\nRunning Custom Series ...\n\n")
+			updateOutput1("\nRunning Custom Series ...\n\n")
 			go func(done chan bool) { // ::: go func now takes an argument
 				defer func() {       // ::: new defer func with global calculating flag set 
 					calculating = false // this does not appear to work 
-					updateOutput1("Calculation finished or aborted\n")
+					updateOutput1("Calculation definitely finished; possibly aborted\n")
 				}()
 				CustomSeries(updateOutput1, done) // ::: probably want to add a done channel to this one
 				calculating = false
@@ -451,11 +469,11 @@ func main() {
 				btn.Enable()
 			}
 			currentDone = make(chan bool) // ::: New channel per run
-			updateOutput2("\nRunning Gregory-Leibniz...\n\n")
+			updateOutput1("\nRunning Gregory-Leibniz...\n\n")
 			go func(done chan bool) { // ::: go func now takes an argument
 				defer func() {       // ::: new defer func with global calculating flag set 
 					calculating = false // this does not appear to work 
-					updateOutput1("Calculation finished or aborted\n")
+					updateOutput1("Calculation definitely finished; possibly aborted\n")
 				}()
 				GregoryLeibniz(updateOutput1, done) // ::: probably want to add a done channel to this one
 				calculating = false
@@ -470,6 +488,7 @@ func main() {
 	.
 	 */
 	
+	// Eight buttons on home page, so eight kluges 
 	archiBut = []*ColoredButton{archimedesBtn1} // All these are a trick/kluge used as bug preventions // to keep methods from being started or restarted in parallel (over-lapping) 
 	walisBut = []*ColoredButton{JohnWallisBtn1} 
 	spigotBut = []*ColoredButton{SpigotBtn1} 
@@ -479,41 +498,68 @@ func main() {
 	customBut = []*ColoredButton{CustomSeriesBtn1}
 	gottfieBut = []*ColoredButton{GregoryLeibnizBtn1}
 	
+	// same eight again: 
 	buttons1 = []*ColoredButton{archimedesBtn1, JohnWallisBtn1, SpigotBtn1, ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,} // used only for range btn.Enable()
 
-		// ::: Layout
+		// ::: page Lay-out
 		content1 := container.NewVBox(widget.NewLabel("\nSelect a method to estimate π:\n"),
 			container.NewGridWithColumns(4, archimedesBtn1, JohnWallisBtn1, SpigotBtn1,
-				ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1,),
+				ChudnovskyBtn1, MontyBtn1, GaussBtn1, CustomSeriesBtn1, GregoryLeibnizBtn1, contentForScoreBoard),
 			windowContent,
 		)
-
-	// ::: drop-down menus
-	logFilesMenu := fyne.NewMenu("Log Files",
+/*
+.
+.
+ */
+	// ::: drop-down menus -- same for all windows  -  -  --  -  -  --  -  -  --  -  -  --  -  -  --  -  -  --  -  -  --  -  -  --  -  -  --  
+	logFilesMenu := fyne.NewMenu("Log-Files",
 		fyne.NewMenuItem("View Log 1", func() { dialog.ShowInformation("Log Files", "Viewing Log 1", window1) }),
 		fyne.NewMenuItem("View Log 2", func() { dialog.ShowInformation("Log Files", "Viewing Log 2", window1) }),
 	)
-	windowsMenu := fyne.NewMenu("Collections/functions",
-		fyne.NewMenuItem("Fast Pi calculators", func() { window1.Show() }),
-		fyne.NewMenuItem("Classic Pi calculators", func() { createWindow2(myApp).Show() }),
+	additionalMethodsMenu := fyne.NewMenu("Other-Methods",
+		fyne.NewMenuItem("Home-Page (Pi methods)", func() { window1.Show() }),
+		fyne.NewMenuItem("Second-page of Pi methods", func() { createWindow2(myApp).Show() }),
 		fyne.NewMenuItem("Odd Pi calculators", func() { createWindow3(myApp).Show() }),
 		fyne.NewMenuItem("Misc Maths", func() { createWindow4(myApp).Show() }),
 	)
-	informationMenu := fyne.NewMenu("Actions and Information",
-		fyne.NewMenuItem("Help", func() {
-			dialog.ShowInformation("Information", "Help...", window1)
-		}),
-		fyne.NewMenuItem("Abort current method", func() {
-			if currentDone == nil {
-				updateOutput1("\nNo active calculation to abort\n")
+	optionsMenu := fyne.NewMenu("Options",
+		fyne.NewMenuItem("Begin the ScoreBoard of Pi", func() {
+			
+			// dialog.ShowInformation("ScoreBoard", "Use Abort in Menu\nPrior to dismissing with OK", window1)
+			if calculating {
+				fmt.Println("Calculation already in progress")
 				return
 			}
-			select { // ::: refer to copious comments below, in comment block: 
+			calculating = true
+			currentDone = make(chan bool)
+			termsCount = 0
+
+			go func(done chan bool) {
+				defer func() {
+					calculating = false
+					terminalDisplay.SetText(fmt.Sprintf("Terminal Output:\n\nCalculation stopped.\nFinal Pi: %.11f\nTerms: %d", <-pichan, termsCount))
+				}()
+
+				pie := nifty_scoreBoardG(func(text string) {
+					terminalDisplay.SetText(text)
+				}, done)
+
+				if pie != 0.0 {
+					terminalDisplay.SetText(fmt.Sprintf("Terminal Output:\n\nComputed Value of Pi:\t\t%.11f\n# of Nilakantha Terms:\t\t%d", pie, termsCount))
+				}
+			}(currentDone)
+		}),
+		fyne.NewMenuItem("Abort any currently executing method", func() {
+			if currentDone == nil {
+				fmt.Println("No active calculation to abort")
+				return
+			}
+			select {
 			case <-currentDone:
-				updateOutput1("\nMenu select determined that done-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n")
+				fmt.Println("Done channel already closed")
 			default:
 				close(currentDone)
-				updateOutput1("\nTermination signals were sent to all current processes that may be listening\n")
+				fmt.Println("Termination signal sent")
 			}
 		}),
 	)
@@ -543,8 +589,7 @@ func main() {
 ...
 	 */
 
-
-	mainMenu := fyne.NewMainMenu(logFilesMenu, windowsMenu, informationMenu)
+	mainMenu := fyne.NewMainMenu(logFilesMenu, additionalMethodsMenu, optionsMenu)
 	window1.SetMainMenu(mainMenu)
 	
 	// Apply window background to the entire content

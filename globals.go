@@ -27,6 +27,8 @@ var customBut []*ColoredButton
 var gottfieBut []*ColoredButton
 var nilaBut2 []*ColoredButton
 
+var scoreBut2 []*ColoredButton
+
 var buttons1 []*ColoredButton // Change to ColoredButton
 var buttons2 []*ColoredButton // Change to ColoredButton
 var buttons3 []*ColoredButton // Change to ColoredButton
