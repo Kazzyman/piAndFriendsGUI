@@ -49,8 +49,8 @@ func chudnovskyBig(fyneFunc func(string), digits int, done chan bool) { // ::: -
 	// The following runs ::: after calcPi 
 	fyneFunc(fmt.Sprintf("\n loops were: %d, and digits requested was: %d \n", loops, digits))
 
-	fyneFunc(fmt.Sprintf("\n 	The Chudnovsky algorithm is an incredibly-fast algorithm for calculating the digits of pi. It was developed by Gregory Chudnovsky and his"))
-	fyneFunc(fmt.Sprintf("brother David Chudnovsky in the 1980s. It is more efficient than other algorithms and is based on the theory of modular equations. It has been"))
+	fyneFunc(fmt.Sprintf("\n 	The Chudnovsky algorithm is an incredibly-fast algorithm for calculating the digits of pi. It was developed by Gregory Chudnovsky and his "))
+	fyneFunc(fmt.Sprintf("brother David Chudnovsky in the 1980s. It is more efficient than other algorithms and is based on the theory of modular equations. It has been "))
 	fyneFunc(fmt.Sprintf("used to calculate pi to over 62 trillion digits.\n\n"))
 
 	// determine elapsed timme:

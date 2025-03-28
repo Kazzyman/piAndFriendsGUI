@@ -43,11 +43,11 @@ func main() {
 
 	scrollContainer1 = container.NewVScroll(outputLabel1)
 	
-	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
+	scrollContainer1.SetMinSize(fyne.NewSize(1900, 950)) // was before adding the scoreBoard 1900, 1050
 	
 	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap
 
-	scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
+	// scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
 
 		coloredScroll := container.NewMax(bgsc, scrollContainer1) // Combine background and scroll, Layer light green background behind scroll content.
 	

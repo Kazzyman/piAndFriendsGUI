@@ -27,7 +27,7 @@ var (
 func createWindow2(myApp fyne.App) fyne.Window {
 	window2.Resize(fyne.NewSize(1900, 1600))
 	outputLabel2.Wrapping = fyne.TextWrapWord
-	scrollContainer2.SetMinSize(fyne.NewSize(1900, 1050))
+	scrollContainer2.SetMinSize(fyne.NewSize(1900, 1000))
 
 	coloredScroll2 := container.NewMax(bgsc2, scrollContainer2) // Light blue-ish scroll bg
 
@@ -259,9 +259,11 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		)
 		windowContent2 := container.NewMax(bgwc2, content2) // Light green window bg
 	
-	window2.Canvas().SetOnTypedRune(func(r rune) { // Main-thread update loop using Fyne's lifecycle ::: see below: 
-	})
+
 /*
+   	window2.Canvas().SetOnTypedRune(func(r rune) { // Main-thread update loop using Fyne's lifecycle ::: see below:
+   	})
+
    Every Fyne window has a Canvas, which is the drawable surface where all widgets (buttons, labels, etc.) are rendered. Calling window2.Canvas() gives you access to this canvas, 
 letting you interact with its properties or events.
 
@@ -279,6 +281,15 @@ function (which you’ve shown as empty {}) is where you’d define what happens
    The comment suggests this is part of Fyne’s event-driven lifecycle. Fyne runs its GUI in a single-threaded, event-based model on the main thread. When you set this callback, it 
 hooks into that lifecycle, ensuring your response to keypresses happens synchronously with other GUI updates (like rendering or widget changes). This avoids concurrency issues that 
 could arise if you tried to update the GUI from another thread.
+:::
+   In short, window2.Canvas().SetOnTypedRune(func(r rune) { ... }) lets you capture and respond to keyboard input in window2. For example:
+   If a user types 'q', the function runs with r = 'q'.
+
+   You could use this to close the window, update a label, or trigger a calculation based on the input.
+
+:::    Since your example has an empty function body ({}), it currently does nothing—it’s just a placeholder. The real action depends on what you put inside the {}.
+
+
 */
 
 		window2.SetContent(windowContent2) // Set once with the full layout
