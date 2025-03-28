@@ -43,7 +43,7 @@ func main() {
 
 	scrollContainer1 = container.NewVScroll(outputLabel1)
 	
-	scrollContainer1.SetMinSize(fyne.NewSize(1900, 950)) // was before adding the scoreBoard 1900, 1050
+	scrollContainer1.SetMinSize(fyne.NewSize(1900, 930)) // was before adding the scoreBoard 1900, 1050
 	
 	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap
 
@@ -176,7 +176,7 @@ func main() {
 		color.RGBA{255, 255, 100, 235},
 		
 		func() {
-			var spigotDigits int
+			var spigotDigits int = 1460 // to resolve a scoping issue 
 			if calculating {
 				return
 			}
@@ -193,25 +193,29 @@ func main() {
 			
 			showCustomEntryDialog(
 				"Input Desired number of digits",
-				"Any number less than 461",
+				"Any number less than 1461",
 				func(input string) {
 					if input != "" { // This if-else is part of the magic that allows us to dismiss a dialog and allow others to run after the dialog is canceled/dismissed.
 						input = removeCommasAndPeriods(input) // allow user to enter a number with a comma
 						val, err := strconv.Atoi(input)
-						if err != nil {
+						if err != nil { // we may force val to become 460, or leave it alone ...
 							fmt.Println("Error converting input:", err)
-							updateOutput1("Invalid input, using default 460 digits")
+							updateOutput1("\nInvalid input, using default 1460 digits\n")
+							val = 1460
 						} else if val <= 0 {
-							updateOutput1("Input must be positive, using default 460 digits")
-						} else if val > 460 {
-							updateOutput1("Input must be less than 461 -- using default of 460 digits")
+							updateOutput1("\nInput must be positive, using default 1460 digits\n")
+							val = 1460
+						} else if val > 1460 {
+							updateOutput1("\nInput must be less than 1461 -- using default of 1460 digits\n")
+							val = 1460 
 						} else {
-							spigotDigits = val
+							spigotDigits = val // resolves a scoping issue 
 						}
+						
 						go func(done chan bool) { // ::: go func now takes an argument
 							defer func() {       // ::: new defer func with global calculating flag set 
 								calculating = false // this does not appear to work 
-								updateOutput1("Calculation definitely finished; possibly aborted\n")
+								updateOutput1("\nCalculation definitely finished; possibly aborted\n")
 							}()
 							TheSpigot(updateOutput1, spigotDigits, done) // ::: func < - - - - - - - - - - - - - < -  NOT AMENABLE TO KILLING VIA A DONE CHANNEL 
 							calculating = false
@@ -221,7 +225,7 @@ func main() {
 						}(currentDone)
 					} else {
 						// dialog canceled 
-						updateOutput1("spigot calculation canceled, make another selection")
+						updateOutput1("\nspigot calculation canceled, make another selection\n")
 						for _, btn := range buttons1 {
 							btn.Enable()
 						}
@@ -551,17 +555,26 @@ func main() {
 		}),
 		fyne.NewMenuItem("Abort any currently executing method", func() {
 			if currentDone == nil {
-				fmt.Println("No active calculation to abort")
+				updateOutput1("\nNo active calculation to abort, no such currentDone channel exists\n")
+				fmt.Println("No active calculation to abort, no such currentDone channel exists")
 				return
 			}
 			select {
 			case <-currentDone:
-				fmt.Println("Done channel already closed")
+				updateOutput1("\nMenu select determined that currentDone-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate\n") // ::: via closed chan status 
+				fmt.Println("Menu select determined that currentDone-chan had already been closed; all Goroutines were PREVIOUSLY notified to terminate")
 			default:
 				close(currentDone)
-				fmt.Println("Termination signal sent")
+				updateOutput1("\nTermination signals were sent to all current processes that may be listening\n") // ::: ... by way of closed chan status 
+				fmt.Println("Termination signals were sent to all current processes that may be listening")
 			}
 		}),
+		fyne.NewMenuItem("Show the terminal -- Cmd+Tab to return", func() {
+			err := openTerminal()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}		}),
 	)
 	/* ::: more: 
 	select { // select is a concurrency-specific channel-only construct used to handle multiple channel operations, see explanation in second comment-block below.

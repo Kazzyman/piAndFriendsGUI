@@ -7,6 +7,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"math/big"
+	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -218,13 +220,11 @@ func updateOutput2(text string) {
 }
 // fyneFunc(fmt.Sprintf("Send a message to the scroll area via fyne func"))
 
+// ::: more than one of these 
 func showCustomEntryDialog(title, message string, callback func(string)) {
 	// Create an Entry widget
 	entry := widget.NewEntry()
-	entry.SetPlaceHolder("e.g. 23,000")
-
-	// Set the size to fit ~7 characters (100 units is a safe estimate)
-	entry.Resize(fyne.NewSize(70, entry.MinSize().Height)) // Use Resize instead of MinSize assignment
+	entry.SetPlaceHolder("Here:") // ::: differ
 
 	// Create content with label and entry
 	content := container.New(
@@ -242,13 +242,13 @@ func showCustomEntryDialog(title, message string, callback func(string)) {
 	})
 
 	d.Show()
-}
+} // ::: more : 
 func showCustomEntryDialog2(title, message string, callback func(string)) {
 	// Create an Entry widget
 	entry := widget.NewEntry()
-	entry.SetPlaceHolder("e.g. 23,000")
+	entry.SetPlaceHolder("e.g. 23,000") // ::: differ
 
-	// Set the size to fit ~7 characters (100 units is a safe estimate)
+	// Set the size to fit ~7 characters (100 units is a safe estimate) ::: no effect ??
 	entry.Resize(fyne.NewSize(70, entry.MinSize().Height)) // Use Resize instead of MinSize assignment
 
 	// Create content with label and entry
@@ -267,4 +267,27 @@ func showCustomEntryDialog2(title, message string, callback func(string)) {
 	})
 
 	d.Show()
+}
+
+func openTerminal() error {
+	/*
+		Unlike Windows or Linux, where each terminal window is often a separate process, macOS treats Terminal.app as a single application instance. When you “open” it again, 
+		it doesn’t always start a fresh process—it activates the existing one unless you explicitly request a new instance. 
+			Default open -a Behavior:
+		Running open -a Terminal from the command line (or via exec.Command) tells macOS to bring Terminal.app to the foreground. If Terminal is already running (e.g., the one you 
+		launched your Go app from), it focuses that instance rather than duplicating it. This preserves the existing session—scrollback, history, and all—explaining why Command-Tab shows 
+		just one Terminal and it feels like a focus switch.
+	*/
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", "cmd")
+	case "darwin":
+		cmd = exec.Command("open", "-a", "Terminal")
+	case "linux":
+		cmd = exec.Command("xterm")
+	default:
+		return nil
+	}
+	return cmd.Start()
 }

@@ -11,7 +11,7 @@ import (
 
 func TheSpigot(fyneFunc func(string), numberOfDigitsToCalc int, done chan bool) {
 
-	fyneFunc(fmt.Sprintf("\nThe forgoing is the entire code for this method.\n\n... from A trick I mooched off of GitHub ...\n\n"))
+	fyneFunc(fmt.Sprintf("\n\n... from A trick I mooched off of GitHub ... and re-wrote\n\n"))
 	fyneFunc(fmt.Sprintf("Spigot executed with a request for %d digits, and produced:\n\n", numberOfDigitsToCalc)) // ::: pi is then printed one char at a time in the loop below
 
 	usingBigFloats = false
@@ -22,10 +22,10 @@ func TheSpigot(fyneFunc func(string), numberOfDigitsToCalc int, done chan bool) 
 
 var piWithInsertedDecimalPoint []string
 
-func SpigotCalculation(fyneFunc func(string), n int, done chan bool) { // Rick's version does not return a string // called by the previous func
+func SpigotCalculation(fyneFunc func(string), numberOfDigits int, done chan bool) { // Rick's version does not return a string // called by the previous func
 	start := time.Now()
 	pi := "" // allocate a string var "pi" which will end up being pi sans the decimal point
-	boxes := n * 10 / 3
+	boxes := numberOfDigits * 10 / 3
 	remainders := make([]int, boxes)
 	for i := 0; i < boxes; i++ {
 		select {
@@ -39,7 +39,7 @@ func SpigotCalculation(fyneFunc func(string), n int, done chan bool) { // Rick's
 	}
 	}
 	digitsHeld := 0
-	for i := 0; i < n; i++ { // ::: loop: ----------------------------------------------------- < < < < < 
+	for i := 0; i < numberOfDigits; i++ { // ::: loop: ----------------------------------------------------- < < < < < 
 		select {
 		case <-done: // ::: here an attempt is made to read from the channel (a closed channel can be read from successfully; but what is read will be the null/zero value of the type of chan (0, false, "", 0.0, etc.)
 			// in the case of this particular channel (which is of type bool) we get the value false from having received from the channel when it is already closed. 
@@ -120,7 +120,7 @@ func SpigotCalculation(fyneFunc func(string), n int, done chan bool) { // Rick's
 			TotalRun := elapsed.String() // cast time durations to a String type for Fprintf "formatted print"
 			_, err7 := fmt.Fprintf(fileHandle, "Runtime this far is %s \n", TotalRun)
 			check(err7)
-			_, err8 := fmt.Fprintf(fileHandle, "... while calculating Pi to %d digits, having completed %d digits\n", n, i)
+			_, err8 := fmt.Fprintf(fileHandle, "... while calculating Pi to %d digits, having completed %d digits\n", numberOfDigits, i)
 			check(err8)
 		}
 		// end Rick's code
@@ -128,14 +128,17 @@ func SpigotCalculation(fyneFunc func(string), n int, done chan bool) { // Rick's
 		}
 	} // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - ::: ^ ^ ^ ^ ^ ^ ^ ^ ^  the loop ends here ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ 
 
-	// ::: pi calculations finished and displayed 
-	fyneFunc(fmt.Sprintf("\nFinished.\n%s\n\n", pi))
+	/*
+		// ::: pi calculations finished and displayed
+		fyneFunc(fmt.Sprintf("\nFinished.\n%s\n\n", pi))
 
-	// ::: here comes our calculated pi with the decimal inserted; printed from an array that we accumulated for this purpose: 
-	fyneFunc(fmt.Sprintf("\nHere comes our calculated pi with the decimal inserted:\n\nSpigot has ended ... \n\n"))
-	for _, character := range piWithInsertedDecimalPoint { // ok, because I will only execute this from window1
-		fyneFunc(fmt.Sprintf("%s", character))
-	}
+		// ::: here comes our calculated pi with the decimal inserted; printed from an array that we accumulated for this purpose:
+		fyneFunc(fmt.Sprintf("\nHere comes our calculated pi with the decimal inserted:\n\nSpigot has ended ... \n\n"))
+		for _, character := range piWithInsertedDecimalPoint { // ok, because I will only execute this from window1
+			fyneFunc(fmt.Sprintf("%s", character))
+		}
+	 */
+
 
 	// Rick's code ::: File prints
 		t := time.Now()
@@ -153,7 +156,7 @@ func SpigotCalculation(fyneFunc func(string), n int, done chan bool) { // Rick's
 			TotalRun := elapsed.String() // cast time durations to a String type for Fprintf "formatted print"
 			_, err7 := fmt.Fprintf(fileHandle, "Total run was %s \n", TotalRun)
 			check(err7)
-			_, err8 := fmt.Fprintf(fileHandle, "To calculate Pi to %d digits\n", n)
+			_, err8 := fmt.Fprintf(fileHandle, "To calculate Pi to %d digits\n", numberOfDigits)
 			check(err8)
 		// end Rick's code
 }
