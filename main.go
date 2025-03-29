@@ -36,7 +36,7 @@ var (
 )
 
 func main() {
-	countAndLogSLOC()
+	countAndLogSLOC() // this one func is the only actual call-to-action apart from the last line in main() : window1.ShowAndRun() -- the setting of variables notwithstanding! 
 	calculating = false // set the global the-coast-is-clear flag
 	myApp.Settings().SetTheme(theme.LightTheme()) // establish a Theme that will work well with dialog boxes
 	window1.Resize(fyne.NewSize(1900, 1600))
@@ -307,30 +307,30 @@ func main() {
 	.
 	.
 	 */
-	
+
 	MontyBtn1 := NewColoredButton(
-	"Monte Carlo method for converging on π  --  big floats, & float64\n" +
-		"Flavor: no fancy equations are used, only Go's pure randomness\n" +
-		"4 digits of pi in 21s; 7 digits possible in 1h30m with a 119k grid\n" +
-		"                   -*-*- Rick's second-favorite method -*-*-     ",
+		"Monte Carlo method for converging on π  --  big floats, & float64\n" +
+			"Flavor: no fancy equations are used, only Go's pure randomness\n" +
+			"4 digits of pi in 21s; 7 digits possible in 1h30m with a 119k grid\n" +
+			"                   -*-*- Rick's second-favorite method -*-*-     ",
 		color.RGBA{255, 255, 100, 235},
-		
+
 		func() {
 			var MontDigits string
-				if calculating {
-					return
-				}
+			if calculating {
+				return
+			}
+			calculating = true
+			for _, btn := range buttons1 {
+				btn.Disable()
+			}
+			for _, btn := range montBut {
 				calculating = true
-				for _, btn := range buttons1 {
-					btn.Disable()
-				}
-				for _, btn := range montBut { 
-					calculating = true 
-					btn.Enable() 
-				}
+				btn.Enable()
+			}
 			currentDone = make(chan bool) // ::: New channel per run
 			updateOutput1("\nRunning Monte Carlo ...\n\n")
-				
+
 			showCustomEntryDialog(
 				"Input Desired number of grid elements",
 				"max 120,000; 10,000 will produce 4 pi digits, 110,00 may get you 5 digits",
@@ -372,9 +372,9 @@ func main() {
 		},
 	)
 	/*
-	.
-	.
-	 */
+		.
+		.
+	*/
 	
 	GaussBtn1 := NewColoredButton(
 	"Gauss-Legendre -- C F Gauss, refined by Adrien-Marie Legendre\n" +
@@ -522,8 +522,8 @@ func main() {
 	)
 	additionalMethodsMenu := fyne.NewMenu("Other-Methods",
 		fyne.NewMenuItem("Home-Page (Pi methods)", func() { window1.Show() }),
-		fyne.NewMenuItem("Second-page of Pi methods", func() { createWindow2(myApp).Show() }),
-		fyne.NewMenuItem("Odd Pi calculators", func() { createWindow3(myApp).Show() }),
+		fyne.NewMenuItem("Second-page of Pi methods", func() { createWindow2(myApp).Show() }), // it is only the Show method of createWindow2 that specifies/(calls for) action. 
+		fyne.NewMenuItem("Odd Pi calculators", func() { createWindow3(myApp).Show() }),       // ... yet even these are inert until the final line of main() : window1.ShowAndRun()
 		fyne.NewMenuItem("Misc Maths", func() { createWindow4(myApp).Show() }),
 	)
 	optionsMenu := fyne.NewMenu("Options",
@@ -603,12 +603,12 @@ func main() {
 	 */
 
 	mainMenu := fyne.NewMainMenu(logFilesMenu, additionalMethodsMenu, optionsMenu)
-	window1.SetMainMenu(mainMenu)
+	window1.SetMainMenu(mainMenu) // does not actually put up the menus, no actual action is called for here !!
 	
 	// Apply window background to the entire content
 	windowWithBackground := container.NewMax(bgwc, content1)
 	
 	window1.SetContent(windowWithBackground)
 	
-	window1.ShowAndRun()
+	window1.ShowAndRun() // ACTION !!!
 }

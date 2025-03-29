@@ -78,8 +78,88 @@ func createWindow2(myApp fyne.App) fyne.Window {
 	}
 
 	// ::: Buttons2
-	done := make(chan bool) // local, kill channel for all goroutines that are listening: ::: not entirely sure of this one ???
 	
+	done := make(chan bool) // local, kill channel for all goroutines that are listening: ::: not entirely sure of this one ???
+
+	RootsBtn2 := NewColoredButton(
+		// signature of ^ ^ ^ ^ (label string, backgroundColor color.Color, tapped func()) *ColoredButton { // 
+		"Roots\n" +
+			"2 or 3\n" +
+			"any integer\n" +
+			"                   -*-*- Rick's own-favorite method -*-*-     ", // first argument, one string
+		color.RGBA{255, 255, 100, 235},                         // a color.Color argument 
+		func() {                                                            // a func() { 
+			var radical_index int                                               // finally it "returns" *ColoredButton which is thereby named RootsBtn2
+			if calculating {                                                // ... and yet, no actions are called for by having done all of this!!
+				return                                  // several levels of nested functions of various morphs. All of it subsumed by a mere label: RootsBtn2
+			}                                          // later we will stuff RootsBtn2 into a "content2 := container.NewVBox( "  -- labels on top of labels
+			calculating = true
+			for _, btn := range buttons2 {
+				btn.Disable()
+			}
+			for _, btn := range rootBut2 {
+				calculating = true
+				btn.Enable()
+			}
+			currentDone = make(chan bool) // New channel per run
+			updateOutput2("\nRunning Roots ...\n\n")
+
+			// Define a recursive function to handle input validation
+			var promptForInput func() // this var is outside the scope of the literal/anonymous "func() {" that we have on the next line. 
+			promptForInput = func() { // we could have written it all on one line as var promptForInput = func prompt() { ... }  // note the inclusion of "prompt()" here. 
+				showCustomEntryDialog2(   // ... in which case, the recursive calls would then be prompt() instead of promptForInput()
+				// ^ ^ ^ signature: (title, message string, callback func(string)) {  // and those 3 arguments appear straight away: 
+					"Input 2 for square root, 3 for cube root", // title string
+					"Enter 2 or 3 only",                   // message string
+					func(input string) {                           // a callback func that takes one string "input" 
+						if input != "" { // User provided some input
+							val, err := strconv.Atoi(input)
+							if err != nil {
+								updateOutput2("\nInput error: Please enter a valid number (2 or 3)\n")
+								promptForInput() // Re-prompt on invalid input
+								return
+							}
+							if val == 2 || val == 3 { // Valid input
+								radical_index = val
+								fmt.Printf("\nin else if or, val is:%d, radical_index: %d\n", val, radical_index)
+								fmt.Printf("Input: %d\n", val)
+
+								// Proceed with calculation
+								go func(done chan bool) {
+									defer func() {
+										calculating = false
+										updateOutput2("Calculation definitely finished; possibly aborted\n")
+									}()
+									// ::: this will become my roots solver app 
+									bbpFast44(updateOutput2, radical_index, done)
+									calculating = false
+									for _, btn := range buttons2 {
+										btn.Enable()
+									}
+								}(currentDone)
+							} else { // Input is a number but not 2 or 3
+								updateOutput2(fmt.Sprintf("\nInvalid input: %d. Please enter 2 or 3\n", val))
+								promptForInput() // Re-prompt
+							}
+						} else { // Dialog canceled
+							updateOutput2("Roots canceled, make another selection")
+							for _, btn := range buttons2 {
+								btn.Enable()
+							}
+							calculating = false
+						}
+					},
+				)
+			}
+			// Below, we start the input prompt. Because, we've yet to actually call for anything to happen. If you had thought that "showCustomEntryDialog2(..." was a call to action you are mislead... 
+			// ... All that was was part of an inline/literal func definition. The definition of a func called promptForInput. 
+			promptForInput() // Execute the aforementioned and previously defined/resolvable func. If and only If we ever specifically direct that the game should begin. 
+		},
+	)
+	/*
+		.
+		.
+	*/
 	// ::: Bailey chan -- will go here
 					BBPfast44Btn2 := NewColoredButton(
 						"BBP, the Bailey–Borwein–Plouffe formula for π, circa 1995\n" +
@@ -245,23 +325,24 @@ func createWindow2(myApp fyne.App) fyne.Window {
 		.
 	*/
 
+	rootBut2 = []*ColoredButton{RootsBtn2}
 	BPPbut2 = []*ColoredButton{BBPfast44Btn2}
 	chudBut2 = []*ColoredButton{ChudnovskyBtn2}
 	nilaBut2 = []*ColoredButton{NilakanthaBtn2}
 
-	buttons2 = []*ColoredButton{BBPfast44Btn2, NilakanthaBtn2, ChudnovskyBtn2} // array used only for range btn.Enable()
+	buttons2 = []*ColoredButton{RootsBtn2, NilakanthaBtn2, ChudnovskyBtn2} // array used only for range btn.Enable()
 
 	// ::: page-2 Lay-out
 		content2 := container.NewVBox(
 			widget.NewLabel("\nSelect a method to estimate π:\n"),
-			container.NewGridWithColumns(4, BBPfast44Btn2, NilakanthaBtn2, ChudnovskyBtn2),
+			container.NewGridWithColumns(4, RootsBtn2, NilakanthaBtn2, ChudnovskyBtn2),
 			coloredScroll2, // Use coloredScroll2 directly or windowContent2 if you want an extra layer
 		)
-		windowContent2 := container.NewMax(bgwc2, content2) // Light green window bg
+		windowContent2 := container.NewMax(bgwc2, content2) // Light green window bg // containers withing containers, labels on labels, functions in functions. Yet still inert. 
 	
 
 /*
-   	window2.Canvas().SetOnTypedRune(func(r rune) { // Main-thread update loop using Fyne's lifecycle ::: see below:
+   	window2.Canvas().SetOnTypedRune(func(r rune) { // Main-thread update loop using Fyne's lifecycle -- here an empty loop ::: see below:
    	})
 
    Every Fyne window has a Canvas, which is the drawable surface where all widgets (buttons, labels, etc.) are rendered. Calling window2.Canvas() gives you access to this canvas, 
@@ -294,7 +375,7 @@ could arise if you tried to update the GUI from another thread.
 
 		window2.SetContent(windowContent2) // Set once with the full layout
 	return window2
-} // end of createWindow2
+} // end of createWindow2 "it's only a label". "no Show, no go" 
 
 
 // ::: ------------------------------------------------------------------------------------------------------------------------------------------------------------
