@@ -36,6 +36,7 @@ var buttons3 []*ColoredButton // Change to ColoredButton
 var buttons4 []*ColoredButton // Change to ColoredButton
 var scrollContainer *container.Scroll
 
+var radical_index int
 var copyOfLastPosition int
 
 // convenience globals:

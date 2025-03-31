@@ -26,13 +26,13 @@ var (
 		// Create scrollContainer1 to display outputLabel1 with initial user prompt.
 		// Build/define scrollContainer1 as containing outputLabel1 with its initial greeting message
 			outputLabel1 = widget.NewLabel("\nSelect one of the brightly-colored panels to estimate π via featured method...\n\n")
-			scrollContainer1 = container.NewVScroll(outputLabel1) // ::: my working line prior to grok 
+			scrollContainer1 = container.NewVScroll(outputLabel1)
 		
 		// Create app and window1 which is an extension of myApp
 		// Initialize the Fyne app (myApp) and create window1 as its main window. Technically not a case of "extension"
 			myApp = app.New()
-			window1 = myApp.NewWindow("Rick's Pi calculation Demo, set #1") // ::: maybe use the new window1 below ??? - -
-			currentDone    chan bool      // Channel to signal termination ::: Tracks the active done channel - -
+			window1 = myApp.NewWindow("Rick's Pi calculation Demo, set #1")
+			currentDone    chan bool
 )
 
 func main() {
@@ -46,8 +46,6 @@ func main() {
 	scrollContainer1.SetMinSize(fyne.NewSize(1900, 930)) // was before adding the scoreBoard 1900, 1050
 	
 	outputLabel1.Wrapping = fyne.TextWrapWord // make the text in the scrollable area auto-wrap
-
-	// scrollContainer1.SetMinSize(fyne.NewSize(1900, 1050))
 
 		coloredScroll := container.NewMax(bgsc, scrollContainer1) // Combine background and scroll, Layer light green background behind scroll content.
 	

@@ -291,3 +291,5 @@ func openTerminal() error {
 	}
 	return cmd.Start()
 }
+
+
