@@ -2,282 +2,271 @@ package main
 
 import (
 	"fmt"
+	"fyne.io/fyne/v2/widget"
+	"image/color"
 	"math"
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
 // @formatter:off
 
-// Entry point of method/algorithm  
-func xRootOfy(fyneFunc func(string), radical_index int, done chan bool) { // calculates either square or cube root of any integer
+var (
+	pairsSlice []Pairs
+	mathSqrtCheat            float64
+	mathCbrtCheat            float64
+	mgr             = NewTrafficManager(outputLabel2) // ::: - -
+)
 
+// SetupRootsDemo sets up the roots demo UI and returns the button for window2
+func SetupRootsDemo(mgr *TrafficManager, radicalEntry, workEntry *widget.Entry, fyneFunc func(string)) *ColoredButton {
+	rootsBtn := NewColoredButton(
+		"Roots demo usage: enter an integer in each of the above fields\n" +
+			"2 or 3 in the first field, then any positive integer in the second\n" +
+			"then click this button to run the calculation of square or cube root\n" +
+			"                   -*-*- Rick's own-favorite method -*-*-     ",
+		color.RGBA{255, 255, 100, 235},
+		func() {
+			if mgr.IsCalculating() {
+				return
+			}
+			trimmedRadicalString := strings.TrimRight(radicalEntry.Text, " ")
+			radical, err := strconv.Atoi(trimmedRadicalString)
+			if err != nil || (radical != 2 && radical != 3) {
+				updateOutput2("Invalid radical: enter 2 or 3\n")
+				fyneFunc(fmt.Sprintf("Invalid radical: enter 2 or 3\n"))
+				return
+			}
+			trimmedWorkPieceString := strings.TrimRight(workEntry.Text, " ")
+			workPiece, err := strconv.Atoi(trimmedWorkPieceString)
+			if err != nil || workPiece < 0 {
+				updateOutput2("Invalid number: enter a non-negative integer\n")
+				fyneFunc(fmt.Sprintf("Invalid number: enter a non-negative integer\n"))
+				return
+			}
+			fmt.Printf(" ::: - Radical is set to: %d\n", radical)
+			fmt.Printf(" ::: - Work Piece is set to: %d\n", workPiece)
+			mgr.SetRadical(radical)
+			mgr.SetWorkPiece(workPiece)
+			mgr.SetCalculating(true)
+			for _, btn := range buttons2 {
+				btn.Disable()
+			}
+			for _, btn := range rootBut2 {
+				btn.Enable()
+			}
+			go func() {
+				defer func() {
+					mgr.Reset()
+					for _, btn := range buttons2 {
+						btn.Enable()
+					}
+				}()
+				xRootOfy(updateOutput2) // ::: formatted to highlight the meat
+				mgr.SetCalculating(false)
+			}()
+		},
+	)
+	return rootsBtn
+}
+
+func xRootOfy(fyneFunc func(string)) {
 	usingBigFloats = false
-
-	var index = 0 // counter used in the for loop in this func :: is also passed to the principal func readTheTableOfPP
-
 	TimeOfStartFromTop := time.Now()
 
-	radical_index, workPiece := setStateOfSquareOrCubeRoot(fyneFunc, radical_index, done) // Obtain workPiece, and set/adjust a global precision val based on the workPiece : the number to solve for.
+	radical2or3 := mgr.GetRadical()
+	workPiece := mgr.GetWorkPiece()
 
-	buildTableOfPerfectProducts(radical_index) // 800,000 entries, 400,000 pairs
+	radical2or3, workPiece = setPrecisionForSquareOrCubeRoot(mgr, radical2or3, workPiece, updateOutput2) // sets precision only, no actual need to digest and pass our inputs
+	mgr.SetRadical(radical2or3) // no need for these
+	mgr.SetWorkPiece(workPiece)
 
-	// The following section consists of the principal for loop with a conditional break ------------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------------------------------------------------------------
-
+	updateOutput2("\n\nBuilding table...\n")
+	buildPairsSlice(radical2or3)
+	updateOutput2("Table built, starting calculation...\n")
 	startBeforeCall := time.Now()
 
-	// read the table built half a dozen lines prior; index will be a sequence of even numbers 
-	for index < 400000 { // the table has 825,000 entries, > 410,000 pairs; so index increments by 2 at the bottom of this loop (200,000 iterations)
-
-		// report on progress of results 
-		readTheTableOfPP(index, startBeforeCall, radical_index, workPiece) // pass-in an index to the table: 400,000 indexes corresponding to the number of pairs of entries
-
-		handlePerfectSquaresAndCubes(TimeOfStartFromTop, radical_index, workPiece) // handle the rare case of a perfect square or cube (report to a file, that is all that is done here)
-
-		if diffOfLarger == 0 || diffOfSmaller == 0 { // Then, it was a perfect square or cube; so, we need to ...
-			break // ... out of the for loop because we are done : the workpiece was either a perfect square or a perfect cube
+	var indx int
+	for i := 0; i < 400000; i += 2 { // this is meant to be a pretty big loop 825,000 is the number of 
+		if mgr.ShouldStop() {
+			updateOutput2("Calculation of a root aborted\n")
+			fyneFunc(fmt.Sprintf("Calculation of a root aborted\n"))
+			return
 		}
-
-		if index == 80000 {
-			fmt.Println("\n80,000 ... still working ...")
+		readPairsSlice(i, startBeforeCall, radical2or3, workPiece, updateOutput2)
+		handlePerfectSquaresAndCubes(TimeOfStartFromTop, radical2or3, workPiece, mgr)
+		if diffOfLarger == 0 || diffOfSmaller == 0 {
+			break // because we have a perfect square or cube
 		}
-		if index == 160000 {
-			fmt.Println("\n160,000 ... still working ...")
+		if i%80000 == 0 && i > 0 { // if remainder of div is 0 (every 80,000 iterations) conditional progress updates print
+			stringVindx := formatInt64WithThousandSeparators(int64(indx))
+			updateOutput2(fmt.Sprintf("\n%s iterations completed... of 400,000\n", stringVindx))
+			updateOutput2(fmt.Sprintf("\n... still working ...\n")) // ok
+
+			fmt.Printf("%s iterations completed... of 400,000\n", stringVindx)
+			fmt.Println(i, "... still working ...")
 		}
-		if index == 240000 {
-			fmt.Println("\n240,000 ... still working ...")
-		}
-		if index == 320000 {
-			fmt.Println("\n320,000 ... still working, almost there ...\n")
-		}
-
-		index = index + 2 // increment the index and read the table again
-	} // end of for loop // the above break statement is NOT the only way to exit this for loop, it also terminates after 200,000 iterations of index
-
-	// ::: Show the final result 
-	// All of the remaining sections are conditional for workpiece NOT being a perfect square or cube
-	if perfectResult2 == 0 && perfectResult3 == 0 { // Then, it was NOT a perfect square or cube, so handle that case
-		// the remaining sections are only reached after having exited the primary for loop above via a break statement or an exaustive reading of the table ------------
-		// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-		// calculate elapsed time
-		t_s2 := time.Now()
-		elapsed_s2 := t_s2.Sub(TimeOfStartFromTop)
-
-		// the following sections log the final results to a text file (and also does one conditional Printf) -------------------------------------------------
-		// -----------------------------------------------------------------------------------------------------------------------------------------------------
-		fileHandle, err31 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600) // append to file
-		check(err31)                                                                                                             // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
-		defer fileHandle.Close()                                                                                                 // It’s idiomatic to defer a Close immediately after opening a file.
-
-		Hostname, _ := os.Hostname()
-		_, err30 := fmt.Fprintf(fileHandle, "\n  -- %d root of %d by a ratio of perfect Products -- selection #%d on %s \n", radical_index, workPiece, Hostname)
-		check(err30)
-
-		current_time := time.Now()
-		_, err36 := fmt.Fprint(fileHandle, "was run on: ", current_time.Format(time.ANSIC), "\n")
-		check(err36)
-
-		// index = index
-		_, err35 := fmt.Fprintf(fileHandle, "%d was total Iterations \n", index)
-		check(err35)
-
-		// Sort the slice sortedResults by its pdiff field :
-		// -----------------------------------------------------------------------------------------------------------
-		sort.Slice(sortedResults, func(i, j int) bool { return sortedResults[i].pdiff < sortedResults[j].pdiff })
-
-		/*
-		   // print the sorted slice twice; once for each field
-		       fmt.Println("Here are the results:")
-		       resultCount := 1
-		       for _, result := range sortedResults {
-		           fmt.Printf("%d, %0.16f \n", resultCount, result.result)
-		           resultCount++
-		       }
-		       fmt.Println("And here are the p-diffs:")
-		       pdiffCount := 1
-		       for _, result := range sortedResults {
-		           fmt.Printf("%d, %0.16f \n", pdiffCount, result.pdiff)
-		           pdiffCount++
-		       }
-		*/
-
-		// display and print the best-fitting result based solely on the lowest pdiff :
-		// -----------------------------------------------------------------------------
-
-		// display the best fitting result :
-		if radical_index == 2 {
-			fmt.Printf("%0.9f, is the best approximation for the Square Root of %d \n", sortedResults[0].result, workPiece)
-		}
-		if radical_index == 3 {
-			fmt.Printf("%0.9f, is the best approximation for the  Cube  Root of %d \n", sortedResults[0].result, workPiece)
-		}
-
-		// Fprint/log the best fitting result :
-		if radical_index == 2 {
-			_, err48 := fmt.Fprintf(fileHandle, "%0.9f, is the best approximation for the Square Root of %d \n", sortedResults[0].result, workPiece)
-			check(err48)
-		}
-		if radical_index == 3 {
-			_, err49 := fmt.Fprintf(fileHandle, "%0.9f, is the best approximation for the  Cube  Root of %d \n", sortedResults[0].result, workPiece)
-			check(err49)
-		}
-
-		TotalRun := elapsed_s2.String() // cast time durations to a String type for Fprintf "formatted print"
-		_, err57 := fmt.Fprintf(fileHandle, "Total run was %s \n ", TotalRun)
-		check(err57)
-
-		fileHandle.Close()
-
-		/*
-		   // all this crap with these 3 arrays was cute, but it does not sort as a record with fields, so it is not what I want
-		               array_len := len(List_of_2_results_case18)
-		               _ , err8 := fmt.Fprintf(fileHandle, "%d was len of array \n", array_len)
-		                   check(err8)
-		               if array_len > 0 {
-		                   index := 0
-		                   for array_len > 0 {
-		                       result_from_array := List_of_2_results_case18[index]
-		                       array_len--
-		                        _ , err9 := fmt.Fprintf(fileHandle, "%0.16f with a diff of %d, percent diff of %0.4f percent\n",
-		                           result_from_array, corresponding_diffs[index], diffs_as_percent[index]*100000)
-		                               check(err9)
-		                       index++
-		                   }
-		               }
-		               List_of_2_results_case18 = nil
-		               corresponding_diffs = nil
-		*/
+		indx = i // save/copy to a wider scope for later use outside this loop
 	}
-	// we need to end here ::: ???
-	return // is this the way to end it ??
-}
+	fmt.Println("Loop completed at index:", indx) // Debug
 
-// report to a file the rare case of having found a perfect square 
-func handlePerfectSquaresAndCubes(TimeOfStartFromTop time.Time, radical_index, workPiece int) {
-	// the next sub-section detects, traps, and reports the detection of either a perfect square of a perfect cube ------------------
-	// ... it also is responsible for causing the algorithm to terminate via a break if workpiece was a perfect square or cube
-	// -------------------------------------------------------------------------------------------------------------------------------
-	if diffOfLarger == 0 || diffOfSmaller == 0 { // Then, it was a perfect square or cube
+	// ::: Show the final result
+	fmt.Println("Entering result block, mathSqrtCheat 'square':", mathSqrtCheat, "mathCbrtCheat 'cube':", mathCbrtCheat) // Debug
+	// ::: "Entering result block ... "
 
-		t_s1 := time.Now()
-		elapsed_s1 := t_s1.Sub(TimeOfStartFromTop) // need to pass this to the func we are planning to build ?? NO, "two" "perfect".
-
-		fileNameToWriteTo := "dataLog-From_calculate-pi-and-friends.txt" // would have been used/needed if we emplement a func for this.
-
-		// fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		fileHandle, err1 := os.OpenFile(fileNameToWriteTo, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		check(err1)              // ... gets a file handle to dataLog-From_calculate-pi-and-friends.txt
-		defer fileHandle.Close() // It’s idiomatic to defer a Close immediately after opening a file.
+	t_s2 := time.Now()
+	elapsed_s2 := t_s2.Sub(TimeOfStartFromTop)
+	if diffOfLarger != 0 || diffOfSmaller != 0 { // if not a perfect square or cube do this else skip due to detection of perfect result
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Panic in result block:", r)
+				updateOutput2("\nError calculating result\n")
+			}
+		}()
+		fileHandle, err31 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		check(err31)
+		defer fileHandle.Close()
 
 		Hostname, _ := os.Hostname()
-		_, err0 := fmt.Fprintf(fileHandle, "\n  -- %d root of %d by a ratio of PerfectProducts -- selection #%d on %s \n",
-			radical_index, workPiece, Hostname)
-		check(err0)
+		fmt.Fprintf(fileHandle, "\n  -- %d root of %d by a ratio of perfect Products -- on %s \n", radical2or3, workPiece, Hostname)
+		fmt.Fprint(fileHandle, "was run on: ", time.Now().Format(time.ANSIC), "\n")
+		fmt.Fprintf(fileHandle, "%d was total Iterations \n", indx)
 
-		current_time := time.Now()
-		_, err6 := fmt.Fprint(fileHandle, "was run on: ", current_time.Format(time.ANSIC), "\n")
-		check(err6)
+		fmt.Println("Sorting results...") // Debug
+		sort.Slice(sortedResults, func(i, j int) bool { return sortedResults[i].pdiff < sortedResults[j].pdiff })
+		fmt.Println("Sorted results, length:", len(sortedResults)) // Debug
 
-		TotalRun := elapsed_s1.String() // cast time durations to a String type for Fprintf "formatted print"
-		_, err7 := fmt.Fprintf(fileHandle, "Total run was %s \n ", TotalRun)
-		check(err7)
-
-		if radical_index == 2 {
-			_, err8 := fmt.Fprintf(fileHandle, "the %d root of %d is %0.2f \n", radical_index, workPiece, perfectResult2)
-			check(err8)
+		if len(sortedResults) > 0 {
+			if radical2or3 == 2 {
+				result := fmt.Sprintf("\n%0.9f, it's the best approximation for the Square Root of %d", sortedResults[0].result, workPiece)
+				fmt.Println("Updating GUI with:", result) // Debug
+				updateOutput2(result)
+				fmt.Println("GUI updated, printing to console...") // Debug
+				fmt.Printf("%s\n", result)
+				// fyneFunc(fmt.Sprintf("\nSquare-root Result is: %s\n", result))
+				fmt.Println("Writing to file...") // Debug
+				fmt.Fprintf(fileHandle, "%s \n", result)
+				fmt.Println("File written") // Debug
+			}
+			if radical2or3 == 3 {
+				result := fmt.Sprintf("\n%0.9f, it's the best approximation for the Cube Root of %d", sortedResults[0].result, workPiece)
+				fmt.Println("Updating GUI with:", result) // Debug
+				updateOutput2(result)
+				fmt.Println("GUI updated, printing to console...") // Debug
+				fmt.Printf("%s\n", result)
+				// fyneFunc(fmt.Sprintf("\nCube-root Result is: %s\n", result))
+				fmt.Println("Writing to file...") // Debug
+				fmt.Fprintf(fileHandle, "%s \n", result)
+				fmt.Println("File written") // Debug
+			}
+		} else {
+			updateOutput2(fmt.Sprintf("\nUpdate: No results found within precision %d after %d iterations", precisionOfRoot, indx))
+			fmt.Printf("No results found within precision %d after %d iterations\n", precisionOfRoot, indx)
+			fyneFunc(fmt.Sprint("\nFyne: No results found within precision %d after %d iterations\n", precisionOfRoot, indx))
 		}
-		if radical_index == 3 {
-			_, err38 := fmt.Fprintf(fileHandle, "the %d root of %d is %0.2f \n", radical_index, workPiece, perfectResult3)
-			check(err38)
-		}
 
-		fileHandle.Close()
-
-		// break // break out of the for loop because we are done : the workpiece was either a perfect square or a perfect cube
-
-	} // end of if :: if it was a perfect square or cube
-	// -------------------------------------------------------------  CASE 18: ------------------------------------------------------------------
-
+		TotalRun := elapsed_s2.String()
+		fmt.Fprintf(fileHandle, "Total run was %s \n ", TotalRun)
+		fmt.Printf("Calculation completed in %s\n", elapsed_s2)
+		fyneFunc(fmt.Sprintf("\nCalculation completed in %s\n", elapsed_s2))
+	} else {
+		fmt.Println("Skipped result block due to perfect result detection") // Debug
+	}
 }
 
-func readTheTableOfPP(index int, startBeforeCall time.Time, radical_index, workPiece int) { // this gets called 400,000 times.
+func readPairsSlice(i int, startBeforeCall time.Time, radical2or3, workPiece int, fyneFunc func(string)) {
+	oneReadOfSmallerRoot := pairsSlice[i].root // Read a smaller PP and its root (just once) for each time readPairsSlice is called
+	oneReadOfSmallerPP := pairsSlice[i].product
 
-	// The first time it is called index is 0
+	for iter := 0; iter < 410000 && i < len(pairsSlice); iter++ { // go big, but not so big that you would read past the end of the pairsSlice
+		i++
+		largerPerfectProduct := pairsSlice[i].product // i has been incremented since the initial one-time read of oneReadOfSmallerPP
 
-	// read it ...
-	smallerPerfectProductOnce := Table_of_perfect_Products[index]
-	// ... and save it locally, do this just-once per func call. // ... index may be 0 up to 380,000
-	RootOfsmallerPerfectProductOnce := Table_of_perfect_Products[index+1]
-	// ^^^ also read the root wich corresponds
+		// ... and, keep incrementing the i until largerPerfectProduct is greater than (oneReadOfSmallerPP * workPiece)
+		if largerPerfectProduct > oneReadOfSmallerPP*workPiece { // For example: workPiece may be 11, 3.32*3.32.   Larger PP may be 49, 7*7.   Smaller oneReadPP may be 4, 2*2. ::: oneRead is 4
 
-	iter := 0
-	for iter < 410000 { // 410,000 loops. Why do we need so many?, Because we need to read through 825,000 table entries pairs
-		iter++ //  ... iters are therefore half the number of pairs. There are actually 1,600,000 items, but who's counting?
-		index = index + 2
-		largerPerfectProduct := Table_of_perfect_Products[index]
-		// to approximate the root of an imperfect square x we will need a ratio of two perfect squares wich is about equal to x
-		// ...we need to find two perfect squares such that one is about x times larger than the other
-		// get next perfect square from table for testing to see if it is more than x * bigger than smallerPerfectProductOnce
+			ProspectivePHitOnLargeSide := largerPerfectProduct // rename it, badly;
+			rootOfProspectivePHitOnLargeSide := pairsSlice[i].root // grab larger side's root
 
-		if largerPerfectProduct > smallerPerfectProductOnce*workPiece {
-			// if largerPerfectProduct is a candidate based on it being just-a-bit larger than workPiece* the smaller PP deal with that, else loop to the next potential
+			ProspectivePHitOnSmallerSide := pairsSlice[i-1].product
+			rootOfProspectivePHitOnSmallerSide := pairsSlice[i-1].root
 
-			ProspectiveHitOnLargeSide := largerPerfectProduct                     // make a copy under a more suitable name :)
-			rootOfProspectiveHitOnLargeSide := Table_of_perfect_Products[index+1] // the current value of index plus one holds the root of largerPerfectSquare hence the root of ProspectiveHitOnLargeSide
 
-			ProspectiveHitOnSmallerSide := Table_of_perfect_Products[index-2]
-			// save that smaller one too //                               ^^ 2 now instead of 1 because we have added roots to the slice
-			rootOfProspectiveHitOnSmallerSide := Table_of_perfect_Products[index-1]
+			// we next look at two roots (PHs) of two PPs. 
+			diffOfLarger = ProspectivePHitOnLargeSide - workPiece*oneReadOfSmallerPP // ::: PH_larger - (WP * _once)     7 - (11 * 4)
+			// What does it tell us if we find that the sum of one of the larger roots from the table : ProspectivePHitOnLargeSide
+			// and/plus the negative of another smaller root from the table (times our WP) turns out to be zero?
 
-			diffOfLarger = ProspectiveHitOnLargeSide - workPiece*smallerPerfectProductOnce
-			// diffOfSmaller = -(ProspectiveHitOnSmallerSide - workPiece*smallerPerfectProductOnce) // this was dumb ??
-			diffOfSmaller = workPiece*smallerPerfectProductOnce - ProspectiveHitOnSmallerSide
 
-			// detect perfect squares and set global vars to their roots -----------------------------------------------
+			diffOfSmaller = workPiece*oneReadOfSmallerPP - ProspectivePHitOnSmallerSide // ::: (WP * _once) - PH_smaller    (11 * 4) - 
+
 			if diffOfLarger == 0 {
-				fmt.Println(colorCyan, "\n The", radical_index, "root of", workPiece, "is", colorGreen,
-					float64(rootOfProspectiveHitOnLargeSide)/float64(RootOfsmallerPerfectProductOnce), colorReset, "\n")
+				fmt.Println(colorCyan, "\n The", radical2or3, "root of", workPiece, "is", colorGreen,
+					float64(rootOfProspectivePHitOnLargeSide)/float64(oneReadOfSmallerRoot), colorReset, "\n")
+				fyneFunc(fmt.Sprintf("\n The %d root of %d is %0.33f\n\n", radical2or3, workPiece, float64(rootOfProspectivePHitOnLargeSide)/float64(oneReadOfSmallerRoot)))
 
-				perfectResult2 = (math.Sqrt(float64(workPiece))) // these global values are used later to Fprint to a log file
-				perfectResult3 = math.Cbrt(float64(workPiece))
-				break // out of the for loop because the workPiece is itself a perfect square
+				mathCbrtCheat = math.Cbrt(float64(workPiece))
+				break
 			}
 			if diffOfSmaller == 0 {
-				fmt.Println(colorCyan, "\n The", radical_index, "root of", workPiece, "is", colorGreen,
-					float64(rootOfProspectiveHitOnSmallerSide)/float64(RootOfsmallerPerfectProductOnce), colorReset, "\n")
+				fmt.Println(colorCyan, "\n The", radical2or3, "root of", workPiece, "is", colorGreen,
+					float64(rootOfProspectivePHitOnSmallerSide)/float64(oneReadOfSmallerRoot), colorReset, "\n")
+				fyneFunc(fmt.Sprintf("\n The %d root of %d is %0.33f\n\n", radical2or3, workPiece, float64(rootOfProspectivePHitOnSmallerSide)/float64(oneReadOfSmallerRoot)))
 
-				perfectResult2 = (math.Sqrt(float64(workPiece))) // these global values are used later to Fprint to a log file
-				perfectResult3 = math.Cbrt(float64(workPiece))
-				break // out of the for loop because the workPiece is itself a perfect square
+				mathSqrtCheat = math.Sqrt(float64(workPiece)) // ::: I cheated? Yea, a bit. But only in order to generate verbiage to print re a perfect root having been found 
+				mathCbrtCheat = math.Cbrt(float64(workPiece))
+				break
 			}
-			// ---------------------------------------------------------------------------------------------------------
-			// we are in case 18:
 
+			if diffOfLarger < precisionOfRoot {
+				result := float64(rootOfProspectivePHitOnLargeSide) / float64(oneReadOfSmallerRoot)
+				pdiff := float64(diffOfLarger) / float64(ProspectivePHitOnLargeSide)
+
+				sortedResults = append(sortedResults, Results{result: result, pdiff: pdiff})
+
+				fmt.Printf("Found large prospect at index %d: result=%f, diff=%d\n", i, result, diffOfLarger) // Debug
+				fyneFunc(fmt.Sprintf("Found large prospect at index %d: result=%f, diff=%d\n", i, result, diffOfLarger)) // Debug
+				// break
+				if diffOfLarger < 2 {break}
+			}
+			if diffOfSmaller < precisionOfRoot {
+				result := float64(rootOfProspectivePHitOnSmallerSide) / float64(oneReadOfSmallerRoot)
+				pdiff := float64(diffOfSmaller) / float64(ProspectivePHitOnSmallerSide)
+
+				sortedResults = append(sortedResults, Results{result: result, pdiff: pdiff})
+
+				fmt.Printf("Found small prospect at index %d: result=%f, diff=%d\n", i, result, diffOfSmaller) // Debug
+				fyneFunc(fmt.Sprintf("Found small prospect at index %d: result=%f, diff=%d\n", i, result, diffOfSmaller)) // Debug
+				// break
+				if diffOfSmaller < 2 {break}
+			}
+
+			// ::: we will be potentially duplicating Results struct -> slice 
 			// larger side section: ----------------------------------------------------------------------------------------------------------------------------------------
-			// --------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-			// Progress reporting
+			// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 			if diffOfLarger < precisionOfRoot { // report the prospects, their differences, and the calculated result for the Sqrt or Cbrt
-				fmt.Println("small PP is", colorCyan, smallerPerfectProductOnce, colorReset, "and, slightly on the higher side of", workPiece,
-					"* that we found a PP of", colorCyan, ProspectiveHitOnLargeSide, colorReset, "a difference of", diffOfLarger)
+				fmt.Println("small PP is", colorCyan, oneReadOfSmallerPP, colorReset, "and, slightly on the higher side of", workPiece,
+					"* that we found a PP of", colorCyan, ProspectivePHitOnLargeSide, colorReset, "a difference of", diffOfLarger)
+				fyneFunc(fmt.Sprintf("\nsmall PP is %d and, slightly on the higher side of %d * that we found a PP of %d a difference of %d\n", oneReadOfSmallerPP, workPiece, ProspectivePHitOnLargeSide, diffOfLarger))
 
-				fmt.Println("the ", radical_index, " root of ", workPiece, " is calculated as ", colorGreen,
-					float64(rootOfProspectiveHitOnLargeSide)/float64(RootOfsmallerPerfectProductOnce), colorReset)
+				fmt.Println("the ", radical2or3, " root of ", workPiece, " is calculated as ", colorGreen,
+					float64(rootOfProspectivePHitOnLargeSide)/float64(oneReadOfSmallerRoot), colorReset)
+				fyneFunc(fmt.Sprintf("\nthe %d root of %d is calculated as %0.6f \n", radical2or3, workPiece, float64(rootOfProspectivePHitOnLargeSide)/float64(oneReadOfSmallerRoot)))
 
-				fmt.Printf("with pdiff of %0.4f \n", (float64(diffOfLarger)/float64(ProspectiveHitOnLargeSide))*100000)
-
+				fmt.Printf("with pdiff of %0.4f \n", (float64(diffOfLarger)/float64(ProspectivePHitOnLargeSide))*100000)
+				fyneFunc(fmt.Sprintf("with pdiff of %0.4f \n", (float64(diffOfLarger)/float64(ProspectivePHitOnLargeSide))*100000))
 				// save the result to an accumulator array so we can Fprint all such hits at the very end
-				// List_of_2_results_case18 = append(List_of_2_results_case18, float64(rootOfProspectiveHitOnLargeSide) / float64(RootOfsmallerPerfectProductOnce) )
+				// List_of_2_results_case18 = append(List_of_2_results_case18, float64(rootOfProspectivePHitOnLargeSide) / float64(oneReadOfSmallerRoot) )
 				// corresponding_diffs = append(corresponding_diffs, diffOfLarger)
-				// diffs_as_percent = append(diffs_as_percent, float64(diffOfLarger)/float64(ProspectiveHitOnLargeSide))
+				// diffs_as_percent = append(diffs_as_percent, float64(diffOfLarger)/float64(ProspectivePHitOnLargeSide))
 
 				// in the next five lines we load (append) a record into/to the file (array) of Results
 				Result1 := Results{
-					result: float64(rootOfProspectiveHitOnLargeSide) / float64(RootOfsmallerPerfectProductOnce),
-					pdiff:  float64(diffOfLarger) / float64(ProspectiveHitOnLargeSide),
+					result: float64(rootOfProspectivePHitOnLargeSide) / float64(oneReadOfSmallerRoot),
+					pdiff:  float64(diffOfLarger) / float64(ProspectivePHitOnLargeSide),
 				}
 				sortedResults = append(sortedResults, Result1)
 
@@ -285,7 +274,7 @@ func readTheTableOfPP(index int, startBeforeCall time.Time, radical_index, workP
 				elapsed2 := t2.Sub(startBeforeCall)
 				// if needed, notify the user that we are still working
 				Tim_win = 0.178
-				if radical_index == 3 {
+				if radical2or3 == 3 {
 					if workPiece > 13 {
 						Tim_win = 0.0012
 					} else {
@@ -294,31 +283,34 @@ func readTheTableOfPP(index int, startBeforeCall time.Time, radical_index, workP
 				}
 				if elapsed2.Seconds() > Tim_win {
 					fmt.Println(elapsed2.Seconds(), "Seconds have elapsed ... working ...\n")
+					fyneFunc(fmt.Sprintf("\n%0.4f Seconds have elapsed ... working ...\n\n", elapsed2.Seconds()))
 				}
 			}
-			// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 			// smaller side section: ----------------------------------------------------------------------------------------------------------------------------------------
 			// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 			if diffOfSmaller < precisionOfRoot { // report the prospects, their differences, and the calculated result for the Sqrt or Cbrt
-				fmt.Println("small PP is", colorCyan, smallerPerfectProductOnce, colorReset, "and, slightly on the lesser side of", workPiece,
-					"* that we found a PP of", colorCyan, ProspectiveHitOnSmallerSide, colorReset, "a difference of", diffOfSmaller)
+				fmt.Println("small PP is", colorCyan, oneReadOfSmallerPP, colorReset, "and, slightly on the lesser side of", workPiece,
+					"* that we found a PP of", colorCyan, ProspectivePHitOnSmallerSide, colorReset, "a difference of", diffOfSmaller)
+				fyneFunc(fmt.Sprintf("\nsmall PP is %d and, slightly on the higher side of %d * that we found a PP of %d a difference of %d\n", oneReadOfSmallerPP, workPiece, ProspectivePHitOnSmallerSide, diffOfSmaller))
 
-				fmt.Println("the ", radical_index, " root of ", workPiece, " is calculated as ", colorGreen,
-					float64(rootOfProspectiveHitOnSmallerSide)/float64(RootOfsmallerPerfectProductOnce), colorReset)
+				fmt.Println("the ", radical2or3, " root of ", workPiece, " is calculated as ", colorGreen,
+					float64(rootOfProspectivePHitOnSmallerSide)/float64(oneReadOfSmallerRoot), colorReset)
+				fyneFunc(fmt.Sprintf("\nthe %d root of %d is calculated as %0.6f \n", radical2or3, workPiece, float64(rootOfProspectivePHitOnSmallerSide)/float64(oneReadOfSmallerRoot)))
 
-				fmt.Printf("with pdiff of %0.4f \n", (float64(diffOfSmaller)/float64(ProspectiveHitOnSmallerSide))*100000)
+				fmt.Printf("with pdiff of %0.4f \n", (float64(diffOfSmaller)/float64(ProspectivePHitOnSmallerSide))*100000)
+				fyneFunc(fmt.Sprintf("with pdiff of %0.4f \n", (float64(diffOfSmaller)/float64(ProspectivePHitOnSmallerSide))*100000))
 
 				// save the result to three accumulator arrays so we can Fprint all such hits, diffs, and p-diffs, at the very end of run
-				// List_of_2_results_case18 = append(List_of_2_results_case18, float64(rootOfProspectiveHitOnSmallerSide) / float64(RootOfsmallerPerfectProductOnce) )
+				// List_of_2_results_case18 = append(List_of_2_results_case18, float64(rootOfProspectivePHitOnSmallerSide) / float64(oneReadOfSmallerRoot) )
 				// corresponding_diffs = append(corresponding_diffs, diffOfSmaller)
-				// diffs_as_percent = append(diffs_as_percent, float64(diffOfSmaller)/float64(ProspectiveHitOnSmallerSide))
+				// diffs_as_percent = append(diffs_as_percent, float64(diffOfSmaller)/float64(ProspectivePHitOnSmallerSide))
 				// ***** ^^^^ ****** the preceeding was replaced with the following five lines *******************************************
 
 				// in the next five lines we load (append) a record into/to the file (array) of Results
 				Result1 := Results{
-					result: float64(rootOfProspectiveHitOnSmallerSide) / float64(RootOfsmallerPerfectProductOnce),
-					pdiff:  float64(diffOfSmaller) / float64(ProspectiveHitOnSmallerSide),
+					result: float64(rootOfProspectivePHitOnSmallerSide) / float64(oneReadOfSmallerRoot),
+					pdiff:  float64(diffOfSmaller) / float64(ProspectivePHitOnSmallerSide),
 				}
 				sortedResults = append(sortedResults, Result1)
 
@@ -326,7 +318,7 @@ func readTheTableOfPP(index int, startBeforeCall time.Time, radical_index, workP
 				elapsed2 := t2.Sub(startBeforeCall)
 				// if needed, notify the user that we are still working
 				Tim_win = 0.178
-				if radical_index == 3 {
+				if radical2or3 == 3 {
 					if workPiece > 13 {
 						Tim_win = 0.0012
 					} else {
@@ -335,120 +327,90 @@ func readTheTableOfPP(index int, startBeforeCall time.Time, radical_index, workP
 				}
 				if elapsed2.Seconds() > Tim_win {
 					fmt.Println(elapsed2.Seconds(), "Seconds have elapsed ... working ...\n")
+					fyneFunc(fmt.Sprintf("\n%0.4f Seconds have elapsed ... working ...\n\n", elapsed2.Seconds()))
 				}
-			} // end of if
-			// -------------  we are in case 18:   we are in case 18:   we are in case 18:   we are in case 18:   we are in case 18: ----------------
-
-			break // each time we find a prospect we break out of the for loop --- if we found any prospects using the current index value we break
-
-		} // end of if :: if largerPerfectProduct > smallerPerfectProductOnce*workPiece  //  we only handle reads that were big enough to be prospects
-	} // this is the end of the aforementioned for loop that we break out of each time we have found a prospect and handled it
-} // the end of the readTheTableOfPP func that gets called 200,000 times
-
-// obtain workPiece and set precision for special cases 
-func setStateOfSquareOrCubeRoot(fyneFunc func(string), radical_index int, done chan bool) (int, int) { // ::: - -
-	// obtain work piece 
-	var workPiece int
-	var promptForWorkPieceInput func() // this var is outside the scope of the literal/anonymous "func() {" that we have on the next line. 
-	promptForWorkPieceInput = func() { // we could have written it all on one line as var promptForWorkPieceInput = func prompt() { ... }  // note the inclusion of "prompt()" here. 
-		showCustomEntryDialog2( // ... in which case, the recursive calls would then be prompt() instead of promptForWorkPieceInput()
-			// ^ ^ ^ signature: (title, message string, callback func(string)) {  // and those 3 arguments appear straight away: 
-			"Enter the work piece",    // title string
-			"Input one whole integer", // message string
-			func(input string) { // a callback func that takes one string "input" 
-				if input == "" {
-					// if input is empty it means the user clicked ok without typing a number as the workPiece; in which case we should re-prompt for the workPiece only 
-					promptForWorkPieceInput() // ::: Re-prompt
-				}
-				if input != "" { // User provided some input; so we will convert the string to an int
-					inputNowInt, err := strconv.Atoi(input)
-					if err != nil { // if there is an error during conversion we should 
-						updateOutput2("\nInput error: Please enter a whole integer\n")
-						promptForWorkPieceInput() // ::: Re-prompt
-					}
-					// at this point we know that the user's input has been verified and has become an integer, locally known as inputNowInt
-					workPiece = inputNowInt // copy inputNowInt to a variable with external scope 
-								fmt.Printf("\nin else if or of workPiece getter, val is:%d, radical_index: %d\n", inputNowInt, radical_index)
-								fmt.Printf("Input: %d\n", inputNowInt)
-					// currentWorkPiece := &workPiece // ???
-					// At this point, nothing should cause the UI to put up another dialog to request input of the workPiece 
-
-					// ::: Proceed with calculation
-					// Runs the calculation in a separate goroutine to avoid blocking the UI thread; and ensures cleanup happens even if the calculation is aborted or fails
-					go func(done chan bool) { // a handle to the 'done' chan is passed to xRootOfy who can then use that chan to either send or receive using the 'done' chan (actually the currentDone chan) 
-							defer func() { // This closure is "deferred" until the surrounding go func completes, regardless of whether that goroutine finishes normally or panics
-								calculating = false // These sorts of deferred statements are termed "clean-up" 
-								updateOutput2("Calculation definitely finished prior to this message; it may have run its normal course or it may have been aborted\n")
-							}() // the empty () makes this deferred func into a call, rather than just a simple definition 
-						xRootOfy(updateOutput2, radical_index, done) // xRootOfy is passed the 'done' var, which was furnished from the (currentDone) chan
-							calculating = false // Termed post-calculation clean-up (Grok's words) 
-							for _, btn := range buttons2 {
-								btn.Enable()
-							}
-					}(currentDone) // this triggers immediate execution of the go func; combining definition and execution in one statement : currentDone is presumably a variable of type chan bool
-					// done is local name - currentDone is the actual channel from the outer scope - (currentDone) bridges the outer scope’s variable to the inner function’s parameter.
-
-				} else { // the Dialog has been canceled by the user having clicked ok without typing a number (or invalid input)
-					updateOutput2("Roots canceled because of empty input field; all buttons are now available, please make another selection")
-					for _, btn := range buttons2 {
-						btn.Enable()
-					}
-					calculating = false // signifying that the UI is no longer servicing this process 
-				}
-			},
-		)
+			}
+			break
+		}
 	}
+}
 
-	/*
-	   if workPiece != 0 {
-	       // do not ask for workPiece (again) -- and yet it does ??
-	   } else {
-	       promptForWorkPieceInput() ::: but I need this ?
-	   }
-	*/
-	// promptForWorkPieceInput()
+// handlePerfectSquaresAndCubes reports perfect squares/cubes to file and UI
+func handlePerfectSquaresAndCubes(TimeOfStartFromTop time.Time, radical2or3, workPiece int, mgr *TrafficManager) {
+	if diffOfLarger == 0 || diffOfSmaller == 0 {
+		t_s1 := time.Now()
+		elapsed_s1 := t_s1.Sub(TimeOfStartFromTop)
+
+		fileHandle, err1 := os.OpenFile("dataLog-From_calculate-pi-and-friends.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		check(err1)
+		defer fileHandle.Close()
+
+		Hostname, _ := os.Hostname()
+		fmt.Fprintf(fileHandle, "\n  -- %d root of %d by a ratio of PerfectProducts -- selection #%d on %s \n", radical2or3, workPiece, 1, Hostname)
+		fmt.Fprint(fileHandle, "was run on: ", time.Now().Format(time.ANSIC), "\n")
+		fmt.Fprintf(fileHandle, "Total run was %s \n ", elapsed_s1.String())
+
+		if radical2or3 == 2 {
+			result := fmt.Sprintf("Perfect square: %0.0f is the %d root of %d", mathSqrtCheat, radical2or3, workPiece)
+			updateOutput2(result)
+			fmt.Fprintf(fileHandle, "the %d root of %d is %0.0f \n", radical2or3, workPiece, mathSqrtCheat)
+		}
+		if radical2or3 == 3 {
+			result := fmt.Sprintf("Perfect cube: %0.0f is the %d root of %d", mathCbrtCheat, radical2or3, workPiece)
+			updateOutput2(result)
+			fmt.Fprintf(fileHandle, "the %d root of %d is %0.0f \n", radical2or3, workPiece, mathCbrtCheat)
+		}
+	}
+}
 
 
-	// set precision for certain known special cases/instances of workPiece values 
-	if radical_index == 3 { // if doing a cube root special tolerances are set here for certain problem values, i.e., 2, 11, 17, 3, 4, or 14
+// setPrecisionForSquareOrCubeRoot adjusts precision based on radical and workPiece
+func setPrecisionForSquareOrCubeRoot(mgr *TrafficManager, radical2or3, workPiece int, fyneFunc func(string)) (int, int) {
+	if radical2or3 == 3 { // ::: setting the optimal precision this way is a crude kluge
 		if workPiece > 4 {
 			precisionOfRoot = 1700
 			fmt.Println("\n Default precision is 1700 \n")
+			fyneFunc(fmt.Sprintf("\n Default precision is 1700 \n"))
 		}
 		if workPiece == 2 || workPiece == 11 || workPiece == 17 {
 			precisionOfRoot = 600
 			fmt.Println("\n resetting precision to 600 \n")
+			fyneFunc(fmt.Sprintf("\n resetting precision to 600 \n"))
 		}
 		if workPiece == 3 || workPiece == 4 || workPiece == 14 {
 			precisionOfRoot = 900
 			fmt.Println("\n resetting precision to 900 \n")
+			fyneFunc(fmt.Sprintf("\n resetting precision to 900 \n"))
 		}
 	}
-	if radical_index == 2 { // if doing a square root we just use a tolerance of 4 for all workpieces.
+	if radical2or3 == 2 {
 		precisionOfRoot = 4
 	}
-	return radical_index, workPiece
+	return radical2or3, workPiece
 }
 
-// Build a table of 825,000 pairs of PPs with their roots, does either squares or cubes:
+// Pairs A struct to contain two related whole numbers: an identity product (perfect square or cube), e.g. 49; and its root, which in that case would be 7 
+type Pairs struct {
+	product int
+	root int
+}
 
-func buildTableOfPerfectProducts(radical_index int) {
-
-	var PerfectProduct int
-	Table_of_perfect_Products = nil // this fixed my bug
-	root := 10
-	iter := 0
-	for iter < 825000 { // a table of 825,000 pairs: PPs with their roots. That ought to do it !!
-		iter++
+// build a table of ::: perfect squares or cubes
+func buildPairsSlice(radical2or3 int) { // ::: - -
+	var identityProduct int
+	pairsSlice = nil // Clear/reset the slice between runs
+	root := 2 // Because; 2 is the smallest possible whole-number root, i.e., it's the square root of 4 and the cube root of 8 // I used to have this as root := 10 but I do not recall why : (how I had decided on 10?)
+	for i := 0; i < 825000; i++ {
 		root++
-		if radical_index == 3 { // build an array of perfect cubes
-			PerfectProduct = root * root * root
+		if radical2or3 == 3 {                   // ::: depending on passed radical 
+			identityProduct = root * root * root
 		}
-		if radical_index == 2 { // build an array of perfect squares
-			PerfectProduct = root * root
+		if radical2or3 == 2 {
+			identityProduct = root * root
 		}
-		Table_of_perfect_Products = append(Table_of_perfect_Products, PerfectProduct)
-		Table_of_perfect_Products = append(Table_of_perfect_Products, root) // the root of the prior PP
+		pairsSlice = append(pairsSlice, Pairs{
+			product: identityProduct,
+			root:  root,
+		})
 	}
-	// written entirely by Richard Woolley
-} // end of xRootOfy()
+}
